@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"moduleResolution": "node",
+		"outDir": "dist",
+		"strict": true,
+		"declaration": true,
+		"esModuleInterop": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"baseUrl": "."
+	},
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src/actions/deploy.mjs",
+		"src/actions/deploy.mjs",
+		"../arc-framework/src/assets/index.ts",
+		"../arc-framework/src/assets/index.ts"
+	],
+	"exclude": ["node_modules", "**/*.spec.ts"]
+}
