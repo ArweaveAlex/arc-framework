@@ -1,23 +1,24 @@
-import { getArcGQLData } from '.';
-import { getPoolIds, getPoolById } from './pools';
 import { ArweaveClient } from '../clients/arweave';
-import { getTagValue, checkGqlCursor } from '../helpers/utils';
+import { CURSORS, STORAGE, TAGS } from '../helpers/config';
+import { getTxEndpoint } from '../helpers/endpoints';
+import { LANGUAGE } from '../helpers/language';
 import {
 	ArcGQLResponseType,
-	GQLResponseType,
 	ArtifactArgsType,
-	ArtifactResponseType,
-	NotificationResponseType,
-	TagFilterType,
-	CursorEnum,
-	SequenceType,
-	AssociationDetailType,
 	ArtifactDetailType,
+	ArtifactResponseType,
+	AssociationDetailType,
+	CursorEnum,
+	GQLResponseType,
+	NotificationResponseType,
 	PoolType,
+	SequenceType,
+	TagFilterType,
 } from '../helpers/types';
-import { LANGUAGE } from '../helpers/language';
-import { getTxEndpoint } from '../helpers/endpoints';
-import { TAGS, STORAGE, CURSORS } from '../helpers/config';
+import { checkGqlCursor, getTagValue } from '../helpers/utils';
+
+import { getPoolById, getPoolIds } from './pools';
+import { getArcGQLData } from '.';
 
 export async function getArtifactsByPool(args: ArtifactArgsType): Promise<ArtifactResponseType> {
 	let tagFilters: TagFilterType[] = [
@@ -34,7 +35,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		});
 	}
 
-	const artifacts: ArcGQLResponseType = await getArcGQLData({
+	const gqlResponse: ArcGQLResponseType = await getArcGQLData({
 		ids: null,
 		tagFilters: tagFilters,
 		uploader: args.uploader,
@@ -43,7 +44,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		cursorObject: CursorEnum.GQL,
 	});
 
-	return getArtifactsResponseObject(artifacts, CursorEnum.GQL, args.reduxCursor);
+	return getArtifactsResponseObject(gqlResponse, CursorEnum.GQL, args.reduxCursor);
 }
 
 export async function getArtifactsByUser(args: ArtifactArgsType): Promise<ArtifactResponseType> {
@@ -151,7 +152,6 @@ export async function getArtifactsByAssociation(
 			cursorObject: null,
 		});
 
-		// TODO: get type
 		const filteredArtifacts: any[] = [];
 		for (let i = 0; i < gqlArtifacts.data.length; i++) {
 			const associationSequence = getTagValue(gqlArtifacts.data[i].node.tags, TAGS.keys.associationSequence);
@@ -292,28 +292,29 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 }
 
 function getArtifactsResponseObject(
-	artifacts: ArcGQLResponseType,
+	gqlResponse: ArcGQLResponseType,
 	cursorObject: CursorEnum.GQL | CursorEnum.Search,
 	reduxCursor: string | null
-) {
+): ArtifactResponseType {
 	// TODO: reimplement
 	// let cursorState: any;
 	// if (reduxCursor) {
-	// 	cursorState = store.getState().cursorsReducer.search[reduxCursor];
+	// 	cursorState = store.getState().cursorsReducer[cursorObject][reduxCursor];
 	// }
 
 	// let nextCursor: string | null = cursorState ? cursorState.next : null;
 	// let previousCursor: string | null = cursorState ? cursorState.previous : null;
 
-	console.log(cursorObject);
-	console.log(reduxCursor);
+	// console.log('!');
+	// console.log(cursorObject);
+	// console.log(reduxCursor);
 
-	const contracts = artifacts.data.filter((element: GQLResponseType) => {
+	const contracts = gqlResponse.data.filter((element: GQLResponseType) => {
 		return getTagValue(element.node.tags, TAGS.keys.uploaderTxId) === STORAGE.none;
 	});
 
 	return {
-		nextCursor: null,
+		nextCursor: gqlResponse.nextCursor,
 		previousCursor: null,
 		contracts: contracts,
 	};

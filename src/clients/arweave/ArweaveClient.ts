@@ -1,12 +1,12 @@
 import Arweave from 'arweave';
 // @ts-ignore
-import { WarpFactory, defaultCacheOptions } from 'warp-contracts/web';
+import { defaultCacheOptions, WarpFactory } from 'warp-contracts';
 
-import { getArcGQLData, getPools, getArtifactsByUser } from '../../gql';
-import { getTagValue } from '../../helpers/utils';
-import { GQLResponseType, PoolType, ContributionType, ContributionResultType } from '../../helpers/types';
-import { LANGUAGE } from '../../helpers/language';
+import { getArcGQLData, getArtifactsByUser, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
+import { LANGUAGE } from '../../helpers/language';
+import { ContributionResultType, ContributionType, GQLResponseType, PoolType } from '../../helpers/types';
+import { getTagValue } from '../../helpers/utils';
 
 const GET_ENDPOINT = 'arweave-search.goldsky.com';
 const POST_ENDPOINT = 'arweave.net';

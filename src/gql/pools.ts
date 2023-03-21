@@ -1,9 +1,10 @@
-import { getArcGQLData } from '.';
 import { ArweaveClient } from '../clients';
-import { getTagValue } from '../helpers/utils';
-import { ArcGQLResponseType, PoolType, PoolSearchIndexType } from '../helpers/types';
+import { POOL_INDEX_CONTRACT_ID, STORAGE, TAGS } from '../helpers/config';
 import { getRedstoneSrcTxEndpoint } from '../helpers/endpoints';
-import { POOL_INDEX_CONTRACT_ID, TAGS, STORAGE } from '../helpers/config';
+import { ArcGQLResponseType, PoolSearchIndexType, PoolType } from '../helpers/types';
+import { getTagValue } from '../helpers/utils';
+
+import { getArcGQLData } from '.';
 
 export async function getPoolIds() {
 	const pools: PoolType[] = await getPools();

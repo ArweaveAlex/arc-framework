@@ -1,4 +1,4 @@
-import { STORAGE, SEARCH, TAGS } from './config';
+import { SEARCH, STORAGE, TAGS } from './config';
 import { DateType, KeyValueType } from './types';
 
 export function getHashUrl(url: string) {

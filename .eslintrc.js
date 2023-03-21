@@ -1,6 +1,6 @@
 module.exports = {
 	parser: '@typescript-eslint/parser',
-	plugins: ['import', '@typescript-eslint', 'simple-import-sort', 'react-hooks'],
+	plugins: ['import', '@typescript-eslint', 'simple-import-sort'],
 	extends: [],
 	rules: {
 		'import/no-duplicates': 'error',
@@ -15,13 +15,13 @@ module.exports = {
 					'error',
 					{
 						groups: [
+							['^@?\\w'],
 							['^\\u0000'],
 							['^\\.\\.(?!/?$)', '^\\.\\./?$'],
 							['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
 						],
 					},
 				],
-				'react-hooks/exhaustive-deps': 'off',
 			},
 		},
 	],

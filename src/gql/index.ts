@@ -1,8 +1,7 @@
 import { ArweaveClient } from '../clients/arweave';
-
-import { GQLResponseType, TagFilterType, CursorEnum, CursorObjectKeyType } from '../helpers/types';
-import { CURSORS, SEARCH, PAGINATOR } from '../helpers/config';
-import { unquoteJsonKeys, checkGqlCursor } from '../helpers/utils';
+import { CURSORS, PAGINATOR, SEARCH } from '../helpers/config';
+import { CursorEnum, CursorObjectKeyType, GQLResponseType, TagFilterType } from '../helpers/types';
+import { checkGqlCursor, unquoteJsonKeys } from '../helpers/utils';
 
 export async function getArcGQLData(args: {
 	ids: string[] | null;

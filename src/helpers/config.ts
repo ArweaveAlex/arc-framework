@@ -1,6 +1,7 @@
-import { PoolType } from './types';
 import * as filters from '../filters';
+
 import { LANGUAGE } from './language';
+import { PoolType } from './types';
 
 export const TAGS = {
 	keys: {
