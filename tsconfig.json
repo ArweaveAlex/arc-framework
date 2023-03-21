@@ -18,7 +18,6 @@
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"strictNullChecks": false,
-		"outDir": "bin",
 		"resolveJsonModule": true
 	},
 	"include": ["src", "src/**/*.json", "src/clients/arweave/index.ts"]
