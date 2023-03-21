@@ -1,7 +1,6 @@
 import { ArweaveClient } from '../clients/arweave';
 import { CURSORS, STORAGE, TAGS } from '../helpers/config';
 import { getTxEndpoint } from '../helpers/endpoints';
-import { LANGUAGE } from '../helpers/language';
 import {
 	ArcGQLResponseType,
 	ArtifactArgsType,
@@ -18,7 +17,7 @@ import {
 import { checkGqlCursor, getTagValue } from '../helpers/utils';
 
 import { getPoolById, getPoolIds } from './pools';
-import { getArcGQLData } from '.';
+import { getGQLData } from '.';
 
 export async function getArtifactsByPool(args: ArtifactArgsType): Promise<ArtifactResponseType> {
 	let tagFilters: TagFilterType[] = [
@@ -35,7 +34,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		});
 	}
 
-	const gqlResponse: ArcGQLResponseType = await getArcGQLData({
+	const gqlResponse: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: tagFilters,
 		uploader: args.uploader,
@@ -66,7 +65,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 		cursor = args.cursor;
 	}
 
-	const artifacts: ArcGQLResponseType = await getArcGQLData({
+	const artifacts: ArcGQLResponseType = await getGQLData({
 		ids: args.ids,
 		tagFilters: null,
 		uploader: args.uploader,
@@ -81,7 +80,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<ArtifactResponseType> {
 	let bookmarkIds: string[];
 
-	// TODO: reimplement
+	// TODO: reimplement in site
 	// const bookmarksReducer = store.getState().bookmarksReducer;
 
 	// if (bookmarksReducer.owner === args.owner) {
@@ -100,7 +99,7 @@ export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<A
 		bookmarkIds = [];
 	}
 
-	const artifacts: ArcGQLResponseType = await getArcGQLData({
+	const artifacts: ArcGQLResponseType = await getGQLData({
 		ids: bookmarkIds,
 		tagFilters: null,
 		uploader: null,
@@ -120,7 +119,7 @@ export async function getArtifactsByAssociation(
 	const range = Array.from({ length: sequence.end - sequence.start + 1 }, (_, i) => (i + sequence.start).toString());
 
 	if (associationId) {
-		const fullThread: ArcGQLResponseType = await getArcGQLData({
+		const fullThread: ArcGQLResponseType = await getGQLData({
 			ids: null,
 			tagFilters: [
 				{
@@ -134,7 +133,7 @@ export async function getArtifactsByAssociation(
 			cursorObject: null,
 		});
 
-		const gqlArtifacts: ArcGQLResponseType = await getArcGQLData({
+		const gqlArtifacts: ArcGQLResponseType = await getGQLData({
 			ids: null,
 			tagFilters: [
 				{
@@ -180,7 +179,7 @@ export async function getArtifactsByAssociation(
 }
 
 export async function getArtifactById(artifactId: string): Promise<ArtifactDetailType | null> {
-	const artifact: ArcGQLResponseType = await getArcGQLData({
+	const artifact: ArcGQLResponseType = await getGQLData({
 		ids: [artifactId],
 		tagFilters: null,
 		uploader: null,
@@ -236,7 +235,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 }
 
 export async function getBookmarkIds(owner: string): Promise<string[]> {
-	const gqlData: ArcGQLResponseType = await getArcGQLData({
+	const gqlData: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: [{ name: TAGS.keys.bookmarkSearch, values: [owner] }],
 		uploader: null,
@@ -275,7 +274,7 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 
 	const response = await global.window.arweaveWallet.dispatch(txRes);
 
-	// TODO: reimplement
+	// TODO: reimplement in site
 	// if (response.id) {
 	//     store.dispatch(
 	//         artifactActions.setBookmark({
@@ -287,7 +286,7 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 
 	return {
 		status: response.id ? 200 : 500,
-		message: response.id ? LANGUAGE.bookmarksUpdated : LANGUAGE.errorOccurred,
+		message: response.id ? `Bookmarks Updated` : `Error Occurred`,
 	};
 }
 
@@ -296,7 +295,7 @@ function getArtifactsResponseObject(
 	cursorObject: CursorEnum.GQL | CursorEnum.Search,
 	reduxCursor: string | null
 ): ArtifactResponseType {
-	// TODO: reimplement
+	// TODO: reimplement in site
 	// let cursorState: any;
 	// if (reduxCursor) {
 	// 	cursorState = store.getState().cursorsReducer[cursorObject][reduxCursor];

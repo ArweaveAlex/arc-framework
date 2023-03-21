@@ -3,7 +3,7 @@ import { CURSORS, PAGINATOR, SEARCH } from '../helpers/config';
 import { CursorEnum, CursorObjectKeyType, GQLResponseType, TagFilterType } from '../helpers/types';
 import { checkGqlCursor, unquoteJsonKeys } from '../helpers/utils';
 
-export async function getArcGQLData(args: {
+export async function getGQLData(args: {
 	ids: string[] | null;
 	tagFilters: TagFilterType[] | null;
 	uploader: string | null;
@@ -35,7 +35,7 @@ export async function getArcGQLData(args: {
 			cursor = `${SEARCH.cursorPrefix}-${i}`;
 		}
 
-		// TODO: reimplement
+		// TODO: reimplement in site
 		// if (store.getState().searchIdsReducer[args.reduxCursor][i]) {
 		// 	ids = JSON.stringify(store.getState().searchIdsReducer[args.reduxCursor][i][cursor]);
 		// 	nextCursor = JSON.parse(ids).length < PAGINATOR ? CURSORS.end : `${SEARCH.cursorPrefix}-${++i}`;

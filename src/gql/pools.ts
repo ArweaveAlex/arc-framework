@@ -4,19 +4,16 @@ import { getRedstoneSrcTxEndpoint } from '../helpers/endpoints';
 import { ArcGQLResponseType, PoolSearchIndexType, PoolType } from '../helpers/types';
 import { getTagValue } from '../helpers/utils';
 
-import { getArcGQLData } from '.';
-
-export async function getPoolIds() {
-	const pools: PoolType[] = await getPools();
-	return pools.map((pool: PoolType) => {
-		return pool.id;
-	});
-}
+import { getGQLData } from '.';
 
 export async function getPools(): Promise<PoolType[]> {
 	const arClient = new ArweaveClient();
 	const contract = arClient.warp.contract(POOL_INDEX_CONTRACT_ID).setEvaluationOptions({ allowBigInt: true });
 	return ((await contract.readState()) as any).cachedValue.state.pools;
+}
+
+export async function getPoolIds(): Promise<string[]> {
+	return (await getPools()).map((pool: PoolType) => pool.id);
 }
 
 export async function getPoolById(poolId: string): Promise<PoolType | null> {
@@ -35,7 +32,7 @@ export async function getPoolById(poolId: string): Promise<PoolType | null> {
 }
 
 export async function getLatestPoolSearchIndexTxId(poolId: string) {
-	const poolSearchIndeces: ArcGQLResponseType = await getArcGQLData({
+	const poolSearchIndeces: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: [
 			{
@@ -64,8 +61,7 @@ export async function getLatestPoolSearchIndexTxId(poolId: string) {
 		let thisIndexDateTag = getTagValue(thisIndex.node.tags, TAGS.keys.timestamp);
 		let latestIndexDateTag = getTagValue(latestIndex.node.tags, TAGS.keys.timestamp);
 		let thisIndexDate = thisIndexDateTag && thisIndexDateTag !== STORAGE.none ? parseInt(thisIndexDateTag) : 0;
-		let latestIndexDate =
-			latestIndexDateTag && latestIndexDateTag !== STORAGE.none ? parseInt(latestIndexDateTag) : 0;
+		let latestIndexDate = latestIndexDateTag && latestIndexDateTag !== STORAGE.none ? parseInt(latestIndexDateTag) : 0;
 		if (thisIndexDate > latestIndexDate) {
 			latestIndex = thisIndex;
 		}

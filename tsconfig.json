@@ -1,17 +1,25 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es6",
+		"target": "es2021",
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"moduleResolution": "node",
-		"outDir": "dist",
-		"strict": true,
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"allowJs": true,
 		"declaration": true,
 		"esModuleInterop": true,
+		"alwaysStrict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"noImplicitAny": false,
+		"noImplicitThis": false,
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
-		"baseUrl": "."
+		"strictNullChecks": false,
+		"outDir": "bin",
+		"resolveJsonModule": true
 	},
-	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules", "**/*.spec.ts"]
+	"include": ["src", "src/**/*.json", "src/clients/arweave/index.ts"]
 }
