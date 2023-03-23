@@ -1,8 +1,9 @@
 export enum ArtifactEnum {
+	Image = 'Alex-Image',
 	Messaging = 'Alex-Messaging',
-	Webpage = 'Alex-Webpage',
-	Reddit = 'Alex-Reddit-Thread',
 	Nostr = 'Alex-Nostr-Event',
+	Reddit = 'Alex-Reddit-Thread',
+	Webpage = 'Alex-Webpage',
 }
 
 export enum CursorEnum {
@@ -14,7 +15,7 @@ export type GQLResponseType = {
 	cursor: string | null;
 	node: {
 		id: string;
-		tags: KeyValueType[];
+		tags: { [key: string]: any }[];
 		data: {
 			size: string;
 			type: string;
@@ -22,24 +23,26 @@ export type GQLResponseType = {
 	};
 };
 
+export type ArcGQLResponseType = { data: GQLResponseType[]; nextCursor: string | null };
+
 export interface ArtifactDetailType {
-	artifactId: NStringType;
-	artifactName: NStringType;
-	artifactType: ArtifactEnum.Messaging | ArtifactEnum.Webpage | ArtifactEnum.Reddit | ArtifactEnum.Nostr;
-	associationId: NStringType;
-	associationSequence: NStringType;
-	profileImagePath: NStringType;
-	owner: NStringType;
-	ansTitle: NStringType;
-	minted: NStringType;
-	keywords: NStringType;
-	poolName: NStringType;
-	mediaIds: NStringType;
-	childAssets: NStringType;
-	poolId: NStringType;
-	dataUrl: NStringType;
-	dataSize: NStringType;
-	rawData: NStringType;
+	artifactId: string | null;
+	artifactName: string | null;
+	artifactType: ArtifactEnum.Messaging | ArtifactEnum.Webpage | ArtifactEnum.Reddit | ArtifactEnum.Nostr | ArtifactEnum.Image;
+	associationId: string | null;
+	associationSequence: string | null;
+	profileImagePath: string | null;
+	owner: string | null;
+	ansTitle: string | null;
+	minted: string | null;
+	keywords: string | null;
+	poolName: string | null;
+	mediaIds: string | null;
+	childAssets: string | null;
+	poolId: string | null;
+	dataUrl: string | null;
+	dataSize: string | null;
+	rawData: string | null;
 }
 
 export interface AssociationDetailType {
@@ -54,8 +57,6 @@ export type ArtifactArgsType = {
 	cursor: string | null;
 	reduxCursor: string | null;
 };
-
-export type ArcGQLResponseType = { data: GQLResponseType[]; nextCursor: string | null };
 
 export type ArtifactResponseType = {
 	nextCursor: string | null;
@@ -82,6 +83,7 @@ export interface PoolStateType {
 	totalContributions: string;
 	totalSupply: string;
 	balance: string;
+	ownerMaintained?: boolean;
 }
 
 export interface CollectionType {
@@ -93,8 +95,17 @@ export interface CollectionStateType {
 	ids: string[];
 	title: string;
 	topic: string;
+	name: string;
+	ticker: string;
+	balances: any;
+	maxSupply: number;
+	transferable: boolean;
+	owner: string;
+	phase: string;
 	description: string;
 	timestamp: string;
+	lockTime: number;
+	lastTransferTimestamp: string;
 }
 
 export interface PoolSearchIndexType {
@@ -108,66 +119,21 @@ export interface PoolSearchIndexStateType {
 	searchIndeces: string[];
 }
 
-export type ButtonType = 'primary' | 'alt1' | 'alt2' | 'alt3';
-export type FormFieldType = 'number' | 'password';
-export type NotificationType = 'success' | 'warning' | 'neutral';
-export type AlignType = 'left' | 'center' | 'right';
 export type ContributionResultType = {
 	status: boolean;
 	message: string | null;
 };
-export type RefType = { current: HTMLElement };
+
 export type DateType = 'iso' | 'epoch';
-export type PageShareType = 'primary' | 'alt1';
+
 export type CursorType = {
 	next: string | null;
 	previous: string | null;
 };
-export type NStringType = string | null;
-export type NStringListType = string[] | null;
-
-export type URLViewType = {
-	index: number;
-	label: string;
-	icon: string;
-	disabled: boolean;
-	url: any;
-	view: any;
-};
-
-export interface IURLView {
-	account: URLViewType[];
-	library: URLViewType[];
-}
 
 export type ValidationType = {
 	status: boolean;
 	message: string | null;
-};
-
-export type KeyValueType = { [key: string]: string | any };
-export type TableHeaderType = {
-	[key: string]: { width: string; align: AlignType; display: string | null };
-};
-export type TableRowType = {
-	data: KeyValueType;
-	active: boolean;
-	viewed: boolean;
-};
-
-export type ArtifactTableRowType = {
-	title?: any;
-	type?: any;
-	pool?: any;
-	dateCreated?: string;
-	actions?: any;
-	callback?: any;
-	stamps?: any;
-};
-
-export type ReduxActionType = {
-	type: string;
-	payload: any;
 };
 
 export type NotificationResponseType = {
@@ -185,12 +151,4 @@ export type ContributionType = { timestamp: string; qty: string };
 export type PoolFilterType = { title: string; fn: (data: any) => any };
 export type CursorObjectKeyType = CursorEnum.GQL | CursorEnum.Search | null;
 export type CursorObjectType = { key: CursorObjectKeyType; value: string };
-export type ActionDropdownType = {
-	fn: () => void;
-	closeOnAction: boolean;
-	subComponent: { node: any; active: boolean } | null;
-	label: string;
-	disabled: boolean;
-	loading: boolean;
-};
 export type SequenceType = { start: number; end: number };

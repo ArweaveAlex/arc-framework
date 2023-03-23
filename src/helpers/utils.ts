@@ -1,5 +1,5 @@
 import { SEARCH, STORAGE, TAGS } from './config';
-import { DateType, KeyValueType } from './types';
+import { DateType } from './types';
 
 export function getHashUrl(url: string) {
 	return `${url}/#`;
@@ -91,7 +91,7 @@ export function formatTitle(string: string) {
 	return finalResult;
 }
 
-export function getTagValue(list: KeyValueType[], name: string): string {
+export function getTagValue(list: { [key: string]: any }[], name: string): string {
 	for (let i = 0; i < list.length; i++) {
 		if (list[i]) {
 			if (list[i]!.name === name) {
@@ -152,12 +152,14 @@ export function checkGqlCursor(string: string): boolean {
 	}
 }
 
-export function formatMessagingText(text: string) {
+export function formatKeywordString(text: string, char: string) {
+	/* Find words containing char
+		Return html string with char strings formatted in HTML tag and strip URLs */
 	let finalStr = '';
 	let count = 0;
 	for (let i = 0; i < text.length; i++) {
 		if (text[i] === ' ') {
-			if (text.substring(count, i).includes('@')) {
+			if (text.substring(count, i).includes(char)) {
 				finalStr += `<span>${text.substring(count, i)}</span>`;
 			} else {
 				finalStr += text.substring(count, i);
@@ -168,111 +170,5 @@ export function formatMessagingText(text: string) {
 	if (count < text.length) {
 		finalStr += text.substring(count, text.length);
 	}
-	return removeUrls(finalStr);
-}
-
-export function formatMessagingData(data: any) {
-	if (data && (data.text || data.full_text)) {
-		const tweetText = data.text ? data.text : data.full_text;
-		return formatMessagingText(tweetText);
-	} else {
-		return STORAGE.none;
-	}
-}
-
-export function formatNostrText(text: string) {
-	return text;
-}
-
-export function formatNostrData(data: any) {
-	if (data && (data.post || data.post.content)) {
-		return formatNostrText(data.post.content);
-	} else {
-		return STORAGE.none;
-	}
-}
-
-export function addUrls(text: string) {
-	const urlRegex = /(https?:\/\/[^\s]+)/g;
-	return text.replace(urlRegex, function (url) {
-		return `<a href=${url} target={"_blank"}>${url}</a>`;
-	});
-}
-
-export function removeUrls(text: string) {
-	const urlRegex = /(https?:\/\/[^\s]+)/g;
-	return text.replace(urlRegex, '');
-}
-
-export function getUsername(data: any) {
-	if (data && data.user) {
-		if (data.user.username) return `@${data.user.username}`;
-		else if (data.user.screen_name) return `@${data.user.screen_name}`;
-		else return STORAGE.none;
-	} else {
-		return STORAGE.none;
-	}
-}
-
-export function checkMedia(tags: KeyValueType[]) {
-	return (
-		getTagValue(tags, TAGS.keys.mediaIds) !== '{}' &&
-		getTagValue(tags, TAGS.keys.mediaIds) !== '[]' &&
-		getTagValue(tags, TAGS.keys.mediaIds) !== STORAGE.none &&
-		getTagValue(tags, TAGS.keys.mediaIds) !== '' &&
-		getTagValue(tags, TAGS.keys.mediaIds) !== `{"":""}`
-	);
-}
-
-export function checkAssociation(tags: KeyValueType[]) {
-	return (
-		getTagValue(tags, TAGS.keys.associationId) !== '' && getTagValue(tags, TAGS.keys.associationId) !== STORAGE.none
-	);
-}
-
-export async function traverseCommentTree(callBackFields: string[], obj: any, callBack: any) {
-	for (let key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			if (callBackFields.includes(key)) {
-				await callBack(obj);
-			} else if (typeof obj[key] === 'object' && obj[key] !== null) {
-				await traverseCommentTree(callBackFields, obj[key], callBack);
-			}
-		}
-	}
-}
-
-export function sortCommentTree(data: any[]) {
-	const reversedData = [...data].reverse();
-	const bodyListData = reversedData.map((element) => element.body);
-	let groupedData: any[] = [];
-	const finalData: any[] = [];
-
-	for (let i = 0; i < reversedData.length; i++) {
-		if (reversedData[i].depth === 0) {
-			let j = bodyListData.indexOf(reversedData[i].body);
-			let commentTraversed = false;
-			const subList: any[] = [];
-			subList.push(reversedData[j]);
-			j++;
-			while (!commentTraversed) {
-				if (reversedData[j]) {
-					if (reversedData[j].depth === 0) {
-						commentTraversed = true;
-					} else {
-						subList.push(reversedData[j]);
-					}
-					j++;
-				} else {
-					commentTraversed = true;
-				}
-			}
-			groupedData.push(subList);
-		}
-	}
-	groupedData = groupedData.reverse();
-	for (let i = 0; i < groupedData.length; i++) {
-		finalData.push(groupedData[i]);
-	}
-	return finalData;
+	return finalStr.replace(/(https?:\/\/[^\s]+)/g, '');
 }
