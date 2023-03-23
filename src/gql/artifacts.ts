@@ -43,7 +43,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		cursorObject: CursorEnum.GQL,
 	});
 
-	return getArtifactsResponseObject(gqlResponse, CursorEnum.GQL, args.reduxCursor);
+	return getArtifactsResponseObject(gqlResponse);
 }
 
 export async function getArtifactsByUser(args: ArtifactArgsType): Promise<ArtifactResponseType> {
@@ -74,7 +74,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 		cursorObject: CursorEnum.Search,
 	});
 
-	return getArtifactsResponseObject(artifacts, CursorEnum.Search, args.reduxCursor);
+	return getArtifactsResponseObject(artifacts);
 }
 
 export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<ArtifactResponseType> {
@@ -108,7 +108,7 @@ export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<A
 		cursorObject: CursorEnum.GQL,
 	});
 
-	return getArtifactsResponseObject(artifacts, CursorEnum.GQL, args.reduxCursor);
+	return getArtifactsResponseObject(artifacts);
 }
 
 export async function getArtifactsByAssociation(
@@ -291,23 +291,8 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 }
 
 function getArtifactsResponseObject(
-	gqlResponse: ArcGQLResponseType,
-	cursorObject: CursorEnum.GQL | CursorEnum.Search,
-	reduxCursor: string | null
+	gqlResponse: ArcGQLResponseType
 ): ArtifactResponseType {
-	// TODO: reimplement in site
-	// let cursorState: any;
-	// if (reduxCursor) {
-	// 	cursorState = store.getState().cursorsReducer[cursorObject][reduxCursor];
-	// }
-
-	// let nextCursor: string | null = cursorState ? cursorState.next : null;
-	// let previousCursor: string | null = cursorState ? cursorState.previous : null;
-
-	// console.log('!');
-	// console.log(cursorObject);
-	// console.log(reduxCursor);
-
 	const contracts = gqlResponse.data.filter((element: GQLResponseType) => {
 		return getTagValue(element.node.tags, TAGS.keys.uploaderTxId) === STORAGE.none;
 	});
