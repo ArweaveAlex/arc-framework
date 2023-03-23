@@ -4,10 +4,10 @@ import { ContributionResultType, ContributionType, GQLResponseType, PoolType } f
 import { getTagValue } from '../../helpers/utils';
 
 import Arweave from 'arweave';
-// TODO: warp-contracts for both web / node environments // @ts-ignore
-import * as Warp from 'warp-contracts';
+import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
-Warp.LoggerFactory.INST.logLevel('fatal');
+LoggerFactory.INST.logLevel('fatal');
 
 const GET_ENDPOINT = 'arweave-search.goldsky.com';
 const POST_ENDPOINT = 'arweave.net';
@@ -34,7 +34,7 @@ export default class ArweaveClient {
 		logging: LOGGING,
 	});
 
-	warp = Warp.WarpFactory.forMainnet({ ...Warp.defaultCacheOptions, inMemory: true });
+	warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true }).use(new DeployPlugin());
 
 	async getUserContributions(userWallet: string) {
 		let pools: PoolType[] = await getPools();

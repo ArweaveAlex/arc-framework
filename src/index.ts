@@ -1,4 +1,4 @@
+// TODO: Default response type
 export * from './clients';
-export * from './filters';
 export * from './gql';
 export * from './helpers';

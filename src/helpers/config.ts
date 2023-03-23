@@ -47,10 +47,6 @@ export const TAGS = {
 	},
 };
 
-export const STORAGE = {
-	none: 'N/A',
-};
-
 export const PAGINATOR = 100;
 
 export const CURSORS = {
@@ -72,4 +68,7 @@ export const SEARCH = {
 };
 
 export const FALLBACK_IMAGE = '8HqSqy_nNRSTPv-q-j7_iHGTp6lEA5K77TP4BPuXGyA';
-export const OPERATOR_LINK = 'https://alex-operator-guide.arweave.dev/';
+
+export const STORAGE = {
+	none: 'N/A',
+};
