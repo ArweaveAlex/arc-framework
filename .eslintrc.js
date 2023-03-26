@@ -15,6 +15,7 @@ module.exports = {
 					'error',
 					{
 						groups: [
+							['^((?!\\.).)*$'],
 							[
 								'^(@|clients)(/.*|$)',
 								'^(@|collections)(/.*|$)',

@@ -1,11 +1,12 @@
+import Arweave from 'arweave';
+import { Buffer } from 'buffer';
+import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
+
 import { getArtifactsByUser, getGQLData, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
 import { ContributionResultType, ContributionType, GQLResponseType, PoolType } from '../../helpers/types';
 import { getTagValue } from '../../helpers/utils';
-
-import Arweave from 'arweave';
-import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
-import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -17,6 +18,8 @@ const PROTOCOL = 'https';
 const TIMEOUT = 40000;
 const LOGGING = false;
 
+// TODO: Move alex functionality to ArcClient
+// TODO: Language to site provider
 export default class ArweaveClient {
 	arweaveGet: any = Arweave.init({
 		host: GET_ENDPOINT,
@@ -194,7 +197,7 @@ export default class ArweaveClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			return { status: true, message: `Pool Contribution Failed` };
+			return { status: true, message: `Thank you for your contribution.` };
 		} catch (error: any) {
 			console.error(error);
 			return { status: false, message: `Pool Contribution Failed` };

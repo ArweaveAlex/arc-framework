@@ -78,29 +78,8 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 }
 
 export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<ArtifactResponseType> {
-	let bookmarkIds: string[];
-
-	// TODO: reimplement in site
-	// const bookmarksReducer = store.getState().bookmarksReducer;
-
-	// if (bookmarksReducer.owner === args.owner) {
-	// 	bookmarkIds = bookmarksReducer.ids;
-	// } else {
-	// 	if (args.owner) {
-	// 		bookmarkIds = await getBookmarkIds(args.owner);
-	// 	} else {
-	// 		bookmarkIds = [];
-	// 	}
-	// }
-
-	if (args.owner) {
-		bookmarkIds = await getBookmarkIds(args.owner);
-	} else {
-		bookmarkIds = [];
-	}
-
 	const artifacts: ArcGQLResponseType = await getGQLData({
-		ids: bookmarkIds,
+		ids: args.ids,
 		tagFilters: null,
 		uploader: null,
 		cursor: args.cursor,
@@ -274,25 +253,13 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 
 	const response = await global.window.arweaveWallet.dispatch(txRes);
 
-	// TODO: reimplement in site
-	// if (response.id) {
-	//     store.dispatch(
-	//         artifactActions.setBookmark({
-	//             owner: owner,
-	//             ids: ids,
-	//         })
-	//     );
-	// }
-
 	return {
 		status: response.id ? 200 : 500,
 		message: response.id ? `Bookmarks Updated` : `Error Occurred`,
 	};
 }
 
-function getArtifactsResponseObject(
-	gqlResponse: ArcGQLResponseType
-): ArtifactResponseType {
+function getArtifactsResponseObject(gqlResponse: ArcGQLResponseType): ArtifactResponseType {
 	const contracts = gqlResponse.data.filter((element: GQLResponseType) => {
 		return getTagValue(element.node.tags, TAGS.keys.uploaderTxId) === STORAGE.none;
 	});

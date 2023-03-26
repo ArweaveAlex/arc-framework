@@ -28,7 +28,12 @@ export type ArcGQLResponseType = { data: GQLResponseType[]; nextCursor: string |
 export interface ArtifactDetailType {
 	artifactId: string | null;
 	artifactName: string | null;
-	artifactType: ArtifactEnum.Messaging | ArtifactEnum.Webpage | ArtifactEnum.Reddit | ArtifactEnum.Nostr | ArtifactEnum.Image;
+	artifactType:
+		| ArtifactEnum.Messaging
+		| ArtifactEnum.Webpage
+		| ArtifactEnum.Reddit
+		| ArtifactEnum.Nostr
+		| ArtifactEnum.Image;
 	associationId: string | null;
 	associationSequence: string | null;
 	profileImagePath: string | null;
