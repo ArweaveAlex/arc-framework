@@ -21,6 +21,7 @@ export const TAGS = {
 		initialOwner: 'Initial-Owner',
 		poolId: 'Pool-Id',
 		profileImage: 'Profile-Image',
+		protocolName: 'Protocol-Name',
 		uploaderTxId: 'Uploader-Tx-Id',
 		contractSrc: 'Contract-Src',
 		mediaIds: 'Media-Ids',
@@ -35,6 +36,10 @@ export const TAGS = {
 		nostrEventArtifactType: 'Alex-Nostr-Event',
 		redditThreadArtifactType: 'Alex-Reddit-Thread',
 		webpageArtifactType: 'Alex-Webpage',
+		profileVersions: {
+			'0.2': 'Account-0.2',
+			'0.3': 'Account-0.3',
+		},
 		poolVersions: {
 			'1.2': 'Alex-Archiving-Pool-v1.2',
 			'1.4': 'Alex-Archiving-Pool-v1.4',

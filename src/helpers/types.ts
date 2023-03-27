@@ -157,3 +157,10 @@ export type PoolFilterType = { title: string; fn: (data: any) => any };
 export type CursorObjectKeyType = CursorEnum.GQL | CursorEnum.Search | null;
 export type CursorObjectType = { key: CursorObjectKeyType; value: string };
 export type SequenceType = { start: number; end: number };
+
+export type ProfileType = {
+    handle: string | null,
+    avatar: string | null,
+    twitter: string | null,
+    discord: string | null
+};

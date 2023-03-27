@@ -1,4 +1,4 @@
-import { getArtifactsByPool, getPools } from '../gql';
+import { getArtifactsByPool, getPools, getProfile } from '../gql';
 import { ArtifactResponseType } from '../helpers';
 
 const POOL_ID = 'zoljIRyzG5hp-R4EZV2q8kFI49OAoy23_B9YJ_yEEws';
@@ -33,7 +33,15 @@ async function testPoolsGQL() {
 	console.log(`Pool Count: ${pools.length}`);
 }
 
+async function testProfileGQL() {
+	console.log(`Testing Profile GQL Request ...`);
+	const profile = await getProfile('uf_FqRvLqjnFMc8ZzGkF4qWKuNmUIQcYP0tPlCGORQk');
+
+	console.log(profile);
+}
+
 (async function () {
 	await testArtifactsByPoolGQL();
 	await testPoolsGQL();
+	await testProfileGQL();
 })();
