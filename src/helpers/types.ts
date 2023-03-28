@@ -159,8 +159,8 @@ export type CursorObjectType = { key: CursorObjectKeyType; value: string };
 export type SequenceType = { start: number; end: number };
 
 export type ProfileType = {
-    handle: string | null,
-    avatar: string | null,
-    twitter: string | null,
-    discord: string | null
+	handle: string | null;
+	avatar: string | null;
+	twitter: string | null;
+	discord: string | null;
 };
