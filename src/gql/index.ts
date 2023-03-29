@@ -34,13 +34,13 @@ export async function getGQLData(args: {
 			i = 0;
 			cursor = `${SEARCH.cursorPrefix}-${i}`;
 		}
-
-		// TODO: reimplement in site
-		// if (store.getState().searchIdsReducer[args.reduxCursor][i]) {
-		// 	ids = JSON.stringify(store.getState().searchIdsReducer[args.reduxCursor][i][cursor]);
-		// 	nextCursor = JSON.parse(ids).length < PAGINATOR ? CURSORS.end : `${SEARCH.cursorPrefix}-${++i}`;
-		// }
 	}
+
+	// TODO: reimplement in site
+	// if (store.getState().searchIdsReducer[args.reduxCursor][i]) {
+	// 	ids = JSON.stringify(store.getState().searchIdsReducer[args.reduxCursor][i][cursor]);
+	// 	nextCursor = JSON.parse(ids).length < PAGINATOR ? CURSORS.end : `${SEARCH.cursorPrefix}-${++i}`;
+	// }
 
 	const operation = {
 		query: `

@@ -119,17 +119,6 @@ export function unquoteJsonKeys(json: Object): string {
 	return JSON.stringify(json).replace(/"([^"]+)":/g, '$1:');
 }
 
-export function stripSearch(s: string) {
-	return s
-		.replaceAll(' ', '')
-		.replaceAll('\t', '')
-		.replaceAll('\r', '')
-		.replaceAll('\n', '')
-		.replaceAll(SEARCH.idTerm, '')
-		.replaceAll(SEARCH.ownerTerm, '')
-		.toLowerCase();
-}
-
 export function splitArray(array: any[], size: number) {
 	const splitResult = [];
 	const arrayCopy = [...array];

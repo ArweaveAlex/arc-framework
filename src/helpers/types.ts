@@ -11,6 +11,22 @@ export enum CursorEnum {
 	Search = 'search',
 }
 
+export enum ANSTopicEnum {
+	History = 'History',
+	Philosophy = 'Philosophy',
+	International = 'International',
+	Culture = 'Culture',
+	Art = 'Art',
+	Music = 'Music',
+	Faith = 'Faith',
+	Spirituality = 'Spirituality',
+	Sports = 'Sports',
+	Business = 'Business',
+	Technology = 'Technology',
+	Politics = 'Politics',
+	Other = 'Other'
+}
+
 export type GQLResponseType = {
 	cursor: string | null;
 	node: {
