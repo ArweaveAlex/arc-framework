@@ -1,7 +1,7 @@
-// import Bundlr from '@bundlr-network/client';
+import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
-import { DeployPlugin } from 'warp-contracts-plugin-deploy';
+// import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -13,19 +13,19 @@ const PROTOCOL = 'https';
 const TIMEOUT = 40000;
 const LOGGING = false;
 
-// const BUNDLR_NODE = 'https://node2.bundlr.network';
-// const CURRENCY = 'arweave';
+const BUNDLR_NODE = 'https://node2.bundlr.network';
+const CURRENCY = 'arweave';
 
 export default class ArweaveClient {
-	// public bundlr: any;
+	public bundlr: any;
 	
-	// constructor(bundlrJwk?: any) {
-	// 	let bundlr: any;
-	// 	if (bundlrJwk) {
-	// 		bundlr = new Bundlr(BUNDLR_NODE, CURRENCY, bundlrJwk);
-	// 	}
-	// 	this.bundlr = bundlr;
-	// }
+	constructor(bundlrJwk?: any) {
+		let bundlr: any;
+		if (bundlrJwk) {
+			bundlr = new Bundlr(BUNDLR_NODE, CURRENCY, bundlrJwk);
+		}
+		this.bundlr = bundlr;
+	}
 
 	arweaveGet: any = Arweave.init({
 		host: GET_ENDPOINT,
@@ -43,6 +43,6 @@ export default class ArweaveClient {
 		logging: LOGGING,
 	});
 	
-	warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true }).use(new DeployPlugin());
-	// warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true });
+	// warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true }).use(new DeployPlugin());
+	warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true });
 }

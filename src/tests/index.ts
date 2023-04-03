@@ -57,7 +57,7 @@ async function testGetProfileGQL() {
 async function testDeployBundle() {
 	console.log(`Testing Bundle Deployment ...`);
 	if (process.env.B64_WALLET && process.env.BUNDLE_ANT_DEPLOY_CONTRACT) {
-		const deploymentTx = await deployBundle(process.env.B64_WALLET, process.env.BUNDLE_ANT_DEPLOY_CONTRACT, './dist');
+		const deploymentTx = await deployBundle(process.env.B64_WALLET, process.env.BUNDLE_ANT_DEPLOY_CONTRACT, '../arc-site/dist');
 		console.log(deploymentTx);
 	}
 	else {
