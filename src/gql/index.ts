@@ -90,5 +90,6 @@ export async function getGQLData(args: {
 }
 
 export * from './artifacts';
+export * from './pool';
 export * from './pools';
 export * from './profile';

@@ -16,7 +16,8 @@ import {
 } from '../helpers/types';
 import { checkGqlCursor, getTagValue } from '../helpers/utils';
 
-import { getPoolById, getPoolIds } from './pools';
+import { getPoolById } from './pool';
+import { getPoolIds } from './pools';
 import { getGQLData } from '.';
 
 export async function getArtifactsByPool(args: ArtifactArgsType): Promise<ArtifactResponseType> {
