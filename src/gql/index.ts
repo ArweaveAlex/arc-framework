@@ -70,7 +70,7 @@ export async function getGQLData(args: {
             }
         `,
 	};
-	
+
 	const response = await arClient.arweaveGet.api.post('/graphql', operation);
 	if (response.data.data) {
 		const responseData = response.data.data.transactions.edges;

@@ -8,7 +8,7 @@ import { ArweaveClient } from '../arweave';
 
 // TODO: Language to site provider
 export default class PoolClient extends ArweaveClient {
-    async getUserContributions(userWallet: string) {
+	async getUserContributions(userWallet: string) {
 		let pools: PoolType[] = await getPools();
 
 		if (pools.length > 0) {

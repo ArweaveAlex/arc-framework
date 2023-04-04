@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { getLatestPoolSearchIndexTxId , getPoolSearchIndexById } from '../gql';
-import { getTagValue , getTxEndpoint , SEARCH,TAGS  } from '../helpers';
+import { getLatestPoolSearchIndexTxId, getPoolSearchIndexById } from '../gql';
+import { getTagValue, getTxEndpoint, SEARCH, TAGS } from '../helpers';
 
 let processedIndeces = 0;
 let poolIndecesLength = 0;

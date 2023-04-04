@@ -24,7 +24,7 @@ export enum ANSTopicEnum {
 	Business = 'Business',
 	Technology = 'Technology',
 	Politics = 'Politics',
-	Other = 'Other'
+	Other = 'Other',
 }
 
 export type GQLResponseType = {
