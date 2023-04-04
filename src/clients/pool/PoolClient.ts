@@ -149,35 +149,43 @@ export default class PoolClient extends ArweaveClient {
 			if (!owner) {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
+
 			const warpContract = this.warp.contract(poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
+				allowBigInt: true,
 			});
 
 			let contractState: any = (await warpContract.readState()).cachedValue.state;
-            let contribToPool = amount;
-            let contribToController = 0;
-            if (contractState.controlPubkey && !(contractState.controlPubkey.length === 0)) {
-                if (contractState.contribPercent && (contractState.contribPercent > 0)) {
-                    const percentDecimal = contractState.contribPercent / 100; // Convert percentage to decimal
-                    contribToController = amount * percentDecimal;
-                    contribToPool = amount - contribToController;
-                    await warpContract.writeInteraction({ function: 'contribute' }, {
-                        disableBundling: true,
-                        transfer: {
-                            target: contractState.controlPubkey,
-                            winstonQty: this.arweavePost.ar.arToWinston(contribToController.toString()),
-                        },
-                    });
-                }
-            }
-			
-            const result = await warpContract.writeInteraction({ function: 'contribute' }, {
-                disableBundling: true,
-                transfer: {
-                    target: owner,
-                    winstonQty: this.arweavePost.ar.arToWinston(contribToPool.toString()),
-                },
-            });
+			let contribToPool = amount;
+			let contribToController = 0;
+			if (contractState.controlPubkey && !(contractState.controlPubkey.length === 0)) {
+				if (contractState.contribPercent && contractState.contribPercent > 0) {
+					const percentDecimal = contractState.contribPercent / 100; // Convert percentage to decimal
+					contribToController = amount * percentDecimal;
+					contribToPool = amount - contribToController;
+					await warpContract.writeInteraction(
+						{ function: 'contribute' },
+						{
+							disableBundling: true,
+							transfer: {
+								target: contractState.controlPubkey,
+								winstonQty: this.arweavePost.ar.arToWinston(contribToController.toString()),
+							},
+						}
+					);
+				}
+			}
+
+			const result = await warpContract.writeInteraction(
+				{ function: 'contribute' },
+				{
+					disableBundling: true,
+					transfer: {
+						target: owner,
+						winstonQty: this.arweavePost.ar.arToWinston(contribToPool.toString()),
+					},
+				}
+			);
 
 			if (!result) {
 				return { status: false, message: `Pool Contribution Failed` };
