@@ -4,37 +4,34 @@
 import { ArweaveClient } from '../arweave';
 
 export default class CollectionClient extends ArweaveClient {
-    // async createCollection(collectionState: CollectionStateType) {
-    //     if (window.arweaveWallet) {
-    //     	await window.arweaveWallet.connect(['ACCESS_ADDRESS', 'SIGN_TRANSACTION', 'ACCESS_PUBLIC_KEY', 'SIGNATURE']);
-    //     }
-    //     const userSigner = new InjectedArweaveSigner(window.arweaveWallet);
-    //     await userSigner.setPublicKey();
-    
-    //     const tags = [
-    //     	{ name: TAGS.keys.appType, value: TAGS.values.collectionAppType },
-    //     	{ name: TAGS.keys.collectionName, value: collectionState.title },
-    //     	{ name: TAGS.keys.collectionDescription, value: collectionState.description },
-    //     	{ name: TAGS.keys.ansTitle, value: collectionState.title },
-    //     	{ name: `${TAGS.keys.ansTopic}:${collectionState.topic}`, value: collectionState.topic },
-    //     	{ name: TAGS.keys.ansDescription, value: collectionState.description },
-    //     	{ name: TAGS.keys.ansType, value: TAGS.values.ansType },
-    //     	{ name: TAGS.keys.ansImplements, value: TAGS.values.ansVersion },
-    //     	{ name: TAGS.keys.initialOwner, value: collectionState.owner },
-    //     ];
-        
-    //     const collectionContract = await this.warp.createContract.deploy({
-    //     	src: COLLECTION_CONTRACT,
-    //     	initState: JSON.stringify(collectionState),
-    //     	wallet: userSigner,
-    //     	tags: tags,
-    //     });
-    
-    //     return {
-    //     	id: collectionContract.contractTxId,
-    //     	state: collectionState,
-    //     };
-    // }
+	// async createCollection(collectionState: CollectionStateType) {
+	//     if (window.arweaveWallet) {
+	//     	await window.arweaveWallet.connect(['ACCESS_ADDRESS', 'SIGN_TRANSACTION', 'ACCESS_PUBLIC_KEY', 'SIGNATURE']);
+	//     }
+	//     const userSigner = new InjectedArweaveSigner(window.arweaveWallet);
+	//     await userSigner.setPublicKey();
+	//     const tags = [
+	//     	{ name: TAGS.keys.appType, value: TAGS.values.collectionAppType },
+	//     	{ name: TAGS.keys.collectionName, value: collectionState.title },
+	//     	{ name: TAGS.keys.collectionDescription, value: collectionState.description },
+	//     	{ name: TAGS.keys.ansTitle, value: collectionState.title },
+	//     	{ name: `${TAGS.keys.ansTopic}:${collectionState.topic}`, value: collectionState.topic },
+	//     	{ name: TAGS.keys.ansDescription, value: collectionState.description },
+	//     	{ name: TAGS.keys.ansType, value: TAGS.values.ansType },
+	//     	{ name: TAGS.keys.ansImplements, value: TAGS.values.ansVersion },
+	//     	{ name: TAGS.keys.initialOwner, value: collectionState.owner },
+	//     ];
+	//     const collectionContract = await this.warp.createContract.deploy({
+	//     	src: COLLECTION_CONTRACT,
+	//     	initState: JSON.stringify(collectionState),
+	//     	wallet: userSigner,
+	//     	tags: tags,
+	//     });
+	//     return {
+	//     	id: collectionContract.contractTxId,
+	//     	state: collectionState,
+	//     };
+	// }
 }
 
 // const COLLECTION_CONTRACT = `

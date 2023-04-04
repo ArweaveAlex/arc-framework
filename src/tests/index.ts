@@ -27,12 +27,12 @@ async function testGetArtifactsByIdsGQL() {
 			'9hUxb7MCMmMJ61oWJAKbGMczUDVYvPjmLs_xSLsppF4',
 			'FRRpmc0_e4--5c_Lsg9yNpqsu9aIQLg920GUKo6JjPo',
 			'PsNTVxx6LauegIamlK4ju92-noWpFxc8fTTmtiEHuAU',
-			'qERJuxaUy2Vs9VwjCZSu5Lt0Tk1ssox2o0hRlHb7WkY'
+			'qERJuxaUy2Vs9VwjCZSu5Lt0Tk1ssox2o0hRlHb7WkY',
 		],
 		owner: null,
 		uploader: null,
 		cursor: null,
-		reduxCursor: null
+		reduxCursor: null,
 	});
 
 	console.log({
@@ -57,11 +57,14 @@ async function testGetProfileGQL() {
 async function testDeployBundle() {
 	console.log(`Testing Bundle Deployment ...`);
 	if (process.env.B64_WALLET && process.env.BUNDLE_ANT_DEPLOY_CONTRACT) {
-		const deploymentTx = await deployBundle(process.env.B64_WALLET, process.env.BUNDLE_ANT_DEPLOY_CONTRACT, '../arc-site/dist');
+		const deploymentTx = await deployBundle(
+			process.env.B64_WALLET,
+			process.env.BUNDLE_ANT_DEPLOY_CONTRACT,
+			'../arc-site/dist'
+		);
 		console.log(deploymentTx);
-	}
-	else {
-		console.log('Params not found')
+	} else {
+		console.log('Params not found');
 	}
 }
 

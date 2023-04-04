@@ -18,7 +18,7 @@ const CURRENCY = 'arweave';
 
 export default class ArweaveClient {
 	public bundlr: any;
-	
+
 	constructor(bundlrJwk?: any) {
 		let bundlr: any;
 		if (bundlrJwk) {
@@ -42,7 +42,7 @@ export default class ArweaveClient {
 		timeout: TIMEOUT,
 		logging: LOGGING,
 	});
-	
+
 	// warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true }).use(new DeployPlugin());
 	warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true });
 }
