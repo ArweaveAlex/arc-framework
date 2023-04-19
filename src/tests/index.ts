@@ -1,4 +1,4 @@
-import { getArtifactsByIds, getArtifactsByPool, getPools, getProfile } from '../gql';
+import { getArtifactsByIds, getArtifactsByPool, getArtifactsByUser,getPools, getProfile } from '../gql';
 import { ArtifactResponseType, deployBundle } from '../helpers';
 
 async function testGetArtifactsByPoolGQL() {
@@ -9,6 +9,23 @@ async function testGetArtifactsByPoolGQL() {
 		uploader: null,
 		cursor: null,
 		reduxCursor: 'poolAll',
+	});
+
+	console.log({
+		contracts: gqlData.contracts.length,
+		nextCursor: gqlData.nextCursor,
+		previousCursor: gqlData.previousCursor,
+	});
+}
+
+async function testGetArtifactsByUserGQL() {
+	console.log(`Testing Artifacts By User GQL Request ...`);
+	const gqlData: ArtifactResponseType = await getArtifactsByUser({
+		ids: null,
+		owner: 'uf_FqRvLqjnFMc8ZzGkF4qWKuNmUIQcYP0tPlCGORQk',
+		uploader: null,
+		cursor: null,
+		reduxCursor: 'accountAll',
 	});
 
 	console.log({
@@ -72,6 +89,9 @@ async function testDeployBundle() {
 	switch (process.argv[2]) {
 		case 'get-artifacts-by-pool':
 			await testGetArtifactsByPoolGQL();
+			return;
+		case 'get-artifacts-by-user':
+			await testGetArtifactsByUserGQL();
 			return;
 		case 'get-artifacts-by-ids':
 			await testGetArtifactsByIdsGQL();

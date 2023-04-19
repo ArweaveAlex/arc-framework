@@ -105,6 +105,7 @@ export interface PoolStateType {
 	totalSupply: string;
 	balance: string;
 	ownerMaintained?: boolean;
+	contribPercent?: string;
 }
 
 export interface CollectionType {
