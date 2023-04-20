@@ -252,6 +252,7 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 	txRes.addTag(TAGS.keys.dateCreated, Date.now().toString());
 	txRes.addTag(TAGS.keys.bookmarkIds, JSON.stringify(ids));
 
+	// @ts-ignore
 	const response = await global.window.arweaveWallet.dispatch(txRes);
 
 	return {

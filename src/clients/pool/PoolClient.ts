@@ -160,7 +160,7 @@ export default class PoolClient extends ArweaveClient {
 			let contribToController = 0;
 			if (contractState.controlPubkey && !(contractState.controlPubkey.length === 0)) {
 				if (contractState.contribPercent && contractState.contribPercent > 0) {
-					const percentDecimal = contractState.contribPercent / 100; // Convert percentage to decimal
+					const percentDecimal = contractState.contribPercent / 100;
 					contribToController = amount * percentDecimal;
 					contribToPool = amount - contribToController;
 					await warpContract.writeInteraction(

@@ -1,5 +1,12 @@
-import { getArtifactsByIds, getArtifactsByPool, getArtifactsByUser,getPools, getProfile } from '../gql';
-import { ArtifactResponseType, deployBundle } from '../helpers';
+import {
+	getArtifactsByBookmarks,
+	getArtifactsByIds,
+	getArtifactsByPool,
+	getArtifactsByUser,
+	getPools,
+	getProfile,
+} from '../gql';
+import { ArtifactResponseType } from '../helpers';
 
 async function testGetArtifactsByPoolGQL() {
 	console.log(`Testing Artifacts By Pool GQL Request ...`);
@@ -59,6 +66,23 @@ async function testGetArtifactsByIdsGQL() {
 	});
 }
 
+async function testGetArtifactsByBookmarksGQL() {
+	console.log(`Testing Artifacts By Ids GQL Request ...`);
+	const gqlData: ArtifactResponseType = await getArtifactsByBookmarks({
+		ids: ['8VUccSZEcXxnHh5o6L7VkzY__hNDyRM0Er8c3RmCMJc'],
+		owner: null,
+		uploader: null,
+		cursor: null,
+		reduxCursor: null,
+	});
+
+	console.log({
+		contracts: gqlData.contracts.length,
+		nextCursor: gqlData.nextCursor,
+		previousCursor: gqlData.previousCursor,
+	});
+}
+
 async function testGetPoolsGQL() {
 	console.log(`Testing Pools GQL Request ...`);
 	const pools = await getPools();
@@ -69,20 +93,6 @@ async function testGetProfileGQL() {
 	console.log(`Testing Profile GQL Request ...`);
 	const profile = await getProfile('uf_FqRvLqjnFMc8ZzGkF4qWKuNmUIQcYP0tPlCGORQk');
 	console.log(profile);
-}
-
-async function testDeployBundle() {
-	console.log(`Testing Bundle Deployment ...`);
-	if (process.env.B64_WALLET && process.env.BUNDLE_ANT_DEPLOY_CONTRACT) {
-		const deploymentTx = await deployBundle(
-			process.env.B64_WALLET,
-			process.env.BUNDLE_ANT_DEPLOY_CONTRACT,
-			'../arc-site/dist'
-		);
-		console.log(deploymentTx);
-	} else {
-		console.log('Params not found');
-	}
 }
 
 (async function () {
@@ -96,14 +106,14 @@ async function testDeployBundle() {
 		case 'get-artifacts-by-ids':
 			await testGetArtifactsByIdsGQL();
 			return;
+		case 'get-artifacts-by-bookmarks':
+			await testGetArtifactsByBookmarksGQL();
+			return;
 		case 'get-pools':
 			await testGetPoolsGQL();
 			return;
 		case 'get-profile':
 			await testGetProfileGQL();
-			return;
-		case 'deploy-bundle':
-			await testDeployBundle();
 			return;
 		default:
 			return;

@@ -42,7 +42,7 @@ export async function getGQLData(args: {
 	// 	nextCursor = JSON.parse(ids).length < PAGINATOR ? CURSORS.end : `${SEARCH.cursorPrefix}-${++i}`;
 	// }
 
-	const operation = {
+	const query = {
 		query: `
                 query {
                     transactions(
@@ -71,7 +71,7 @@ export async function getGQLData(args: {
         `,
 	};
 
-	const response = await arClient.arweaveGet.api.post('/graphql', operation);
+	const response = await arClient.arweaveGet.api.post('/graphql', query);
 	if (response.data.data) {
 		const responseData = response.data.data.transactions.edges;
 		if (responseData.length > 0) {

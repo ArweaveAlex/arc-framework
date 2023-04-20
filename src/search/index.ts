@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { getLatestPoolSearchIndexTxId, getPoolSearchIndexById } from '../gql';
 import { getTagValue, getTxEndpoint, SEARCH, TAGS } from '../helpers';
 
@@ -68,7 +66,7 @@ async function searchIndex(
 	owner: string | null,
 	callback: (ids: string[], checkProcessed: any) => void
 ) {
-	const searchIndex = (await axios.get(index)).data;
+	const searchIndex = (await fetch(index) as any).data;
 
 	let text = searchIndex;
 	searchTerm = stripSearch(searchTerm);

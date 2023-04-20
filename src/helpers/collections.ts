@@ -1,7 +1,8 @@
 // import { InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 import { ArweaveClient } from '../clients';
-import { CollectionStateType, CollectionType } from '../helpers';
+
+import { CollectionStateType, CollectionType } from './types';
 
 // import { getGQLData } from 'arcframework';
 // import { TAGS } from 'helpers/config';
