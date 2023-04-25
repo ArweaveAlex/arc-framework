@@ -4,6 +4,10 @@ export enum ArtifactEnum {
 	Nostr = 'Alex-Nostr-Event',
 	Reddit = 'Alex-Reddit-Thread',
 	Webpage = 'Alex-Webpage',
+	Document = 'Alex-Document',
+	Audio = 'Alex-Audio',
+	Video = 'Alex-Video',
+	Ebook = 'Alex-Ebook',
 }
 
 export enum CursorEnum {
@@ -44,12 +48,7 @@ export type ArcGQLResponseType = { data: GQLResponseType[]; nextCursor: string |
 export interface ArtifactDetailType {
 	artifactId: string | null;
 	artifactName: string | null;
-	artifactType:
-		| ArtifactEnum.Messaging
-		| ArtifactEnum.Webpage
-		| ArtifactEnum.Reddit
-		| ArtifactEnum.Nostr
-		| ArtifactEnum.Image;
+	artifactType: ArtifactEnum;
 	associationId: string | null;
 	associationSequence: string | null;
 	profileImagePath: string | null;
