@@ -17,6 +17,7 @@ export const TAGS = {
 		bookmarkIds: 'Bookmark-Ids-Tag',
 		bookmarkSearch: 'Alex-Bookmark-Search',
 		dateCreated: 'Date-Created',
+		fileType: `File-Type`,
 		keywords: 'Keywords',
 		initialOwner: 'Initial-Owner',
 		poolId: 'Pool-Id',

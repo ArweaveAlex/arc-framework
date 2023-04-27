@@ -195,6 +195,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 					keywords: getTagValue(artifact.node.tags, TAGS.keys.keywords),
 					mediaIds: getTagValue(artifact.node.tags, TAGS.keys.mediaIds),
 					childAssets: getTagValue(artifact.node.tags, TAGS.keys.childAssets),
+					fileType: getTagValue(artifact.node.tags, TAGS.keys.fileType),
 					poolName: pool ? pool.state.title : null,
 					poolId: pool ? pool.id : null,
 					dataUrl: response.url,

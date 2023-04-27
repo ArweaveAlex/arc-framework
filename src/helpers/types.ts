@@ -59,6 +59,7 @@ export interface ArtifactDetailType {
 	poolName: string | null;
 	mediaIds: string | null;
 	childAssets: string | null;
+	fileType: string | null;
 	poolId: string | null;
 	dataUrl: string | null;
 	dataSize: string | null;
