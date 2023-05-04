@@ -77,18 +77,31 @@ export default class PoolClient extends ArweaveClient {
 
 	getReceivingPercent(userWallet: string, contributors: any, totalContributions: string, activeAmount: number): string {
 		if (userWallet && contributors && totalContributions) {
-			let amount: number = 0;
-			if (!isNaN(activeAmount)) {
-				amount = activeAmount * 1e6;
+			if (isNaN(activeAmount)) {
+				return '0';
 			}
+			let amount: number = 0;
+			amount = activeAmount * 1e12;
+
+			let origAmount: number = amount;
 
 			if (contributors[userWallet]) {
-				amount = parseFloat(contributors[userWallet] + (!isNaN(activeAmount) ? activeAmount : 0));
+				if (isNaN(contributors[userWallet])) {
+					let contribs = contributors[userWallet];
+					let total = 0;
+					for (let i = 0; i < contribs.length; i++) {
+						let c = contribs[i];
+						total = total + parseInt(c.qty);
+					}
+					amount = total + amount;
+				} else {
+					amount = parseFloat(contributors[userWallet]) + amount;
+				}
 			}
 
 			let calc: number = amount;
 			if (parseFloat(totalContributions) > 0) {
-				calc = (amount / parseFloat(totalContributions)) * 100;
+				calc = (amount / (parseFloat(totalContributions) + origAmount)) * 100;
 			}
 			let tokens = calc.toFixed(4);
 			if (isNaN(calc)) return '0';

@@ -66,7 +66,7 @@ async function searchIndex(
 	owner: string | null,
 	callback: (ids: string[], checkProcessed: any) => void
 ) {
-	const searchIndex = (await fetch(index) as any).data;
+	const searchIndex = ((await fetch(index)) as any).data;
 
 	let text = searchIndex;
 	searchTerm = stripSearch(searchTerm);
