@@ -60,6 +60,7 @@ export interface ArtifactDetailType {
 	mediaIds: string | null;
 	childAssets: string | null;
 	fileType: string | null;
+	renderWith: string | null;
 	poolId: string | null;
 	dataUrl: string | null;
 	dataSize: string | null;

@@ -29,14 +29,19 @@ export const TAGS = {
 		timestamp: 'Timestamp',
 		collectionName: 'Collection-Name',
 		collectionDescription: 'Collection-Description',
+		renderWith: 'Render-With'
 	},
 	values: {
+		audioArtifactType: 'Alex-Audio',
 		defaultArtifactType: 'Alex-Default',
+		documentArtifactType: 'Alex-Document',
+		ebookArtifactType: 'Alex-Ebook',
 		imageArtifactType: 'Alex-Image',
 		messagingArtifactType: 'Alex-Messaging',
 		nostrEventArtifactType: 'Alex-Nostr-Event',
 		redditThreadArtifactType: 'Alex-Reddit-Thread',
 		webpageArtifactType: 'Alex-Webpage',
+		videoArtifactType: 'Alex-Video',
 		profileVersions: {
 			'0.2': 'Account-0.2',
 			'0.3': 'Account-0.3',
