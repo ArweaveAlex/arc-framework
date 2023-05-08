@@ -17,3 +17,7 @@ export function getRedstoneSrcTxEndpoint(contractId: string, page: number) {
 export function getRedstoneDescEndpoint(src: string, page: number, limit: number) {
 	return `https://gateway.redstone.finance/gateway/contracts-by-source?id=${src}&page=${page.toString()}&sort=desc&limit=${limit.toString()}`;
 }
+
+export function getRendererEndpoint(renderWith: string, tx: string) {
+	return `https://${renderWith}.arweave.dev/?tx=${tx}`;
+}
