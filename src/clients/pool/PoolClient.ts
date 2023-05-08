@@ -165,7 +165,7 @@ export default class PoolClient extends ArweaveClient {
 
 			const warpContract = this.warp.contract(poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
-				allowBigInt: true,
+				allowBigInt: true
 			});
 
 			let contractState: any = (await warpContract.readState()).cachedValue.state;

@@ -36,7 +36,10 @@ export default class ArweaveClient {
 		this.arweaveGet.request = this.wrapRequestForLogging(this.arweaveGet.request);
 		this.arweavePost.request = this.wrapRequestForLogging(this.arweavePost.request);
 
-		this.warp = WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true });
+		this.warp = WarpFactory.forMainnet({ 
+			...defaultCacheOptions, 
+			inMemory: true
+		});
 	}
 
 	wrapRequestForLogging(originalRequest) {

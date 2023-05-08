@@ -6,7 +6,10 @@ export async function getPools(): Promise<PoolType[]> {
 	const arClient = new ArweaveClient();
 	const contract = arClient.warp
 		.contract(POOL_INDEX_CONTRACT_ID)
-		.setEvaluationOptions({ allowBigInt: true, remoteStateSyncEnabled: true });
+		.setEvaluationOptions({ 
+			allowBigInt: true, 
+			remoteStateSyncEnabled: true
+		});
 	return ((await contract.readState()) as any).cachedValue.state.pools;
 }
 

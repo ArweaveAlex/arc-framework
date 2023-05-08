@@ -83,3 +83,5 @@ export const FALLBACK_IMAGE = '8HqSqy_nNRSTPv-q-j7_iHGTp6lEA5K77TP4BPuXGyA';
 export const STORAGE = {
 	none: 'N/A',
 };
+
+export const RENDER_WITH_VALUES = ["alex-renderers"];

@@ -10,7 +10,9 @@ export async function getPoolById(poolId: string): Promise<PoolType | null> {
 	const arClient = new ArweaveClient();
 
 	try {
-		const contract = arClient.warp.contract(poolId).setEvaluationOptions({ allowBigInt: true });
+		const contract = arClient.warp.contract(poolId).setEvaluationOptions({ 
+			allowBigInt: true
+		});
 		return {
 			id: poolId,
 			state: ((await contract.readState()) as any).cachedValue.state,
@@ -64,7 +66,9 @@ export async function getPoolSearchIndexById(poolSearchIndexId: string): Promise
 	const arClient = new ArweaveClient();
 
 	try {
-		const contract = arClient.warp.contract(poolSearchIndexId).setEvaluationOptions({ allowBigInt: true });
+		const contract = arClient.warp.contract(poolSearchIndexId).setEvaluationOptions({ 
+			allowBigInt: true
+		});
 		return {
 			id: poolSearchIndexId,
 			state: ((await contract.readState()) as any).cachedValue.state,
