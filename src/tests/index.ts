@@ -115,6 +115,14 @@ async function testGetProfileGQL() {
 		case 'get-profile':
 			await testGetProfileGQL();
 			return;
+		case 'full':
+			await testGetArtifactsByPoolGQL();
+			await testGetArtifactsByUserGQL();
+			await testGetArtifactsByIdsGQL();
+			await testGetArtifactsByBookmarksGQL();
+			await testGetPoolsGQL();
+			await testGetProfileGQL();
+			return;
 		default:
 			return;
 	}
