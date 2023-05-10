@@ -29,7 +29,7 @@ export const TAGS = {
 		timestamp: 'Timestamp',
 		collectionName: 'Collection-Name',
 		collectionDescription: 'Collection-Description',
-		renderWith: 'Render-With'
+		renderWith: 'Render-With',
 	},
 	values: {
 		audioArtifactType: 'Alex-Audio',
@@ -84,4 +84,4 @@ export const STORAGE = {
 	none: 'N/A',
 };
 
-export const RENDER_WITH_VALUES = ["alex-renderers"];
+export const RENDER_WITH_VALUES = ['alex-renderers'];

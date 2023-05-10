@@ -46,7 +46,7 @@ export default class ArweaveClient {
 
 		this.warp = WarpFactory.forMainnet({
 			...defaultCacheOptions,
-			inMemory: true
+			inMemory: true,
 		});
 	}
 }
