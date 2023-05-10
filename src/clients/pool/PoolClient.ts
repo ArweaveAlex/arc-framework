@@ -1,13 +1,59 @@
 import { Buffer } from 'buffer';
+import Bundlr from '@bundlr-network/client';
 
 import { getArtifactsByUser, getGQLData, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
-import { ContributionResultType, ContributionType, GQLResponseType, PoolType } from '../../helpers/types';
+import { ANSTopicEnum, ContributionResultType, ContributionType, GQLResponseType, IPoolClient, PoolConfigType, PoolType } from '../../helpers/types';
 import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
+import { Contract } from 'warp-contracts';
 
 // TODO: Language to site provider
-export default class PoolClient extends ArweaveClient {
+export default class PoolClient extends ArweaveClient implements IPoolClient {
+	arClient = new ArweaveClient();
+
+    poolConfig: PoolConfigType;
+    walletKey: string | null;
+
+    contract: Contract;
+
+    constructor(poolConfig: PoolConfigType) {
+		super();
+
+        this.poolConfig = poolConfig;
+
+        this.bundlr = new Bundlr("https://node2.bundlr.network", "arweave", poolConfig.walletKey);
+        this.contract = this.arClient.warp.contract(poolConfig.contracts.pool.id).setEvaluationOptions({
+            allowBigInt: true
+        });
+        this.warp = this.arClient.warp;
+
+		this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
+    }
+
+	async validatePoolConfigs() {
+		console.log(`Checking Exisiting Pools ...`);
+        const exisitingPools = await getPools();
+		let poolConfig = this.poolConfig;
+        exisitingPools.forEach(function (pool: PoolType) {
+            if (poolConfig.state.title === pool.state.title) {
+                throw new Error(`Pool Already Exists`);
+            }
+        });
+
+        let validTopic = false;
+        poolConfig.topics.map((topic: string) => {
+            if(topic in ANSTopicEnum){
+                validTopic = true;
+            } 
+        });
+
+        let topics = Object.values(ANSTopicEnum).join(', ');
+        if(!validTopic){
+            throw new Error(`Must configure at least 1 topic with one of the following values ${topics}`);
+        }
+	}
+
 	async getUserContributions(userWallet: string) {
 		let pools: PoolType[] = await getPools();
 

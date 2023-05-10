@@ -1,6 +1,9 @@
 import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
+import { GQLResponseType, TAGS } from '../../helpers';
+import { getGQLData } from '../../gql';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -47,6 +50,30 @@ export default class ArweaveClient {
 		this.warp = WarpFactory.forMainnet({
 			...defaultCacheOptions,
 			inMemory: true
-		});
+		}).use(new DeployPlugin());
 	}
+
+	async isDuplicate(args: {
+        artifactName: string,
+        poolId: string,
+    }) {
+        const artifacts: { data: GQLResponseType[]; nextCursor: string | null } = await getGQLData({
+            ids: null,
+            tagFilters: [
+                {
+                    name: TAGS.keys.artifactName,
+                    values: [args.artifactName]
+                },
+                {
+                    name: TAGS.keys.poolId,
+                    values: [args.poolId]
+                }
+            ],
+            uploader: null,
+            cursor: null,
+			reduxCursor: null,
+			cursorObject: null
+        });
+        return artifacts.data.length > 0;
+    }
 }

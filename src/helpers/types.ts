@@ -1,3 +1,6 @@
+import Bundlr from "@bundlr-network/client/build/cjs/common/bundlr";
+import { Contract } from "warp-contracts";
+
 export enum ArtifactEnum {
 	Image = 'Alex-Image',
 	Messaging = 'Alex-Messaging',
@@ -8,6 +11,7 @@ export enum ArtifactEnum {
 	Audio = 'Alex-Audio',
 	Video = 'Alex-Video',
 	Ebook = 'Alex-Ebook',
+	File = 'Alex-File'
 }
 
 export enum CursorEnum {
@@ -96,7 +100,6 @@ export interface PoolStateType {
 	image: string;
 	briefDescription: string;
 	description: string;
-	link: string;
 	owner: string;
 	ownerInfo: string;
 	timestamp: string;
@@ -106,7 +109,9 @@ export interface PoolStateType {
 	totalSupply: string;
 	balance: string;
 	ownerMaintained?: boolean;
+	controlPubkey?: string;
 	contribPercent?: string;
+	canEvolve?: boolean;
 }
 
 export interface CollectionType {
@@ -182,3 +187,66 @@ export type ProfileType = {
 	twitter: string | null;
 	discord: string | null;
 };
+
+
+export type PoolConfigType = {
+    appType: string,
+    contracts: {
+        nft: {
+            id: NStringType
+            src: NStringType
+        },
+        pool: {
+            id: NStringType
+            src: NStringType
+        },
+    },
+    state: {
+        owner: {
+            pubkey: string
+            info: string
+        },
+        controller: {
+            pubkey: NStringType
+            contribPercent: number | null
+        },
+        title: string
+        description: string
+        briefDescription: string
+        image: NStringType
+        timestamp: NStringType
+    },
+	walletPath?: string,
+    walletKey: string,
+    keywords: string[],
+    twitterApiKeys: any,
+    clarifaiApiKey: string,
+    topics: string[],
+    redditApiKeys: any,
+    nostr: {
+        keys: {
+            public: string,
+            private: string 
+        },
+        relays: NostrRelayType[]
+    }
+}
+
+export type NostrRelayType = { socket: string };
+
+type NStringType = string | null;
+export type KeyValueType = { [key: string]: string };
+
+export interface PoolType {
+    id: string
+    state: PoolStateType
+}
+
+export interface IPoolClient {
+    arClient: any;
+    poolConfig: PoolConfigType;
+    walletKey: string | null;
+    bundlr: Bundlr;
+    contract: Contract;
+    warp: any;
+}

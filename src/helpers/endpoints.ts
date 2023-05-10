@@ -21,3 +21,5 @@ export function getRedstoneDescEndpoint(src: string, page: number, limit: number
 export function getRendererEndpoint(renderWith: string, tx: string) {
 	return `https://${renderWith}.arweave.dev/?tx=${tx}`;
 }
+
+export const sonarLink = (contractId: string) => `https://sonar.warp.cc/#/app/contract/${contractId}`;
