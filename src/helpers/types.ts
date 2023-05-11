@@ -107,7 +107,7 @@ export interface PoolStateType {
 	balance: string;
 	ownerMaintained?: boolean;
 	contribPercent?: string;
-	topic?: string;
+	topics?: string[];
 }
 
 export interface CollectionType {
