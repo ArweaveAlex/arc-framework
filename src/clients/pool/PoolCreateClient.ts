@@ -12,7 +12,7 @@ import {
 } from "../../helpers";
 
 import PoolClient from './PoolClient';
-import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from "./contracts/contracts";
+import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from "./contracts";
 
 export function initNewPoolConfig() {
     return DEFAULT_POOLS_JSON;

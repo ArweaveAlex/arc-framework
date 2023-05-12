@@ -7,6 +7,8 @@ import { ANSTopicEnum, ContributionResultType, ContributionType, GQLResponseType
 import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 import { Contract } from 'warp-contracts';
+import { POOL_CONTRACT_SRC } from './contracts';
+import { ArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 // TODO: Language to site provider
 export default class PoolClient extends ArweaveClient implements IPoolClient {
@@ -52,6 +54,67 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
         if(!validTopic){
             throw new Error(`Must configure at least 1 topic with one of the following values ${topics}`);
         }
+	}
+
+	async evolve() {
+		if(!this.poolConfig.walletKey) {
+			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
+		}
+		let poolSrc = POOL_CONTRACT_SRC;
+		let poolWallet = new ArweaveSigner(this.poolConfig.walletKey);
+
+        let contract = this.arClient.warp.contract(this.poolConfig.contracts.pool.id).connect(this.poolConfig.walletKey).setEvaluationOptions({
+            allowBigInt: true
+        });
+
+        const newSource = await this.arClient.warp.createSource({src: poolSrc}, poolWallet);
+        const newSrcId = await this.arClient.warp.saveSource(newSource);
+        await contract.evolve(newSrcId);
+	}
+
+	async fundBundlr() {
+		if(!this.poolConfig.walletKey) {
+			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
+		}
+
+		const arClient = new ArweaveClient(this.poolConfig.walletKey);
+        let balance  = await arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
+
+        try{
+            await arClient.bundlr.fund(Math.floor(balance/2));
+        } catch (e: any){
+            throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
+        }
+	}
+
+	async setTopics(topicValues: string[]) {
+		if(!this.poolConfig.walletKey) {
+			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
+		}
+
+		for (let i = 0; i < topicValues.length; i++) {
+            let topicValue = topicValues[i].trim().toLowerCase();
+            if (!Object.keys(ANSTopicEnum).some(key => ANSTopicEnum[key].toLowerCase() === topicValue)) {
+                throw new Error(`Invalid topic value: ${topicValue}, please only use values from this list - ${Object.values(ANSTopicEnum).join(", ")}`);
+            }
+        }
+
+        topicValues = topicValues.map((val: string) => {
+            let l = val.toLowerCase();
+            return l.charAt(0).toUpperCase() + l.slice(1);
+        });
+
+        let contract = this.arClient.warp.contract(this.poolConfig.contracts.pool.id)
+							.connect(this.poolConfig.walletKey).setEvaluationOptions({
+								allowBigInt: true
+							});
+
+        await contract.writeInteraction({
+            function: "setTopics",
+            data: topicValues
+        });
+
+        this.poolConfig.topics = topicValues;
 	}
 
 	async getUserContributions(userWallet: string) {

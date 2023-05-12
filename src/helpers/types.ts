@@ -26,7 +26,9 @@ export enum ANSTopicEnum {
 	Culture = 'Culture',
 	Art = 'Art',
 	Music = 'Music',
+    News = 'News',
 	Faith = 'Faith',
+    Science = 'Science',
 	Spirituality = 'Spirituality',
 	Sports = 'Sports',
 	Business = 'Business',
@@ -218,7 +220,7 @@ export type PoolConfigType = {
         timestamp: NStringType
     },
 	walletPath?: string,
-    walletKey: string,
+    walletKey: any,
     keywords: string[],
     twitterApiKeys: any,
     clarifaiApiKey: string,
