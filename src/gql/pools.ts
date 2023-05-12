@@ -46,8 +46,7 @@ export async function getPools(): Promise<PoolType[]> {
 		if (poolIds[i]) {
 			try {
 				const contract = arClient.warp.contract(poolIds[i]).setEvaluationOptions({ 
-					allowBigInt: true,
-					remoteStateSyncEnabled: true, 
+					allowBigInt: true
 				});
 				try {
 					pools.push({ id: poolIds[i], state: ((await contract.readState()) as any).cachedValue.state });
