@@ -1,7 +1,7 @@
 import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
-import { DeployPlugin } from 'warp-contracts-plugin-deploy';
+import { DeployPlugin, ArweaveSigner } from 'warp-contracts-plugin-deploy';
 import { GQLResponseType, TAGS } from '../../helpers';
 import { getGQLData } from '../../gql';
 
@@ -22,6 +22,7 @@ export default class ArweaveClient {
 	public bundlr: any;
 	arweaveGet: any;
 	arweavePost: any;
+	arweaveSigner: any;
 	warp: any;
 
 	constructor(bundlrJwk?: any) {
@@ -47,9 +48,11 @@ export default class ArweaveClient {
 			logging: LOGGING,
 		});
 
+		this.arweaveSigner = ArweaveSigner;
+
 		this.warp = WarpFactory.forMainnet({
 			...defaultCacheOptions,
-			inMemory: true
+			inMemory: true,
 		}).use(new DeployPlugin());
 	}
 

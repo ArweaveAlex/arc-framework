@@ -112,7 +112,7 @@ export interface PoolStateType {
 	controlPubkey?: string;
 	contribPercent?: string;
 	canEvolve?: boolean;
-	topics?: string[]
+	topics?: string[];
 }
 
 export interface CollectionType {
