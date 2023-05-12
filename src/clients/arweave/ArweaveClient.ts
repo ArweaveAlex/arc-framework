@@ -1,6 +1,7 @@
 import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
+import { ArweaveSigner, DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -19,6 +20,7 @@ export default class ArweaveClient {
 	public bundlr: any;
 	arweaveGet: any;
 	arweavePost: any;
+	arweaveSigner: any;
 	warp: any;
 
 	constructor(bundlrJwk?: any) {
@@ -44,9 +46,11 @@ export default class ArweaveClient {
 			logging: LOGGING,
 		});
 
+		this.arweaveSigner = ArweaveSigner;
+
 		this.warp = WarpFactory.forMainnet({
 			...defaultCacheOptions,
 			inMemory: true,
-		});
+		}).use(new DeployPlugin());
 	}
 }
