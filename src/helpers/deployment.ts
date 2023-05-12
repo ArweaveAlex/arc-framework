@@ -22,8 +22,7 @@ export async function deployBundle(deployKey: string, contract: string, folderPa
 		});
 
 		console.log(`Deployed [${bundlrResult.id}] to [${contractState.name}]`);
-	}
-	catch (e: any) {
+	} catch (e: any) {
 		console.error(e);
 	}
 }

@@ -117,6 +117,13 @@ export interface PoolStateType {
 	topics?: string[];
 }
 
+export type PoolIndexType = {
+	id: string;
+	image: string;
+	topics: string[];
+	totalContributions: string;
+};
+
 export interface CollectionType {
 	id: string;
 	state: CollectionStateType;

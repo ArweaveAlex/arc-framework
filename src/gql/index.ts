@@ -36,12 +36,6 @@ export async function getGQLData(args: {
 		}
 	}
 
-	// TODO: reimplement in site
-	// if (store.getState().searchIdsReducer[args.reduxCursor][i]) {
-	// 	ids = JSON.stringify(store.getState().searchIdsReducer[args.reduxCursor][i][cursor]);
-	// 	nextCursor = JSON.parse(ids).length < PAGINATOR ? CURSORS.end : `${SEARCH.cursorPrefix}-${++i}`;
-	// }
-
 	const query = {
 		query: `
                 query {
