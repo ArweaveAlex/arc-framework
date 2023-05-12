@@ -161,3 +161,10 @@ export function formatKeywordString(text: string, char: string) {
 	}
 	return finalStr.replace(/(https?:\/\/[^\s]+)/g, '');
 }
+
+
+export function logJsonUpdate(poolTitle: string, key: string, value: string): void {
+	const now = new Date();
+	const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
+	console.log(`${formattedDate} - Updating ${poolTitle} JSON Object - ${key} - [`, `'${value}'`, `]`);
+}

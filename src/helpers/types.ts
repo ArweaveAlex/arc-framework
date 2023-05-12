@@ -112,6 +112,7 @@ export interface PoolStateType {
 	controlPubkey?: string;
 	contribPercent?: string;
 	canEvolve?: boolean;
+	topics?: string[]
 }
 
 export interface CollectionType {
@@ -224,10 +225,6 @@ export type PoolConfigType = {
     topics: string[],
     redditApiKeys: any,
     nostr: {
-        keys: {
-            public: string,
-            private: string 
-        },
         relays: NostrRelayType[]
     }
 }

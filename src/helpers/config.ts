@@ -17,21 +17,37 @@ export const TAGS = {
 		bookmarkIds: 'Bookmark-Ids-Tag',
 		bookmarkSearch: 'Alex-Bookmark-Search',
 		dateCreated: 'Date-Created',
+		description: 'Description',
 		fileType: `File-Type`,
 		keywords: 'Keywords',
 		initialOwner: 'Initial-Owner',
 		poolId: 'Pool-Id',
+		poolName: "Pool-Name",
 		profileImage: 'Profile-Image',
 		protocolName: 'Protocol-Name',
 		uploaderTxId: 'Uploader-Tx-Id',
 		contractSrc: 'Contract-Src',
+		contentType: "Content-Type",
 		mediaIds: 'Media-Ids',
 		timestamp: 'Timestamp',
+		title: 'Title',
+		topic: (topic: string) => `Topic:${topic}`,
+		type: "Type",
 		collectionName: 'Collection-Name',
 		collectionDescription: 'Collection-Description',
-		renderWith: 'Render-With'
+		renderWith: 'Render-With',
 	},
 	values: {
+		ansTypes: {
+            socialPost: "social-post",
+            webPage: "web-page",
+            image: "image",
+            video: "video",
+            music: "music",
+            document: "document",
+            file: "file",
+            collection: "collection"
+        },
 		audioArtifactType: 'Alex-Audio',
 		defaultArtifactType: 'Alex-Default',
 		documentArtifactType: 'Alex-Document',
@@ -84,4 +100,69 @@ export const STORAGE = {
 	none: 'N/A',
 };
 
-export const RENDER_WITH_VALUES = ["alex-renderers"];
+export const RENDER_WITH_VALUES = ['alex-renderers'];
+
+export const DEFAULT_NOSTR_RELAYS = [
+	{socket: "wss://relay.damus.io"},
+	{socket: "wss://nos.lol"},
+	{socket: "wss://nostr.relayer.se"},
+	{socket: "wss://relay.current.fyi"},
+	{socket: "wss://nostr.bitcoiner.social"},
+	{socket: "wss://relay.nostr.info"},
+	{socket: "wss://nostr.fmt.wiz.biz"}
+];
+
+export const DEFAULT_POOLS_JSON = 
+     {
+        "appType": TAGS.values.poolVersions["1.5"], 
+        "contracts": {
+            "nft": {
+                "id": "",
+                "src": ""
+            },
+            "pool": {
+                "id": "",
+                "src": ""
+            },
+        },
+        "state": {
+            "owner": {
+                "pubkey": "",
+                "info": ""
+            },
+            "controller": {
+                "pubkey": "",
+                "contribPercent": 0
+            },
+            "title": "Pool Title such as Russia Ukraine War",
+            "description": "Paragraph/html markup for long pool description on site",
+            "briefDescription": "Text for short pool description on site",
+            "image": "",
+            "timestamp": "",
+            "ownerMaintained": false
+        },
+        "walletPath": "",
+        "keywords": [
+            "keyword1",
+        ],
+        "twitterApiKeys": {
+            "consumer_key": "",
+            "consumer_secret": "",
+            "token": "",
+            "token_secret": "",
+            "bearer_token": ""
+        },
+        "clarifaiApiKey": "",
+        "topics": [
+            "History"
+        ],
+        "redditApiKeys": {
+            "username": "",
+            "password": "",
+            "appId": "",
+            "appSecret": ""
+        },
+        "nostr": {
+            "relays": DEFAULT_NOSTR_RELAYS
+        }
+};
