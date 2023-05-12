@@ -113,6 +113,7 @@ export interface PoolStateType {
 export type PoolIndexType = {
 	id: string;
 	image: string;
+	topics: string[];
 	totalContributions: string;
 };
 
