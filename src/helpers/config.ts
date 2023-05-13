@@ -1,4 +1,4 @@
-export const POOL_INDEX_CONTRACT_ID = 'G2j_YAD1GQcdtXZEwUIE7VDs8Y0UuWx85inKI-kXajY';
+export const POOL_INDEX_CONTRACT_ID = 'D0OZN4o0aF6msGNAaKaKpuaR4_duptorZWfq2s-XINQ';
 
 export const TAGS = {
 	keys: {

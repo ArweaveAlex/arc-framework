@@ -6,7 +6,7 @@ import { ContributionResultType, ContributionType, GQLResponseType, PoolType } f
 import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 
-// TODO: Language to site provider
+// TODO: language to site provider
 export default class PoolClient extends ArweaveClient {
 	async getUserContributions(userWallet: string) {
 		let pools: PoolType[] = await getPools();
