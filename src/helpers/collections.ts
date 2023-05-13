@@ -51,7 +51,7 @@ export async function createCollection(collectionState: CollectionStateType) {
 	// ];
 
 	// TODO: integrate with arcframework
-	// const collectionContract = await arClient.warp.createContract.deploy({
+	// const collectionContract = await arClient.warpDefault.createContract.deploy({
 	// 	src: COLLECTION_CONTRACT,
 	// 	initState: JSON.stringify(collectionState),
 	// 	wallet: userSigner,
@@ -86,7 +86,7 @@ export async function createCollection(collectionState: CollectionStateType) {
 export async function saveCollection(collection: CollectionType) {
 	const arClient = new ArweaveClient();
 
-	const warpContract = arClient.warp.contract(collection.id).connect('use_wallet').setEvaluationOptions({
+	const warpContract = arClient.warpDefault.contract(collection.id).connect('use_wallet').setEvaluationOptions({
 		waitForConfirmation: false,
 	});
 
@@ -110,7 +110,7 @@ export async function saveCollection(collection: CollectionType) {
 export async function getContractById(contractId: string): Promise<CollectionType | null> {
 	const arClient = new ArweaveClient();
 	try {
-		const contract = arClient.warp.contract(contractId).setEvaluationOptions({ allowBigInt: true });
+		const contract = arClient.warpDefault.contract(contractId).setEvaluationOptions({ allowBigInt: true });
 		return {
 			id: contractId,
 			state: ((await contract.readState()) as any).cachedValue.state,

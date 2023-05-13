@@ -163,7 +163,7 @@ export default class PoolClient extends ArweaveClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			const warpContract = this.warp.contract(poolId).connect('use_wallet').setEvaluationOptions({
+			const warpContract = this.warpDefault.contract(poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
 				allowBigInt: true,
 			});

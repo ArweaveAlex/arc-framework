@@ -21,7 +21,7 @@ export default class CollectionClient extends ArweaveClient {
 	//     	{ name: TAGS.keys.ansImplements, value: TAGS.values.ansVersion },
 	//     	{ name: TAGS.keys.initialOwner, value: collectionState.owner },
 	//     ];
-	//     const collectionContract = await this.warp.createContract.deploy({
+	//     const collectionContract = await this.warpDefault.createContract.deploy({
 	//     	src: COLLECTION_CONTRACT,
 	//     	initState: JSON.stringify(collectionState),
 	//     	wallet: userSigner,

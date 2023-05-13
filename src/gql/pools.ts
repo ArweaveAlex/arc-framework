@@ -45,7 +45,7 @@ export async function getPools(): Promise<PoolType[]> {
 	for (let i = 0; i < poolIds.length; i++) {
 		if (poolIds[i]) {
 			try {
-				const contract = arClient.warp.contract(poolIds[i]).setEvaluationOptions({ 
+				const contract = arClient.warpDefault.contract(poolIds[i]).setEvaluationOptions({ 
 					allowBigInt: true
 				});
 				try {
@@ -64,7 +64,7 @@ export async function getPools(): Promise<PoolType[]> {
 
 export async function getIndexPools(): Promise<PoolIndexType[]> {
 	const arClient = new ArweaveClient();
-	const contract = arClient.warp.contract(POOL_INDEX_CONTRACT_ID).setEvaluationOptions({
+	const contract = arClient.warpDefault.contract(POOL_INDEX_CONTRACT_ID).setEvaluationOptions({
 		allowBigInt: true,
 		remoteStateSyncEnabled: true,
 	});
