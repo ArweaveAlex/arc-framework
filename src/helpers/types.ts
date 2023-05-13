@@ -112,9 +112,14 @@ export interface PoolStateType {
 
 export type PoolIndexType = {
 	id: string;
-	image: string;
-	topics: string[];
-	totalContributions: string;
+	state: {
+		image: string;
+		ownerMaintained?: boolean;
+		timestamp: string;
+		title: string;
+		topics?: string[];
+		totalContributions: string;
+	}
 };
 
 export interface CollectionType {
