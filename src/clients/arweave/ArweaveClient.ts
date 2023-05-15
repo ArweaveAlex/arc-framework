@@ -13,24 +13,23 @@ const POST_ENDPOINT = 'arweave.net';
 const PORT = 443;
 const PROTOCOL = 'https';
 const TIMEOUT = 40000;
-const LOGGING = true;
+const LOGGING = false;
 
 const BUNDLR_NODE = 'https://node2.bundlr.network';
 const CURRENCY = 'arweave';
 
 export default class ArweaveClient {
-	public bundlr: any;
+	bundlr: any;
 	arweaveGet: any;
 	arweavePost: any;
-	arweaveSigner: any;
-	warp: any;
+	warpArweaveGateway: any;
+	warpDefault: any;
+	warpPluginArweaveSigner: any;
 
 	constructor(bundlrJwk?: any) {
-		let bundlr: any;
 		if (bundlrJwk) {
-			bundlr = new Bundlr(BUNDLR_NODE, CURRENCY, bundlrJwk);
+			this.bundlr = new Bundlr(BUNDLR_NODE, CURRENCY, bundlrJwk);
 		}
-		this.bundlr = bundlr;
 
 		this.arweaveGet = Arweave.init({
 			host: GET_ENDPOINT,
@@ -48,12 +47,14 @@ export default class ArweaveClient {
 			logging: LOGGING,
 		});
 
-		this.arweaveSigner = ArweaveSigner;
+		this.warpArweaveGateway = WarpFactory.forMainnet(defaultCacheOptions, true);
 
-		this.warp = WarpFactory.forMainnet({
+		this.warpDefault = WarpFactory.forMainnet({
 			...defaultCacheOptions,
 			inMemory: true,
 		}).use(new DeployPlugin());
+
+		this.warpPluginArweaveSigner = ArweaveSigner;
 	}
 
 	async isDuplicate(args: {

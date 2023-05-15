@@ -25,10 +25,10 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
         this.poolConfig = args.poolConfig;
 
         this.bundlr = new Bundlr("https://node2.bundlr.network", "arweave", args.poolConfig.walletKey);
-        this.contract = this.arClient.warp.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
+        this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
             allowBigInt: true
         });
-        this.warp = this.arClient.warp;
+        this.warpDefault = this.arClient.warpDefault;
 
 		this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
     }
@@ -63,12 +63,12 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 		let poolSrc = POOL_CONTRACT_SRC;
 		let poolWallet = new ArweaveSigner(this.poolConfig.walletKey);
 
-        let contract = this.arClient.warp.contract(this.poolConfig.contracts.pool.id).connect(this.poolConfig.walletKey).setEvaluationOptions({
+        let contract = this.arClient.warpDefault.contract(this.poolConfig.contracts.pool.id).connect(this.poolConfig.walletKey).setEvaluationOptions({
             allowBigInt: true
         });
 
-        const newSource = await this.arClient.warp.createSource({src: poolSrc}, poolWallet);
-        const newSrcId = await this.arClient.warp.saveSource(newSource);
+        const newSource = await this.arClient.warpDefault.createSource({src: poolSrc}, poolWallet);
+        const newSrcId = await this.arClient.warpDefault.saveSource(newSource);
         await contract.evolve(newSrcId);
 	}
 
@@ -104,7 +104,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
             return l.charAt(0).toUpperCase() + l.slice(1);
         });
 
-        let contract = this.arClient.warp.contract(this.poolConfig.contracts.pool.id)
+        let contract = this.arClient.warpDefault.contract(this.poolConfig.contracts.pool.id)
 							.connect(this.poolConfig.walletKey).setEvaluationOptions({
 								allowBigInt: true
 							});
@@ -272,7 +272,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			const warpContract = this.warp.contract(poolId).connect('use_wallet').setEvaluationOptions({
+			const warpContract = this.warpDefault.contract(poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
 				allowBigInt: true,
 			});

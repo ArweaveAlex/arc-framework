@@ -4,7 +4,7 @@ export async function deployBundle(deployKey: string, contract: string, folderPa
 	const jwk = JSON.parse(Buffer.from(deployKey, 'base64').toString('utf-8'));
 
 	const arClient = new ArweaveClient(jwk);
-	const warpContract = arClient.warp.contract(contract).connect(jwk);
+	const warpContract = arClient.warpArweaveGateway.contract(contract).connect(jwk);
 	const contractState: any = (await warpContract.readState()).cachedValue.state;
 
 	try {
@@ -19,7 +19,7 @@ export async function deployBundle(deployKey: string, contract: string, folderPa
 			function: 'setRecord',
 			subDomain: '@',
 			transactionId: bundlrResult.id,
-		});
+		}, { disableBundling: true });
 
 		console.log(`Deployed [${bundlrResult.id}] to [${contractState.name}]`);
 	} catch (e: any) {

@@ -80,7 +80,7 @@ export default class PoolCreateClient {
         }
 
         try {
-            nftDeployment = await this.poolClient.warp.createContract.deploy({
+            nftDeployment = await this.poolClient.warpDefault.createContract.deploy({
                 src: nftSrc,
                 initState: JSON.stringify(nftInitState),
                 wallet: new ArweaveSigner(this.controlWalletJwk)
@@ -92,7 +92,7 @@ export default class PoolCreateClient {
 
         try {
             console.log(`Deploying Pool Contract Source ...`);
-            const poolSrcDeployment = await this.poolClient.warp.createContract.deploy({
+            const poolSrcDeployment = await this.poolClient.warpDefault.createContract.deploy({
                 src: poolSrc,
                 initState: JSON.stringify({}),
                 wallet: new ArweaveSigner(this.controlWalletJwk)
@@ -141,7 +141,7 @@ export default class PoolCreateClient {
 
             console.log(`Deploying Pool from Source Tx ...`);
             const poolInitState = JSON.stringify(poolInitJson, null, 2);
-            const poolDeployment = await this.poolClient.warp.createContract.deployFromSourceTx({
+            const poolDeployment = await this.poolClient.warpDefault.createContract.deployFromSourceTx({
                 wallet: new ArweaveSigner(this.controlWalletJwk),
                 initState: poolInitState,
                 srcTxId: poolSrcDeployment.srcTxId,

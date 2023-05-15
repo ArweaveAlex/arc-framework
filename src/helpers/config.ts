@@ -1,6 +1,6 @@
 import { ArtifactEnum } from "./types";
 
-export const POOL_INDEX_CONTRACT_ID = 'B02drj7cGmSL_OWDKQ0oK3v-r2SEwFYnEtjM4OBetcI';
+export const POOL_INDEX_CONTRACT_ID = 'D0OZN4o0aF6msGNAaKaKpuaR4_duptorZWfq2s-XINQ';
 
 export const TAGS = {
 	keys: {

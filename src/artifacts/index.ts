@@ -201,7 +201,7 @@ async function deployToBundlr(poolClient: IPoolClient, args: {
 
 async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) {
   try {
-    const { contractTxId } = await poolClient.warp.register(args.assetId, "node2");
+    const { contractTxId } = await poolClient.warpDefault.register(args.assetId, "node2");
     APS++;
     return contractTxId;
   }
@@ -219,7 +219,7 @@ async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) 
         await new Promise(r => setTimeout(r, 2000));
         try {
           log(`Retrying Warp ...`, null);
-          const { contractTxId } = await poolClient.warp.register(args.assetId, "node2");
+          const { contractTxId } = await poolClient.warpDefault.register(args.assetId, "node2");
           log(`Retry succeeded`, 0);
           APS++;
           return contractTxId;
