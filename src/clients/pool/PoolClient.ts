@@ -19,13 +19,13 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
     contract: Contract;
 
-    constructor(poolConfig: PoolConfigType) {
+    constructor(args: { poolConfig: PoolConfigType }) {
 		super();
 
-        this.poolConfig = poolConfig;
+        this.poolConfig = args.poolConfig;
 
-        this.bundlr = new Bundlr("https://node2.bundlr.network", "arweave", poolConfig.walletKey);
-        this.contract = this.arClient.warp.contract(poolConfig.contracts.pool.id).setEvaluationOptions({
+        this.bundlr = new Bundlr("https://node2.bundlr.network", "arweave", args.poolConfig.walletKey);
+        this.contract = this.arClient.warp.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
             allowBigInt: true
         });
         this.warp = this.arClient.warp;

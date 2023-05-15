@@ -1,3 +1,5 @@
+import { ArtifactEnum } from "./types";
+
 export const POOL_INDEX_CONTRACT_ID = 'B02drj7cGmSL_OWDKQ0oK3v-r2SEwFYnEtjM4OBetcI';
 
 export const TAGS = {
@@ -8,19 +10,27 @@ export const TAGS = {
 		ansTopic: 'Topic',
 		ansType: 'Type',
 		ansImplements: 'Implements',
-		appType: 'App-Type',
+		application: "Application",
+		appName: "App-Name",
+        appType: "App-Type",
+        appVersion: "App-Version",
 		artifactName: 'Artifact-Name',
+		artifactSeries: "Artifact-Series",
 		artifactType: 'Artifact-Type',
 		associationId: 'Association-Id',
 		associationSequence: 'Association-Sequence',
 		childAssets: 'Child-Assets',
 		bookmarkIds: 'Bookmark-Ids-Tag',
 		bookmarkSearch: 'Alex-Bookmark-Search',
+		dataProtocol: "Data-Protocol",
 		dateCreated: 'Date-Created',
 		description: 'Description',
 		fileType: `File-Type`,
 		keywords: 'Keywords',
+		implements: "Implements",
 		initialOwner: 'Initial-Owner',
+		initState: "Init-State",
+		license: "License",
 		poolId: 'Pool-Id',
 		poolName: "Pool-Name",
 		profileImage: 'Profile-Image',
@@ -29,6 +39,9 @@ export const TAGS = {
 		contractSrc: 'Contract-Src',
 		contentType: "Content-Type",
 		mediaIds: 'Media-Ids',
+		tweetId: "Tweet-ID",
+        redditPostId: "Reddit-Post-ID",
+        nostrEventId: "Nostr-Event-ID",
 		timestamp: 'Timestamp',
 		title: 'Title',
 		topic: (topic: string) => `Topic:${topic}`,
@@ -49,10 +62,19 @@ export const TAGS = {
             collection: "collection"
         },
 		audioArtifactType: 'Alex-Audio',
+		application: "Alex.",
+		appName: "SmartWeaveContract",
+        appVersion: "0.3.0",
 		defaultArtifactType: 'Alex-Default',
 		documentArtifactType: 'Alex-Document',
 		ebookArtifactType: 'Alex-Ebook',
 		imageArtifactType: 'Alex-Image',
+		initState: {
+            name: (name: string) => `Artifact - ${name}`,
+            ticker: (assetId: string) => `ATOMIC-ASSET-${assetId}`,
+            title: (name: string) => `Alex Artifact - ${name}`
+        },
+		license: "x5UYiin_eRB0XCpZAkpduL0JIaXAUe9Bi2-RXGloBQI",
 		messagingArtifactType: 'Alex-Messaging',
 		nostrEventArtifactType: 'Alex-Nostr-Event',
 		redditThreadArtifactType: 'Alex-Reddit-Thread',
@@ -166,4 +188,49 @@ export const DEFAULT_POOLS_JSON =
         "nostr": {
             "relays": DEFAULT_NOSTR_RELAYS
         }
+};
+
+export const CONTENT_TYPES = {
+    arweaveManifest: "application/x.arweave-manifest+json",
+    json: "application/json",
+    octetStream: "application/octet-stream",
+    textHtml: "text/html"
+}
+
+export const ARTIFACT_TYPES_BY_FILE: { [ext: string]: ArtifactEnum } = {
+    // Images
+    'jpg': ArtifactEnum.Image,
+    'jpeg': ArtifactEnum.Image,
+    'png': ArtifactEnum.Image,
+    'gif': ArtifactEnum.Image,
+    'bmp': ArtifactEnum.Image,
+    'tiff': ArtifactEnum.Image,
+    'svg': ArtifactEnum.Image,
+    'webp': ArtifactEnum.Image,
+    // Documents
+    'pdf': ArtifactEnum.Document,
+    'txt': ArtifactEnum.Document,
+    'csv': ArtifactEnum.Document, 
+    'doc': ArtifactEnum.Document,
+    'docx': ArtifactEnum.Document,
+    'xls': ArtifactEnum.Document,
+    'xlsx': ArtifactEnum.Document,
+    'ppt': ArtifactEnum.Document,
+    'pptx': ArtifactEnum.Document,
+    'rtf': ArtifactEnum.Document, 
+    // Audio
+    'mp3': ArtifactEnum.Audio,
+    'm4a': ArtifactEnum.Audio,
+    'wav': ArtifactEnum.Audio,
+    'ogg': ArtifactEnum.Audio,
+    'flac': ArtifactEnum.Audio,
+    // Video
+    'mp4': ArtifactEnum.Video,
+    'mpg': ArtifactEnum.Video,
+    'avi': ArtifactEnum.Video,
+    'wmv': ArtifactEnum.Video,
+    'mov': ArtifactEnum.Video,
+    'mkv': ArtifactEnum.Video,
+    // Ebooks
+    'epub': ArtifactEnum.Ebook,
 };

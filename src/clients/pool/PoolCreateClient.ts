@@ -28,20 +28,22 @@ export default class PoolCreateClient {
     imgFileType: string;
 
     constructor(
-        poolConfig: PoolConfigType, 
-        controlWalletJwk: any, 
-        poolWalletJwk: any,
-        poolWalletPath: string | null,
-        img: Buffer | null, 
-        imgFileType: string | null
+        args: {
+            poolConfig: PoolConfigType, 
+            controlWalletJwk: any, 
+            poolWalletJwk: any,
+            poolWalletPath: string | null,
+            img: Buffer | null, 
+            imgFileType: string | null
+        }
     ) {
-        this.poolClient = new PoolClient(poolConfig);
-        this.poolConfig = poolConfig;
-        this.controlWalletJwk = controlWalletJwk;
-        this.poolWalletJwk = poolWalletJwk;
-        this.poolWalletPath = poolWalletPath;
-        this.img = img;
-        this.imgFileType = imgFileType;
+        this.poolClient = new PoolClient({ poolConfig: args.poolConfig });
+        this.poolConfig = args.poolConfig;
+        this.controlWalletJwk = args.controlWalletJwk;
+        this.poolWalletJwk = args.poolWalletJwk;
+        this.poolWalletPath = args.poolWalletPath;
+        this.img = args.img;
+        this.imgFileType = args.imgFileType;
         this.createPool = this.createPool.bind(this);
     }
 
