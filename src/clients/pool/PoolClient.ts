@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
 import { getArtifactsByUser, getGQLData, getPools, getPoolById } from '../../gql';
-import { TAGS } from '../../helpers/config';
+import { BUNDLR_CURRENCY, BUNDLR_NODE, TAGS } from '../../helpers/config';
 import {
 	ANSTopicEnum,
 	ContributionResultType,
@@ -104,7 +104,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 		if(args.poolConfig) {
 			this.poolConfig = args.poolConfig;
 
-			this.bundlr = new Bundlr('https://node2.bundlr.network', 'matic', args.poolConfig.walletKey);
+			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
 			this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
 				allowBigInt: true,
 			});
