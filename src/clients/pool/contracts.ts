@@ -1,16 +1,14 @@
-
-
 export const NFT_INIT_STATE = {
-    "title": "Alex Archiving Artifact",
-    "name": "Artefact #000000",
-    "description": "Minted from archiving pool Alex...",
-    "ticker": "KOINFT",
-    "balances": {},
-    "maxSupply": 1,
-    "contentType": "application/json",
-    "transferable": false,
-    "lockTime": 0,
-    "lastTransferTimestamp": null
+	title: 'Alex Archiving Artifact',
+	name: 'Artefact #000000',
+	description: 'Minted from archiving pool Alex...',
+	ticker: 'KOINFT',
+	balances: {},
+	maxSupply: 1,
+	contentType: 'application/json',
+	transferable: false,
+	lockTime: 0,
+	lastTransferTimestamp: null,
 };
 
 export const NFT_CONTRACT_SRC = `
@@ -65,7 +63,7 @@ function handle(state, action) {
     }
     throw new ContractError("No function supplied or function not recognised.");
 }
-`
+`;
 
 export const POOL_CONTRACT_SRC = `
 "use strict";
@@ -161,4 +159,4 @@ async function handle(state, action) {
         }
     }
 }
-`
+`;

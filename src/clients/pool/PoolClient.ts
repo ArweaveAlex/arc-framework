@@ -1,134 +1,145 @@
-import { Buffer } from 'buffer';
 import Bundlr from '@bundlr-network/client';
+import { Buffer } from 'buffer';
+import { Contract } from 'warp-contracts';
 
 import { getArtifactsByUser, getGQLData, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
-import { 
-	ANSTopicEnum, 
-	ContributionResultType, 
-	ContributionType, 
-	GQLResponseType, 
-	IPoolClient, 
-	PoolConfigType, 
-	PoolType 
+import {
+	ANSTopicEnum,
+	ContributionResultType,
+	ContributionType,
+	GQLResponseType,
+	IPoolClient,
+	PoolConfigType,
+	PoolType,
 } from '../../helpers/types';
 import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
-import { Contract } from 'warp-contracts';
+
 import { POOL_CONTRACT_SRC } from './contracts';
+
+export async function initPoolConfigFromContract(poolId: string) {
+
+}
 
 // TODO: Language to site provider
 export default class PoolClient extends ArweaveClient implements IPoolClient {
 	arClient = new ArweaveClient();
 
-    poolConfig: PoolConfigType;
-    walletKey: string | null;
+	poolConfig: PoolConfigType;
+	walletKey: string | null;
 
-    contract: Contract;
+	contract: Contract;
 
 	signedPoolWallet: any;
 
-    constructor(args: { poolConfig: PoolConfigType, signedPoolWallet?: any }) {
+	constructor(args: { poolConfig: PoolConfigType; signedPoolWallet?: any }) {
 		super();
 
-        this.poolConfig = args.poolConfig;
+		this.poolConfig = args.poolConfig;
 
-        this.bundlr = new Bundlr("https://node2.bundlr.network", "arweave", args.poolConfig.walletKey);
-        this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
-            allowBigInt: true
-        });
-        this.warpDefault = this.arClient.warpDefault;
+		this.bundlr = new Bundlr('https://node2.bundlr.network', 'matic', args.poolConfig.walletKey);
+		this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
+			allowBigInt: true,
+		});
+		this.warpDefault = this.arClient.warpDefault;
 
 		this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
 
 		this.signedPoolWallet = args.signedPoolWallet;
-    }
+	}
 
 	async validatePoolConfigs() {
 		console.log(`Checking Exisiting Pools ...`);
-        const exisitingPools = await getPools();
+		const exisitingPools = await getPools();
 		let poolConfig = this.poolConfig;
-        exisitingPools.forEach(function (pool: PoolType) {
-            if (poolConfig.state.title === pool.state.title) {
-                throw new Error(`Pool Already Exists`);
-            }
-        });
+		exisitingPools.forEach(function (pool: PoolType) {
+			if (poolConfig.state.title === pool.state.title) {
+				throw new Error(`Pool Already Exists`);
+			}
+		});
 
-        let validTopic = false;
-        poolConfig.topics.map((topic: string) => {
-            if(topic in ANSTopicEnum){
-                validTopic = true;
-            } 
-        });
+		let validTopic = false;
+		poolConfig.topics.map((topic: string) => {
+			if (topic in ANSTopicEnum) {
+				validTopic = true;
+			}
+		});
 
-        let topics = Object.values(ANSTopicEnum).join(', ');
-        if(!validTopic){
-            throw new Error(`Must configure at least 1 topic with one of the following values ${topics}`);
-        }
+		let topics = Object.values(ANSTopicEnum).join(', ');
+		if (!validTopic) {
+			throw new Error(`Must configure at least 1 topic with one of the following values ${topics}`);
+		}
 	}
 
 	async evolve() {
-		if(!this.poolConfig.walletKey) {
+		if (!this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 		let poolSrc = POOL_CONTRACT_SRC;
 		let poolWallet = this.signedPoolWallet;
 
-        let contract = this.arClient.warpDefault
+		let contract = this.arClient.warpDefault
 			.contract(this.poolConfig.contracts.pool.id)
 			.connect(this.poolConfig.walletKey)
 			.setEvaluationOptions({
-				allowBigInt: true
+				allowBigInt: true,
 			});
 
-        const newSource = await this.arClient.warpDefault.createSource({src: poolSrc}, poolWallet);
-        const newSrcId = await this.arClient.warpDefault.saveSource(newSource);
-        await contract.evolve(newSrcId);
+		const newSource = await this.arClient.warpDefault.createSource({ src: poolSrc }, poolWallet);
+		const newSrcId = await this.arClient.warpDefault.saveSource(newSource);
+		await contract.evolve(newSrcId);
 	}
 
 	async fundBundlr() {
-		if(!this.poolConfig.walletKey) {
+		if (!this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
 		const arClient = new ArweaveClient(this.poolConfig.walletKey);
-        let balance  = await arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
+		let balance = await arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
 
-        try{
-            await arClient.bundlr.fund(Math.floor(balance/2));
-        } catch (e: any){
-            throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
-        }
+		try {
+			await arClient.bundlr.fund(Math.floor(balance / 2));
+		} catch (e: any) {
+			throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
+		}
 	}
 
 	async setTopics(topicValues: string[]) {
-		if(!this.poolConfig.walletKey) {
+		if (!this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
 		for (let i = 0; i < topicValues.length; i++) {
-            let topicValue = topicValues[i].trim().toLowerCase();
-            if (!Object.keys(ANSTopicEnum).some(key => ANSTopicEnum[key].toLowerCase() === topicValue)) {
-                throw new Error(`Invalid topic value: ${topicValue}, please only use values from this list - ${Object.values(ANSTopicEnum).join(", ")}`);
-            }
-        }
+			let topicValue = topicValues[i].trim().toLowerCase();
+			if (!Object.keys(ANSTopicEnum).some((key) => ANSTopicEnum[key].toLowerCase() === topicValue)) {
+				throw new Error(
+					`Invalid topic value: ${topicValue}, please only use values from this list - ${Object.values(
+						ANSTopicEnum
+					).join(', ')}`
+				);
+			}
+		}
 
-        topicValues = topicValues.map((val: string) => {
-            let l = val.toLowerCase();
-            return l.charAt(0).toUpperCase() + l.slice(1);
-        });
+		topicValues = topicValues.map((val: string) => {
+			let l = val.toLowerCase();
+			return l.charAt(0).toUpperCase() + l.slice(1);
+		});
 
-        let contract = this.arClient.warpDefault.contract(this.poolConfig.contracts.pool.id)
-							.connect(this.poolConfig.walletKey).setEvaluationOptions({
-								allowBigInt: true
-							});
+		let contract = this.arClient.warpDefault
+			.contract(this.poolConfig.contracts.pool.id)
+			.connect(this.poolConfig.walletKey)
+			.setEvaluationOptions({
+				allowBigInt: true,
+			});
 
-        await contract.writeInteraction({
-            function: "setTopics",
-            data: topicValues
-        });
+		await contract.writeInteraction({
+			function: 'setTopics',
+			data: topicValues,
+		});
 
-        this.poolConfig.topics = topicValues;
+		this.poolConfig.topics = topicValues;
 	}
 
 	async getUserContributions(userWallet: string) {

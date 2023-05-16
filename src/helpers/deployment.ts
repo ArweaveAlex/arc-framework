@@ -15,11 +15,14 @@ export async function deployBundle(deployKey: string, contract: string, folderPa
 
 		await new Promise((r) => setTimeout(r, 1000));
 
-		await warpContract.writeInteraction({
-			function: 'setRecord',
-			subDomain: '@',
-			transactionId: bundlrResult.id,
-		}, { disableBundling: true });
+		await warpContract.writeInteraction(
+			{
+				function: 'setRecord',
+				subDomain: '@',
+				transactionId: bundlrResult.id,
+			},
+			{ disableBundling: true }
+		);
 
 		console.log(`Deployed [${bundlrResult.id}] to [${contractState.name}]`);
 	} catch (e: any) {

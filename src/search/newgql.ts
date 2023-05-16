@@ -3,15 +3,14 @@
 // import { CursorEnum, CursorObjectKeyType, GQLResponseType, TagFilterType } from '../helpers/types';
 // import { checkGqlCursor, unquoteJsonKeys } from '../helpers/utils';
 
-
 // const addMatchProperty = (input: any) => {
 // 	// Parse the input string into a JavaScript array of objects
-  
+
 // 	// Add the "match" property with the value FUZZY_OR to each object in the array
 // 	const updatedArr = input.map((item: any) => {
 // 	  return { ...item, match: 'FUZZY_OR' };
 // 	});
-  
+
 // 	return updatedArr;
 // };
 
@@ -22,7 +21,7 @@
 // 	cursor: string | null;
 // 	reduxCursor: string | null;
 // 	cursorObject: CursorObjectKeyType;
-// 	fuzzyMatch?: boolean; 
+// 	fuzzyMatch?: boolean;
 // }): Promise<{ data: GQLResponseType[]; nextCursor: string | null }> {
 // 	const arClient = new ArweaveClient();
 // 	let nextCursor: string | null = null;
@@ -34,7 +33,7 @@
 
 // 	let ids = args.ids ? JSON.stringify(args.ids) : null;
 // 	let tags = args.tagFilters ? unquoteJsonKeys(addMatchProperty(args.tagFilters)).replace(/"FUZZY_OR"/g, 'FUZZY_OR') : null;
-	
+
 // 	console.log(unquoteJsonKeys(addMatchProperty(args.tagFilters)));
 
 // 	let owners = args.uploader ? JSON.stringify([args.uploader]) : null;
@@ -65,7 +64,7 @@
 //                         ids: ${ids},
 //                         tags: ${tags},
 //                         owners: ${owners},
-//                         first: ${PAGINATOR}, 
+//                         first: ${PAGINATOR},
 //                         after: ${cursor}
 //                     ){
 //                     edges {
@@ -73,8 +72,8 @@
 //                         node {
 //                             id
 //                             tags {
-//                                 name 
-//                                 value 
+//                                 name
+//                                 value
 //                             }
 //                             data {
 //                                 size

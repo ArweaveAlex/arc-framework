@@ -1,9 +1,10 @@
 import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
-import { DeployPlugin, ArweaveSigner, InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
-import { GQLResponseType, TAGS } from '../../helpers';
+import { ArweaveSigner, DeployPlugin, InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
+
 import { getGQLData } from '../../gql';
+import { GQLResponseType, TAGS } from '../../helpers';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -16,7 +17,7 @@ const TIMEOUT = 40000;
 const LOGGING = false;
 
 const BUNDLR_NODE = 'https://node2.bundlr.network';
-const CURRENCY = 'arweave';
+const CURRENCY = 'matic';
 
 export default class ArweaveClient {
 	bundlr: any;
@@ -65,27 +66,24 @@ export default class ArweaveClient {
 		return new InjectedArweaveSigner(wallet);
 	}
 
-	async isDuplicate(args: {
-        artifactName: string,
-        poolId: string,
-    }) {
-        const artifacts: { data: GQLResponseType[]; nextCursor: string | null } = await getGQLData({
-            ids: null,
-            tagFilters: [
-                {
-                    name: TAGS.keys.artifactName,
-                    values: [args.artifactName]
-                },
-                {
-                    name: TAGS.keys.poolId,
-                    values: [args.poolId]
-                }
-            ],
-            uploader: null,
-            cursor: null,
+	async isDuplicate(args: { artifactName: string; poolId: string }) {
+		const artifacts: { data: GQLResponseType[]; nextCursor: string | null } = await getGQLData({
+			ids: null,
+			tagFilters: [
+				{
+					name: TAGS.keys.artifactName,
+					values: [args.artifactName],
+				},
+				{
+					name: TAGS.keys.poolId,
+					values: [args.poolId],
+				},
+			],
+			uploader: null,
+			cursor: null,
 			reduxCursor: null,
-			cursorObject: null
-        });
-        return artifacts.data.length > 0;
-    }
+			cursorObject: null,
+		});
+		return artifacts.data.length > 0;
+	}
 }
