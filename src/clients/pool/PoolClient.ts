@@ -101,7 +101,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 	) {
 		super();
 
-		if(args.poolConfig) {
+		if(args && args.poolConfig) {
 			this.poolConfig = args.poolConfig;
 
 			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
