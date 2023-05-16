@@ -19,7 +19,7 @@ import { ArweaveClient } from '../arweave';
 import { POOL_CONTRACT_SRC } from './contracts';
 
 export async function initPoolConfigFromContract(poolId: string) {
-
+	console.log(poolId)
 }
 
 // TODO: Language to site provider
