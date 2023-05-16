@@ -165,6 +165,7 @@ export const DEFAULT_POOLS_JSON =
             "ownerMaintained": false
         },
         "walletPath": "",
+        "walletKey": null,
         "keywords": [
             "keyword1",
         ],
@@ -189,6 +190,8 @@ export const DEFAULT_POOLS_JSON =
             "relays": DEFAULT_NOSTR_RELAYS
         }
 };
+
+export const TESTING_APP_TYPE = "Alex-Archiving-Pool-Thread-Testing-v1.0";
 
 export const CONTENT_TYPES = {
     arweaveManifest: "application/x.arweave-manifest+json",

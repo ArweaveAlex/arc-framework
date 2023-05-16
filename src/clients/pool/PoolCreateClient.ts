@@ -1,9 +1,10 @@
 
 
-import { ArweaveSigner } from "warp-contracts-plugin-deploy";
+
 import { 
     ANSTopicEnum, 
     DEFAULT_POOLS_JSON, 
+    TESTING_APP_TYPE,
     FALLBACK_IMAGE, 
     PoolConfigType, 
     PoolStateType, 
@@ -14,37 +15,43 @@ import {
 import PoolClient from './PoolClient';
 import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from "./contracts";
 
-export function initNewPoolConfig() {
-    return DEFAULT_POOLS_JSON;
+export function initNewPoolConfig(args?: { testMode?: boolean }) {
+    let r = DEFAULT_POOLS_JSON;
+    if(args.testMode) {
+        r.appType = TESTING_APP_TYPE;
+    }
+    return r;
 }
 
 export default class PoolCreateClient {
     poolClient: PoolClient;
     poolConfig: PoolConfigType;
     controlWalletJwk: any;
-    poolWalletJwk: any;
     poolWalletPath: string | null;
     img: Buffer;
     imgFileType: string;
+    signedControlWallet: any;
 
     constructor(
         args: {
             poolConfig: PoolConfigType, 
             controlWalletJwk: any, 
-            poolWalletJwk: any,
-            poolWalletPath: string | null,
-            img: Buffer | null, 
-            imgFileType: string | null
+            poolWalletPath?: string,
+            img?: Buffer, 
+            imgFileType?: string,
+            signedControlWallet: any,
         }
     ) {
-        this.poolClient = new PoolClient({ poolConfig: args.poolConfig });
+        this.poolClient = new PoolClient({ 
+            poolConfig: args.poolConfig
+        });
         this.poolConfig = args.poolConfig;
         this.controlWalletJwk = args.controlWalletJwk;
-        this.poolWalletJwk = args.poolWalletJwk;
         this.poolWalletPath = args.poolWalletPath;
         this.img = args.img;
         this.imgFileType = args.imgFileType;
         this.createPool = this.createPool.bind(this);
+        this.signedControlWallet = args.signedControlWallet;
     }
 
     async createPool() {
@@ -83,7 +90,7 @@ export default class PoolCreateClient {
             nftDeployment = await this.poolClient.warpDefault.createContract.deploy({
                 src: nftSrc,
                 initState: JSON.stringify(nftInitState),
-                wallet: new ArweaveSigner(this.controlWalletJwk)
+                wallet: this.signedControlWallet
             });
         } catch (e: any) {
             console.log(e);
@@ -95,17 +102,17 @@ export default class PoolCreateClient {
             const poolSrcDeployment = await this.poolClient.warpDefault.createContract.deploy({
                 src: poolSrc,
                 initState: JSON.stringify({}),
-                wallet: new ArweaveSigner(this.controlWalletJwk)
+                wallet: this.signedControlWallet
             });
             
             const timestamp = Date.now().toString();
-            
+
             const poolInitJson: PoolStateType = {
                 title: this.poolConfig.state.title,
                 image: img,
                 briefDescription: this.poolConfig.state.briefDescription,
                 description: this.poolConfig.state.description,
-                owner: this.poolWalletJwk,
+                owner: this.poolConfig.state.owner.pubkey,
                 ownerInfo: this.poolConfig.state.owner.info,
                 timestamp: timestamp,
                 contributors: {},
@@ -142,15 +149,12 @@ export default class PoolCreateClient {
             console.log(`Deploying Pool from Source Tx ...`);
             const poolInitState = JSON.stringify(poolInitJson, null, 2);
             const poolDeployment = await this.poolClient.warpDefault.createContract.deployFromSourceTx({
-                wallet: new ArweaveSigner(this.controlWalletJwk),
+                wallet: this.signedControlWallet,
                 initState: poolInitState,
                 srcTxId: poolSrcDeployment.srcTxId,
                 tags: tags
             });
 
-            let poolWalletAddress = await this.poolClient.arweavePost.wallets.jwkToAddress(this.poolWalletJwk);
-
-            this.poolConfig.state.owner.pubkey = poolWalletAddress;
             this.poolConfig.walletPath = this.poolWalletPath;
             this.poolConfig.state.controller.pubkey = controlWalletAddress;
             this.poolConfig.state.image = img;
@@ -164,7 +168,7 @@ export default class PoolCreateClient {
             logJsonUpdate(this.poolConfig.state.title, `contracts.nft.src`, nftDeployment.srcTxId);
             logJsonUpdate(this.poolConfig.state.title, `state.timestamp`, timestamp);
             logJsonUpdate(this.poolConfig.state.title, `contracts.pool.src`, poolSrcDeployment.contractTxId);
-            logJsonUpdate(this.poolConfig.state.title, `state.owner.pubkey`, poolWalletAddress);
+            logJsonUpdate(this.poolConfig.state.title, `state.owner.pubkey`, this.poolConfig.state.owner.pubkey);
             logJsonUpdate(this.poolConfig.state.title, `walletPath`, this.poolWalletPath);
             logJsonUpdate(this.poolConfig.state.title, `contracts.pool.id`, poolDeployment.contractTxId);
         } catch (e: any) {

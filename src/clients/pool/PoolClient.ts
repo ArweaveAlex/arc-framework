@@ -8,7 +8,6 @@ import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 import { Contract } from 'warp-contracts';
 import { POOL_CONTRACT_SRC } from './contracts';
-import { ArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 // TODO: Language to site provider
 export default class PoolClient extends ArweaveClient implements IPoolClient {
@@ -19,7 +18,9 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
     contract: Contract;
 
-    constructor(args: { poolConfig: PoolConfigType }) {
+	signedPoolWallet: any;
+
+    constructor(args: { poolConfig: PoolConfigType, signedPoolWallet?: any }) {
 		super();
 
         this.poolConfig = args.poolConfig;
@@ -31,6 +32,8 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
         this.warpDefault = this.arClient.warpDefault;
 
 		this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
+
+		this.signedPoolWallet = args.signedPoolWallet;
     }
 
 	async validatePoolConfigs() {
@@ -61,11 +64,14 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 		let poolSrc = POOL_CONTRACT_SRC;
-		let poolWallet = new ArweaveSigner(this.poolConfig.walletKey);
+		let poolWallet = this.signedPoolWallet;
 
-        let contract = this.arClient.warpDefault.contract(this.poolConfig.contracts.pool.id).connect(this.poolConfig.walletKey).setEvaluationOptions({
-            allowBigInt: true
-        });
+        let contract = this.arClient.warpDefault
+			.contract(this.poolConfig.contracts.pool.id)
+			.connect(this.poolConfig.walletKey)
+			.setEvaluationOptions({
+				allowBigInt: true
+			});
 
         const newSource = await this.arClient.warpDefault.createSource({src: poolSrc}, poolWallet);
         const newSrcId = await this.arClient.warpDefault.saveSource(newSource);

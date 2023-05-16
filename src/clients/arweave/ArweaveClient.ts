@@ -1,7 +1,7 @@
 import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
-import { DeployPlugin, ArweaveSigner } from 'warp-contracts-plugin-deploy';
+import { DeployPlugin, ArweaveSigner, InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
 import { GQLResponseType, TAGS } from '../../helpers';
 import { getGQLData } from '../../gql';
 
@@ -24,7 +24,6 @@ export default class ArweaveClient {
 	arweavePost: any;
 	warpArweaveGateway: any;
 	warpDefault: any;
-	warpPluginArweaveSigner: any;
 
 	constructor(bundlrJwk?: any) {
 		if (bundlrJwk) {
@@ -54,7 +53,16 @@ export default class ArweaveClient {
 			inMemory: true,
 		}).use(new DeployPlugin());
 
-		this.warpPluginArweaveSigner = ArweaveSigner;
+		this.warpPluginArweaveSigner = this.warpPluginArweaveSigner.bind(this);
+		this.warpPluginInjectedArweaveSigner = this.warpPluginInjectedArweaveSigner.bind(this);
+	}
+
+	warpPluginArweaveSigner(wallet: any) {
+		return new ArweaveSigner(wallet);
+	}
+
+	warpPluginInjectedArweaveSigner(wallet: any) {
+		return new InjectedArweaveSigner(wallet);
 	}
 
 	async isDuplicate(args: {
