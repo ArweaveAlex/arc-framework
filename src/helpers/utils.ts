@@ -162,7 +162,6 @@ export function formatKeywordString(text: string, char: string) {
 	return finalStr.replace(/(https?:\/\/[^\s]+)/g, '');
 }
 
-
 export function logJsonUpdate(poolTitle: string, key: string, value: string): void {
 	const now = new Date();
 	const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
@@ -173,11 +172,10 @@ export function log(message: any, status: 0 | 1 | null): void {
 	const now = new Date();
 	const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 	console.log(`${formattedDate} - ${message} - log status ${status}`);
-  }
-  
-  export function logValue(message: any, value: any, status: 0 | 1 | null): void {
+}
+
+export function logValue(message: any, value: any, status: 0 | 1 | null): void {
 	const now = new Date();
 	const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 	console.log(`${formattedDate} - ${message} - ['${value}'] - log status ${status}`);
-  }
-  
+}

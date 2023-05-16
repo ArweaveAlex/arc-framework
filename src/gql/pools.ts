@@ -1,7 +1,7 @@
 import { ArweaveClient } from '../clients';
 import { getTagValue } from '../helpers';
 import { POOL_INDEX_CONTRACT_ID, TAGS } from '../helpers/config';
-import { ArcGQLResponseType, GQLResponseType, PoolIndexType,PoolType } from '../helpers/types';
+import { ArcGQLResponseType, GQLResponseType, PoolIndexType, PoolType } from '../helpers/types';
 
 import { getGQLData } from '.';
 
@@ -11,11 +11,7 @@ export async function getPoolIds() {
 		tagFilters: [
 			{
 				name: TAGS.keys.appType,
-				values: [
-					TAGS.values.poolVersions['1.2'], 
-					TAGS.values.poolVersions['1.4'], 
-					TAGS.values.poolVersions['1.5']
-				],
+				values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
 			},
 		],
 		uploader: null,
@@ -45,8 +41,8 @@ export async function getPools(): Promise<PoolType[]> {
 	for (let i = 0; i < poolIds.length; i++) {
 		if (poolIds[i]) {
 			try {
-				const contract = arClient.warpDefault.contract(poolIds[i]).setEvaluationOptions({ 
-					allowBigInt: true
+				const contract = arClient.warpDefault.contract(poolIds[i]).setEvaluationOptions({
+					allowBigInt: true,
 				});
 				try {
 					pools.push({ id: poolIds[i], state: ((await contract.readState()) as any).cachedValue.state });
@@ -81,15 +77,11 @@ export async function checkExistingPool(poolName: string): Promise<boolean> {
 		tagFilters: [
 			{
 				name: TAGS.keys.poolName,
-				values: [poolName]
+				values: [poolName],
 			},
 			{
 				name: TAGS.keys.appType,
-				values: [
-					TAGS.values.poolVersions['1.2'], 
-					TAGS.values.poolVersions['1.4'], 
-					TAGS.values.poolVersions['1.5']
-				],
+				values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
 			},
 		],
 		uploader: null,

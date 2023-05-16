@@ -1,5 +1,5 @@
-import Bundlr from "@bundlr-network/client/build/cjs/common/bundlr";
-import { Contract } from "warp-contracts";
+import Bundlr from '@bundlr-network/client/build/cjs/common/bundlr';
+import { Contract } from 'warp-contracts';
 
 export enum ArtifactEnum {
 	Image = 'Alex-Image',
@@ -11,7 +11,7 @@ export enum ArtifactEnum {
 	Audio = 'Alex-Audio',
 	Video = 'Alex-Video',
 	Ebook = 'Alex-Ebook',
-	File = 'Alex-File'
+	File = 'Alex-File',
 }
 
 export enum CursorEnum {
@@ -26,9 +26,9 @@ export enum ANSTopicEnum {
 	Culture = 'Culture',
 	Art = 'Art',
 	Music = 'Music',
-    News = 'News',
+	News = 'News',
 	Faith = 'Faith',
-    Science = 'Science',
+	Science = 'Science',
 	Spirituality = 'Spirituality',
 	Sports = 'Sports',
 	Business = 'Business',
@@ -126,7 +126,7 @@ export type PoolIndexType = {
 		title: string;
 		topics?: string[];
 		totalContributions: string;
-	}
+	};
 };
 
 export interface CollectionType {
@@ -203,45 +203,44 @@ export type ProfileType = {
 	discord: string | null;
 };
 
-
 export type PoolConfigType = {
-    appType: string,
-    contracts: {
-        nft: {
-            id: NStringType
-            src: NStringType
-        },
-        pool: {
-            id: NStringType
-            src: NStringType
-        },
-    },
-    state: {
-        owner: {
-            pubkey: string
-            info: string
-        },
-        controller: {
-            pubkey: NStringType
-            contribPercent: number | null
-        },
-        title: string
-        description: string
-        briefDescription: string
-        image: NStringType
-        timestamp: NStringType
-    },
-	walletPath?: string,
-    walletKey: any,
-    keywords: string[],
-    twitterApiKeys: any,
-    clarifaiApiKey: string,
-    topics: string[],
-    redditApiKeys: any,
-    nostr: {
-        relays: NostrRelayType[]
-    }
-}
+	appType: string;
+	contracts: {
+		nft: {
+			id: NStringType;
+			src: NStringType;
+		};
+		pool: {
+			id: NStringType;
+			src: NStringType;
+		};
+	};
+	state: {
+		owner: {
+			pubkey: string;
+			info: string;
+		};
+		controller: {
+			pubkey: NStringType;
+			contribPercent: number | null;
+		};
+		title: string;
+		description: string;
+		briefDescription: string;
+		image: NStringType;
+		timestamp: NStringType;
+	};
+	walletPath?: string;
+	walletKey: any;
+	keywords: string[];
+	twitterApiKeys: any;
+	clarifaiApiKey: string;
+	topics: string[];
+	redditApiKeys: any;
+	nostr: {
+		relays: NostrRelayType[];
+	};
+};
 
 export type NostrRelayType = { socket: string };
 
@@ -249,15 +248,15 @@ type NStringType = string | null;
 export type KeyValueType = { [key: string]: string };
 
 export interface PoolType {
-    id: string
-    state: PoolStateType
+	id: string;
+	state: PoolStateType;
 }
 
 export interface IPoolClient {
-    arClient: any;
-    poolConfig: PoolConfigType;
-    walletKey: string | null;
-    bundlr: Bundlr;
-    contract: Contract;
-    warpDefault: any;
+	arClient: any;
+	poolConfig: PoolConfigType;
+	walletKey: string | null;
+	bundlr: Bundlr;
+	contract: Contract;
+	warpDefault: any;
 }
