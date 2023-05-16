@@ -94,7 +94,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 	signedPoolWallet: any;
 
 	constructor(
-		args: { 
+		args?: { 
 			poolConfig?: PoolConfigType, 
 			signedPoolWallet?: any
 		}

@@ -120,6 +120,7 @@ export default class PoolCreateClient {
 				controlPubkey: this.controlWalletAddress,
 				contribPercent: this.poolConfig.state.controller.contribPercent.toString(),
 				topics: [],
+                artifactContractSrc: nftDeployment.srcTxId
 			};
 
 			const tags = [
