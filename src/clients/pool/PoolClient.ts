@@ -3,7 +3,15 @@ import Bundlr from '@bundlr-network/client';
 
 import { getArtifactsByUser, getGQLData, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
-import { ANSTopicEnum, ContributionResultType, ContributionType, GQLResponseType, IPoolClient, PoolConfigType, PoolType } from '../../helpers/types';
+import { 
+	ANSTopicEnum, 
+	ContributionResultType, 
+	ContributionType, 
+	GQLResponseType, 
+	IPoolClient, 
+	PoolConfigType, 
+	PoolType 
+} from '../../helpers/types';
 import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 import { Contract } from 'warp-contracts';
