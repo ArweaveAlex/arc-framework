@@ -111,6 +111,7 @@ export interface PoolStateType {
 	totalSupply: string;
 	balance: string;
 	ownerMaintained?: boolean;
+	artifactContractSrc?: string;
 	controlPubkey?: string;
 	contribPercent?: string;
 	canEvolve?: boolean;
@@ -229,6 +230,7 @@ export type PoolConfigType = {
 		briefDescription: string;
 		image: NStringType;
 		timestamp: NStringType;
+		ownerMaintained?: boolean;
 	};
 	walletPath?: string;
 	walletKey: any;

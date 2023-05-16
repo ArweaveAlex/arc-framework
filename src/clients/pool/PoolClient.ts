@@ -2,7 +2,7 @@ import Bundlr from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
-import { getArtifactsByUser, getGQLData, getPools } from '../../gql';
+import { getArtifactsByUser, getGQLData, getPools, getPoolById } from '../../gql';
 import { TAGS } from '../../helpers/config';
 import {
 	ANSTopicEnum,
@@ -17,9 +17,69 @@ import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 
 import { POOL_CONTRACT_SRC } from './contracts';
+import { initNewPoolConfig } from './PoolCreateClient';
 
+// initialize a PoolConfigType from an existing pool contract
 export async function initPoolConfigFromContract(poolId: string) {
-	console.log(poolId)
+	let poolConfig: PoolConfigType = initNewPoolConfig();
+
+	let pool = await getPoolById(poolId);
+	let poolData = await getGQLData({
+		ids: null,
+		tagFilters: [
+			{name: TAGS.keys.poolName, values: [pool.state.title]}
+		],
+		uploader: null,
+		cursor: null,
+		reduxCursor: null,
+		cursorObject: null
+	});
+
+	if(poolData.data.length < 1) return null;
+
+	let artifactContractSrc: string;
+
+	if(pool.state.artifactContractSrc) {
+		artifactContractSrc = pool.state.artifactContractSrc;
+	} else {
+		let artifactData = await getGQLData({
+			ids: null,
+			tagFilters: [
+				{name: TAGS.keys.poolName, values: [pool.state.title]}
+			],
+			uploader: null,
+			cursor: null,
+			reduxCursor: null,
+			cursorObject: null
+		}); 
+
+		if(artifactData.data.length > 0) {
+			artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
+		}
+	}
+
+	if(!artifactContractSrc) {
+		throw new Error(`Could not locate artifact contract src id`);
+	}
+
+	poolConfig.appType = getTagValue(poolData.data[0].node.tags, TAGS.keys.appType);
+	poolConfig.contracts.pool.id = pool.id;
+	poolConfig.contracts.pool.src = getTagValue(poolData.data[0].node.tags, TAGS.keys.contractSrc);
+	poolConfig.contracts.nft.src = artifactContractSrc;
+	poolConfig.state.owner.pubkey = pool.state.owner;
+	poolConfig.state.owner.info = pool.state.ownerInfo;
+	poolConfig.state.controller.pubkey = pool.state.controlPubkey;
+	poolConfig.state.controller.contribPercent = parseFloat(pool.state.contribPercent);
+	poolConfig.state.title = pool.state.title;
+	poolConfig.state.description = pool.state.description;
+	poolConfig.state.briefDescription = pool.state.briefDescription;
+	poolConfig.state.image = pool.state.image;
+	poolConfig.state.timestamp = pool.state.timestamp;
+	poolConfig.state.ownerMaintained = pool.state.ownerMaintained;
+	poolConfig.keywords = JSON.parse(getTagValue(poolData.data[0].node.tags, TAGS.keys.keywords)) as string[];
+	poolConfig.topics = pool.state.topics;
+
+	return poolConfig;
 }
 
 // TODO: Language to site provider
@@ -33,20 +93,27 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(args: { poolConfig: PoolConfigType; signedPoolWallet?: any }) {
+	constructor(
+		args: { 
+			poolConfig?: PoolConfigType, 
+			signedPoolWallet?: any
+		}
+	) {
 		super();
 
-		this.poolConfig = args.poolConfig;
+		if(args.poolConfig) {
+			this.poolConfig = args.poolConfig;
 
-		this.bundlr = new Bundlr('https://node2.bundlr.network', 'matic', args.poolConfig.walletKey);
-		this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
-			allowBigInt: true,
-		});
-		this.warpDefault = this.arClient.warpDefault;
-
-		this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
-
-		this.signedPoolWallet = args.signedPoolWallet;
+			this.bundlr = new Bundlr('https://node2.bundlr.network', 'matic', args.poolConfig.walletKey);
+			this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
+				allowBigInt: true,
+			});
+			this.warpDefault = this.arClient.warpDefault;
+	
+			this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
+	
+			this.signedPoolWallet = args.signedPoolWallet;
+		}
 	}
 
 	async validatePoolConfigs() {
