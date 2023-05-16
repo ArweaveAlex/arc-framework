@@ -74,3 +74,29 @@ export async function getIndexPools(): Promise<PoolIndexType[]> {
 export async function getIndexPoolIds(): Promise<string[]> {
 	return (await getIndexPools()).map((pool: PoolIndexType) => pool.id);
 }
+
+export async function checkExistingPool(poolName: string): Promise<boolean> {
+	const existingPool: ArcGQLResponseType = await getGQLData({
+		ids: null,
+		tagFilters: [
+			{
+				name: TAGS.keys.poolName,
+				values: [poolName]
+			},
+			{
+				name: TAGS.keys.appType,
+				values: [
+					TAGS.values.poolVersions['1.2'], 
+					TAGS.values.poolVersions['1.4'], 
+					TAGS.values.poolVersions['1.5']
+				],
+			},
+		],
+		uploader: null,
+		cursor: null,
+		reduxCursor: null,
+		cursorObject: null,
+	});
+
+	return existingPool.data.length > 0;
+}

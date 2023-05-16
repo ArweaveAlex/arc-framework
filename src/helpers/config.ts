@@ -32,7 +32,7 @@ export const TAGS = {
 		initState: "Init-State",
 		license: "License",
 		poolId: 'Pool-Id',
-		poolName: "Pool-Name",
+		poolName: 'Pool-Name',
 		profileImage: 'Profile-Image',
 		protocolName: 'Protocol-Name',
 		uploaderTxId: 'Uploader-Tx-Id',
