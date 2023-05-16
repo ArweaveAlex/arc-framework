@@ -116,6 +116,7 @@ export interface PoolStateType {
 	contribPercent?: string;
 	canEvolve?: boolean;
 	topics?: string[];
+	keywords?: string[];
 }
 
 export type PoolIndexType = {
@@ -231,6 +232,7 @@ export type PoolConfigType = {
 		image: NStringType;
 		timestamp: NStringType;
 		ownerMaintained?: boolean;
+		keywords?: string[];
 	};
 	walletPath?: string;
 	walletKey: any;

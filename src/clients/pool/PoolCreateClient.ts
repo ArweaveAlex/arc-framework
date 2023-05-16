@@ -14,7 +14,7 @@ import PoolClient from './PoolClient';
 
 export function initNewPoolConfig(args?: { testMode?: boolean }) {
 	let r = DEFAULT_POOLS_JSON;
-	if (args.testMode) {
+	if (args && args.testMode) {
 		r.appType = TESTING_APP_TYPE;
 	}
 	return r;
@@ -110,6 +110,7 @@ export default class PoolCreateClient {
 				description: this.poolConfig.state.description,
 				owner: this.poolConfig.state.owner.pubkey,
 				ownerInfo: this.poolConfig.state.owner.info,
+                ownerMaintained: this.poolConfig.state.ownerMaintained,
 				timestamp: timestamp,
 				contributors: {},
 				tokens: {},
@@ -120,7 +121,8 @@ export default class PoolCreateClient {
 				controlPubkey: this.controlWalletAddress,
 				contribPercent: this.poolConfig.state.controller.contribPercent.toString(),
 				topics: [],
-                artifactContractSrc: nftDeployment.srcTxId
+                artifactContractSrc: nftDeployment.srcTxId,
+                keywords: this.poolConfig.keywords
 			};
 
 			const tags = [

@@ -38,28 +38,41 @@ export async function initPoolConfigFromContract(poolId: string) {
 	if(poolData.data.length < 1) return null;
 
 	let artifactContractSrc: string;
+	let keywords: string[];
+
+	let artifactData = await getGQLData({
+		ids: null,
+		tagFilters: [
+			{name: TAGS.keys.poolId, values: [pool.id]}
+		],
+		uploader: null,
+		cursor: null,
+		reduxCursor: null,
+		cursorObject: null
+	}); 
 
 	if(pool.state.artifactContractSrc) {
 		artifactContractSrc = pool.state.artifactContractSrc;
 	} else {
-		let artifactData = await getGQLData({
-			ids: null,
-			tagFilters: [
-				{name: TAGS.keys.poolName, values: [pool.state.title]}
-			],
-			uploader: null,
-			cursor: null,
-			reduxCursor: null,
-			cursorObject: null
-		}); 
-
 		if(artifactData.data.length > 0) {
 			artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
 		}
 	}
 
+	if(pool.state.keywords) {
+		keywords = pool.state.keywords;
+	} else {
+		if(artifactData.data.length > 0) {
+			keywords = JSON.parse(getTagValue(artifactData.data[0].node.tags, TAGS.keys.keywords)) as string[];
+		}
+	}
+
 	if(!artifactContractSrc) {
 		throw new Error(`Could not locate artifact contract src id`);
+	}
+
+	if(!keywords) {
+		throw new Error(`Could not locate keywords`);
 	}
 
 	poolConfig.appType = getTagValue(poolData.data[0].node.tags, TAGS.keys.appType);
@@ -76,7 +89,7 @@ export async function initPoolConfigFromContract(poolId: string) {
 	poolConfig.state.image = pool.state.image;
 	poolConfig.state.timestamp = pool.state.timestamp;
 	poolConfig.state.ownerMaintained = pool.state.ownerMaintained;
-	poolConfig.keywords = JSON.parse(getTagValue(poolData.data[0].node.tags, TAGS.keys.keywords)) as string[];
+	poolConfig.keywords = keywords;
 	poolConfig.topics = pool.state.topics;
 
 	return poolConfig;
