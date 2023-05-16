@@ -21,6 +21,7 @@ export const TAGS = {
 		keywords: 'Keywords',
 		initialOwner: 'Initial-Owner',
 		poolId: 'Pool-Id',
+		poolName: 'Pool-Name',
 		profileImage: 'Profile-Image',
 		protocolName: 'Protocol-Name',
 		uploaderTxId: 'Uploader-Tx-Id',
