@@ -28,7 +28,7 @@ export default class PoolCreateClient {
 	img: Buffer;
 	imgFileType: string;
 	signedControlWallet: any;
-    controlWalletAddress: string;
+	controlWalletAddress: string;
 
 	constructor(args: {
 		poolConfig: PoolConfigType;
@@ -37,7 +37,7 @@ export default class PoolCreateClient {
 		img?: Buffer;
 		imgFileType?: string;
 		signedControlWallet: any;
-        controlWalletAddress: string;
+		controlWalletAddress: string;
 	}) {
 		this.poolClient = new PoolClient({
 			poolConfig: args.poolConfig,
@@ -49,7 +49,7 @@ export default class PoolCreateClient {
 		this.imgFileType = args.imgFileType;
 		this.createPool = this.createPool.bind(this);
 		this.signedControlWallet = args.signedControlWallet;
-        this.controlWalletAddress = args.controlWalletAddress;
+		this.controlWalletAddress = args.controlWalletAddress;
 	}
 
 	async createPool() {
@@ -78,7 +78,7 @@ export default class PoolCreateClient {
 				img = FALLBACK_IMAGE;
 			}
 		} catch (e: any) {
-            console.error(e)
+			console.error(e);
 			throw new Error(`Failed to upload background image`);
 		}
 
@@ -110,7 +110,7 @@ export default class PoolCreateClient {
 				description: this.poolConfig.state.description,
 				owner: this.poolConfig.state.owner.pubkey,
 				ownerInfo: this.poolConfig.state.owner.info,
-                ownerMaintained: this.poolConfig.state.ownerMaintained,
+				ownerMaintained: this.poolConfig.state.ownerMaintained,
 				timestamp: timestamp,
 				contributors: {},
 				tokens: {},
@@ -121,8 +121,8 @@ export default class PoolCreateClient {
 				controlPubkey: this.controlWalletAddress,
 				contribPercent: this.poolConfig.state.controller.contribPercent.toString(),
 				topics: [],
-                artifactContractSrc: nftDeployment.srcTxId,
-                keywords: this.poolConfig.keywords
+				artifactContractSrc: nftDeployment.srcTxId,
+				keywords: this.poolConfig.keywords,
 			};
 
 			const tags = [
