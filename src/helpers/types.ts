@@ -117,6 +117,7 @@ export interface PoolStateType {
 	canEvolve?: boolean;
 	topics?: string[];
 	keywords?: string[];
+	usedFunds?: number;
 }
 
 export type PoolIndexType = {
