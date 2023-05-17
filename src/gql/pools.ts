@@ -5,18 +5,13 @@ import { ArcGQLResponseType, GQLResponseType, PoolIndexType, PoolType } from '..
 
 import { getGQLData } from '.';
 
-// TODO: switch tags
 export async function getPoolIds(owner?: string) {
 	const pools: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: [
-			// {
-			// 	name: TAGS.keys.appType,
-			// 	values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
-			// },
 			{
 				name: TAGS.keys.appType,
-				values: ['Alex-Archiving-Pool-Thread-Testing-v1.0'],
+				values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
 			},
 		],
 		uploader: owner ? owner : null,
