@@ -2,7 +2,7 @@ import Bundlr from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
-import { getArtifactsByUser, getGQLData, getPools, getPoolById } from '../../gql';
+import { getArtifactsByUser, getGQLData, getPoolById, getPools } from '../../gql';
 import { BUNDLR_CURRENCY, BUNDLR_NODE, TAGS } from '../../helpers/config';
 import {
 	ANSTopicEnum,
@@ -26,52 +26,48 @@ export async function initPoolConfigFromContract(poolId: string) {
 	let pool = await getPoolById(poolId);
 	let poolData = await getGQLData({
 		ids: null,
-		tagFilters: [
-			{name: TAGS.keys.poolName, values: [pool.state.title]}
-		],
+		tagFilters: [{ name: TAGS.keys.poolName, values: [pool.state.title] }],
 		uploader: null,
 		cursor: null,
 		reduxCursor: null,
-		cursorObject: null
+		cursorObject: null,
 	});
 
-	if(poolData.data.length < 1) return null;
+	if (poolData.data.length < 1) return null;
 
 	let artifactContractSrc: string;
 	let keywords: string[];
 
 	let artifactData = await getGQLData({
 		ids: null,
-		tagFilters: [
-			{name: TAGS.keys.poolId, values: [pool.id]}
-		],
+		tagFilters: [{ name: TAGS.keys.poolId, values: [pool.id] }],
 		uploader: null,
 		cursor: null,
 		reduxCursor: null,
-		cursorObject: null
-	}); 
+		cursorObject: null,
+	});
 
-	if(pool.state.artifactContractSrc) {
+	if (pool.state.artifactContractSrc) {
 		artifactContractSrc = pool.state.artifactContractSrc;
 	} else {
-		if(artifactData.data.length > 0) {
+		if (artifactData.data.length > 0) {
 			artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
 		}
 	}
 
-	if(pool.state.keywords) {
+	if (pool.state.keywords) {
 		keywords = pool.state.keywords;
 	} else {
-		if(artifactData.data.length > 0) {
+		if (artifactData.data.length > 0) {
 			keywords = JSON.parse(getTagValue(artifactData.data[0].node.tags, TAGS.keys.keywords)) as string[];
 		}
 	}
 
-	if(!artifactContractSrc) {
+	if (!artifactContractSrc) {
 		throw new Error(`Could not locate artifact contract src id`);
 	}
 
-	if(!keywords) {
+	if (!keywords) {
 		throw new Error(`Could not locate keywords`);
 	}
 
@@ -106,15 +102,10 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(
-		args?: { 
-			poolConfig?: PoolConfigType, 
-			signedPoolWallet?: any
-		}
-	) {
+	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
 		super();
 
-		if(args && args.poolConfig) {
+		if (args && args.poolConfig) {
 			this.poolConfig = args.poolConfig;
 
 			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
@@ -122,9 +113,9 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 				allowBigInt: true,
 			});
 			this.warpDefault = this.arClient.warpDefault;
-	
+
 			this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
-	
+
 			this.signedPoolWallet = args.signedPoolWallet;
 		}
 	}

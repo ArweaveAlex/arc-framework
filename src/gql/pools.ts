@@ -5,16 +5,21 @@ import { ArcGQLResponseType, GQLResponseType, PoolIndexType, PoolType } from '..
 
 import { getGQLData } from '.';
 
-export async function getPoolIds() {
+// TODO: switch tags
+export async function getPoolIds(owner?: string) {
 	const pools: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: [
+			// {
+			// 	name: TAGS.keys.appType,
+			// 	values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
+			// },
 			{
 				name: TAGS.keys.appType,
-				values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
+				values: ['Alex-Archiving-Pool-Thread-Testing-v1.0'],
 			},
 		],
-		uploader: null,
+		uploader: owner ? owner : null,
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
@@ -22,6 +27,8 @@ export async function getPoolIds() {
 
 	return pools.data.map((pool: GQLResponseType) => {
 		switch (getTagValue(pool.node.tags, TAGS.keys.appType)) {
+			case 'Alex-Archiving-Pool-Thread-Testing-v1.0':
+				return pool.node.id;
 			case TAGS.values.poolVersions['1.2']:
 				return pool.node.id;
 			case TAGS.values.poolVersions['1.4']:
@@ -32,11 +39,11 @@ export async function getPoolIds() {
 	});
 }
 
-export async function getPools(): Promise<PoolType[]> {
+export async function getPools(owner?: string): Promise<PoolType[]> {
 	const arClient = new ArweaveClient();
 
 	const pools: PoolType[] = [];
-	const poolIds = await getPoolIds();
+	const poolIds = owner ? await getPoolIds(owner) : await getPoolIds();
 
 	for (let i = 0; i < poolIds.length; i++) {
 		if (poolIds[i]) {
@@ -69,6 +76,10 @@ export async function getIndexPools(): Promise<PoolIndexType[]> {
 
 export async function getIndexPoolIds(): Promise<string[]> {
 	return (await getIndexPools()).map((pool: PoolIndexType) => pool.id);
+}
+
+export async function getPoolsByOwner(owner: string): Promise<PoolType[]> {
+	return await getPools(owner);
 }
 
 export async function checkExistingPool(poolName: string): Promise<boolean> {
