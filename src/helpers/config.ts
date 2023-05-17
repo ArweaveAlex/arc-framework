@@ -234,4 +234,4 @@ export const ARTIFACT_TYPES_BY_FILE: { [ext: string]: ArtifactEnum } = {
 };
 
 export const BUNDLR_NODE = 'https://node2.bundlr.network';
-export const BUNDLR_CURRENCY = 'matic';
+export const BUNDLR_CURRENCY = "arweave";
