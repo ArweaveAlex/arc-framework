@@ -184,8 +184,10 @@ async function createContractTags(
 		tagList.push({ name: TAGS.keys.fileType, value: args.fileType });
 	}
 
-	for (let i = 0; i < poolClient.poolConfig.topics.length; i++) {
-		tagList.push({ name: TAGS.keys.topic(poolClient.poolConfig.topics[i]), value: poolClient.poolConfig.topics[i] });
+	if(poolClient.poolConfig.topics) {
+		for (let i = 0; i < poolClient.poolConfig.topics.length; i++) {
+			tagList.push({ name: TAGS.keys.topic(poolClient.poolConfig.topics[i]), value: poolClient.poolConfig.topics[i] });
+		}
 	}
 
 	return tagList;
