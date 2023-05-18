@@ -1,4 +1,5 @@
 import Bundlr from '@bundlr-network/client';
+import WebBundlr from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
@@ -102,13 +103,18 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
+	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any, env?: string }) {
 		super();
 
 		if (args && args.poolConfig) {
 			this.poolConfig = args.poolConfig;
 
-			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
+			if(args.env === 'web') {
+				this.bundlr = new WebBundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
+			} else {
+				this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
+			}
+
 			this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
 				allowBigInt: true,
 			});

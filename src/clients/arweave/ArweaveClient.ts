@@ -22,6 +22,7 @@ export default class ArweaveClient {
 	arweavePost: any;
 	warpArweaveGateway: any;
 	warpDefault: any;
+	arweaveUtils: any;
 
 	constructor(bundlrJwk?: any) {
 		if (bundlrJwk) {
@@ -43,6 +44,8 @@ export default class ArweaveClient {
 			timeout: TIMEOUT,
 			logging: LOGGING,
 		});
+
+		this.arweaveUtils = Arweave.utils;
 
 		this.warpArweaveGateway = WarpFactory.forMainnet(defaultCacheOptions, true);
 

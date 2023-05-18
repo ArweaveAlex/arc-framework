@@ -1,6 +1,7 @@
 import { contentType } from 'mime-types';
+import mime from "mime-types";
 
-import { CONTENT_TYPES, TAGS } from '../helpers/config';
+import { ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
 import { ArtifactEnum, IPoolClient } from '../helpers/types';
 import { log, logValue } from '../helpers/utils';
 
@@ -12,6 +13,40 @@ export function initCounter() {
 		log(`Artifacts per second - ${APS}`, 0);
 		APS = 0;
 	}, 1000);
+}
+
+export function getMimeType(fileName: string) {
+	return mime.contentType(mime.lookup(fileName) || CONTENT_TYPES.octetStream) as string;
+}
+
+export function getAlexType(fileType: string) {
+	return  ARTIFACT_TYPES_BY_FILE[fileType] ? ARTIFACT_TYPES_BY_FILE[fileType] : ArtifactEnum.File;
+}
+
+export function getAnsType(alexType: string) {
+	let ansType: string;
+	switch (alexType){
+        case ArtifactEnum.Video:
+            ansType = TAGS.values.ansTypes.video;
+            break;
+        case ArtifactEnum.Audio:
+            ansType = TAGS.values.ansTypes.music;
+            break;
+        case ArtifactEnum.Image:
+            ansType = TAGS.values.ansTypes.image;
+            break;
+        case ArtifactEnum.Document:
+            ansType = TAGS.values.ansTypes.document;
+            break;
+        case ArtifactEnum.Ebook:
+            ansType = TAGS.values.ansTypes.document;
+            break;
+        // file is a default
+        case ArtifactEnum.File:
+            ansType = TAGS.values.ansTypes.file;
+            break;
+    }
+	return ansType;
 }
 
 export async function createAsset(
