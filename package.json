@@ -1,6 +1,6 @@
 {
 	"name": "arcframework",
-	"version": "1.1.62",
+	"version": "1.1.67",
 	"description": "Alex. Framework",
 	"author": "NickJ202",
 	"license": "ISC",
@@ -8,21 +8,21 @@
 		"format": "eslint --fix . && npx prettier --write .",
 		"test": "ts-node src/tests",
 		"build": "tsc",
-		"build:publish": "npm run build && npm publish"
+		"build:publish": "npm run build && npm publish",
+		"postinstall": "npm install ./bundlr-network-client-v0.11.2.tgz"
 	},
 	"dependencies": {
-		"@bundlr-network/client": "file:bundlr-network-client-v0.11.2.tgz",
 		"arweave": "1.13.7",
 		"mime": "^3.0.0",
 		"warp-contracts": "1.4.6",
 		"warp-contracts-plugin-deploy": "1.0.8"
 	},
 	"devDependencies": {
+		"@types/mime": "^3.0.1",
+		"@types/mime-types": "^2.1.1",
 		"@types/node": "^18.16.1",
 		"@typescript-eslint/eslint-plugin": "^5.54.0",
 		"@typescript-eslint/parser": "^5.54.0",
-		"@types/mime": "^3.0.1",
-		"@types/mime-types": "^2.1.1",
 		"eslint": "^8.35.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-simple-import-sort": "^10.0.0",
@@ -44,6 +44,6 @@
 		"dist",
 		"README.md",
 		"package.json",
-		"bundlr-network-client-0.11.2.tgz"
+		"bundlr-network-client-v0.11.2.tgz"
 	]
 }
