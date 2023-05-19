@@ -120,6 +120,13 @@ export interface PoolStateType {
 	usedFunds?: number;
 }
 
+export type PoolBalancesType = {
+	totalBalance: number;
+	arweaveBalance: number;
+	bundlrBalance: number;
+	fundsUsed: number;
+};
+
 export type PoolAdditionalPropsType = PoolType & {
 	totalContributed?: string;
 	lastContribution?: number;

@@ -1,4 +1,4 @@
-import Bundlr, { WebBundlr } from '@bundlr-network/client';
+import Bundlr from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
@@ -10,6 +10,7 @@ import {
 	ContributionType,
 	GQLResponseType,
 	IPoolClient,
+	PoolBalancesType,
 	PoolConfigType,
 	PoolType,
 } from '../../helpers/types';
@@ -102,17 +103,13 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any; env?: string }) {
+	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
 		super();
 
 		if (args && args.poolConfig) {
 			this.poolConfig = args.poolConfig;
 
-			if (args.env === 'web') {
-				this.bundlr = new WebBundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
-			} else {
-				this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
-			}
+			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
 
 			this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
 				allowBigInt: true,
@@ -165,6 +162,29 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 		const newSource = await this.arClient.warpDefault.createSource({ src: poolSrc }, poolWallet);
 		const newSrcId = await this.arClient.warpDefault.saveSource(newSource);
 		await contract.evolve(newSrcId);
+	}
+
+	async balances(): Promise<PoolBalancesType> {
+		if (this.poolConfig && this.poolConfig.contracts.pool.id) {
+			let arweaveBalance = parseInt(await this.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey));
+			let bundlrBalance = 0;
+			try {
+				bundlrBalance = (await this.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+			} catch (e: any) {
+				console.log(e);
+			}
+			let contractState: any = (await this.contract.readState()).cachedValue.state;
+			let fundsUsed = contractState.fundsUsed ? contractState.fundsUsed : 0;
+
+			return {
+				totalBalance: arweaveBalance + bundlrBalance,
+				arweaveBalance: arweaveBalance,
+				bundlrBalance: bundlrBalance,
+				fundsUsed: fundsUsed,
+			};
+		} else {
+			throw new Error(`Please provide a pool config with a pool id in it`);
+		}
 	}
 
 	async fundBundlr() {
