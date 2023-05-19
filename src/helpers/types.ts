@@ -120,7 +120,11 @@ export interface PoolStateType {
 	usedFunds?: number;
 }
 
-export type PoolAdditionalPropsType = PoolType & { totalContributed?: string, lastContribution?: number, receivingPercent?: string };
+export type PoolAdditionalPropsType = PoolType & {
+	totalContributed?: string;
+	lastContribution?: number;
+	receivingPercent?: string;
+};
 
 export type PoolIndexType = {
 	id: string;

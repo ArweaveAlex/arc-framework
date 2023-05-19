@@ -1,5 +1,4 @@
-import { contentType } from 'mime-types';
-import mime from "mime-types";
+import mime, { contentType } from 'mime-types';
 
 import { ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
 import { ArtifactEnum, IPoolClient } from '../helpers/types';
@@ -20,32 +19,32 @@ export function getMimeType(fileName: string) {
 }
 
 export function getAlexType(fileType: string) {
-	return  ARTIFACT_TYPES_BY_FILE[fileType] ? ARTIFACT_TYPES_BY_FILE[fileType] : ArtifactEnum.File;
+	return ARTIFACT_TYPES_BY_FILE[fileType] ? ARTIFACT_TYPES_BY_FILE[fileType] : ArtifactEnum.File;
 }
 
 export function getAnsType(alexType: string) {
 	let ansType: string;
-	switch (alexType){
-        case ArtifactEnum.Video:
-            ansType = TAGS.values.ansTypes.video;
-            break;
-        case ArtifactEnum.Audio:
-            ansType = TAGS.values.ansTypes.music;
-            break;
-        case ArtifactEnum.Image:
-            ansType = TAGS.values.ansTypes.image;
-            break;
-        case ArtifactEnum.Document:
-            ansType = TAGS.values.ansTypes.document;
-            break;
-        case ArtifactEnum.Ebook:
-            ansType = TAGS.values.ansTypes.document;
-            break;
-        // file is a default
-        case ArtifactEnum.File:
-            ansType = TAGS.values.ansTypes.file;
-            break;
-    }
+	switch (alexType) {
+		case ArtifactEnum.Video:
+			ansType = TAGS.values.ansTypes.video;
+			break;
+		case ArtifactEnum.Audio:
+			ansType = TAGS.values.ansTypes.music;
+			break;
+		case ArtifactEnum.Image:
+			ansType = TAGS.values.ansTypes.image;
+			break;
+		case ArtifactEnum.Document:
+			ansType = TAGS.values.ansTypes.document;
+			break;
+		case ArtifactEnum.Ebook:
+			ansType = TAGS.values.ansTypes.document;
+			break;
+		// file is a default
+		case ArtifactEnum.File:
+			ansType = TAGS.values.ansTypes.file;
+			break;
+	}
 	return ansType;
 }
 
@@ -184,7 +183,7 @@ async function createContractTags(
 		tagList.push({ name: TAGS.keys.fileType, value: args.fileType });
 	}
 
-	if(poolClient.poolConfig.topics) {
+	if (poolClient.poolConfig.topics) {
 		for (let i = 0; i < poolClient.poolConfig.topics.length; i++) {
 			tagList.push({ name: TAGS.keys.topic(poolClient.poolConfig.topics[i]), value: poolClient.poolConfig.topics[i] });
 		}
