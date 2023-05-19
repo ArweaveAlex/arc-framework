@@ -1,6 +1,6 @@
 module.exports = {
 	parser: '@typescript-eslint/parser',
-	plugins: ['import', '@typescript-eslint', 'simple-import-sort'],
+	plugins: ['import', '@typescript-eslint', 'simple-import-sort', 'react-hooks'],
 	extends: [],
 	rules: {
 		'import/no-duplicates': 'error',
@@ -9,19 +9,34 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: ['*.js', '*.ts'],
+			files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
 			rules: {
 				'simple-import-sort/imports': [
 					'error',
 					{
 						groups: [
-							['^((?!\\.).)*$'],
+							['^react', '^@?\\w'],
+							['^(@|arcframework)(/.*|$)'],
 							[
+								'^(@|app)(/.*|$)',
+								'^(@|assets)(/.*|$)',
 								'^(@|clients)(/.*|$)',
-								'^(@|collections)(/.*|$)',
+								'^(@|components)(/.*|$)',
 								'^(@|filters)(/.*|$)',
+								'^(@|global)(/.*|$)',
 								'^(@|gql)(/.*|$)',
 								'^(@|helpers)(/.*|$)',
+								'^(@|hooks)(/.*|$)',
+								'^(@|navigation)(/.*|$)',
+								'^(@|providers)(/.*|$)',
+								'^(@|root)(/.*|$)',
+								'^(@|routes)(/.*|$)',
+								'^(@|search)(/.*|$)',
+								'^(@|state)(/.*|$)',
+								'^(@|views)(/.*|$)',
+								'^(@|wallet)(/.*|$)',
+								'^(@|workers)(/.*|$)',
+								'^(@|wrappers)(/.*|$)',
 							],
 							['^\\u0000'],
 							['^\\.\\.(?!/?$)', '^\\.\\./?$'],

@@ -1,5 +1,4 @@
-import Bundlr from '@bundlr-network/client';
-import WebBundlr from '@bundlr-network/client';
+import Bundlr, { WebBundlr } from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
