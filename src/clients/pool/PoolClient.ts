@@ -114,6 +114,8 @@ export default class PoolClient implements IPoolClient {
 			this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
 
 			this.signedPoolWallet = args.signedPoolWallet;
+		} else {
+			this.arClient = new ArweaveClient();
 		}
 	}
 
