@@ -60,19 +60,21 @@ export default class PoolCreateClient {
 		let img: string;
 
 		try {
-			let controlWalletBalance = await this.poolClient.arweavePost.wallets.getBalance(this.controlWalletAddress);
+			let controlWalletBalance = await this.poolClient.arClient.arweavePost.wallets.getBalance(
+				this.controlWalletAddress
+			);
 
 			if (controlWalletBalance == 0) {
 				throw new Error(`Control wallet is empty`);
 			}
 
 			if (this.img) {
-				const tx = await this.poolClient.arweavePost.createTransaction({
+				const tx = await this.poolClient.arClient.arweavePost.createTransaction({
 					data: this.img,
 				});
 				tx.addTag(TAGS.keys.contentType, this.imgFileType);
-				await this.poolClient.arweavePost.transactions.sign(tx, this.controlWalletJwk);
-				await this.poolClient.arweavePost.transactions.post(tx);
+				await this.poolClient.arClient.arweavePost.transactions.sign(tx, this.controlWalletJwk);
+				await this.poolClient.arClient.arweavePost.transactions.post(tx);
 				img = tx.id;
 			} else {
 				img = FALLBACK_IMAGE;
@@ -83,7 +85,7 @@ export default class PoolCreateClient {
 		}
 
 		try {
-			nftDeployment = await this.poolClient.warpDefault.createContract.deploy({
+			nftDeployment = await this.poolClient.arClient.warpDefault.createContract.deploy({
 				src: nftSrc,
 				initState: JSON.stringify(nftInitState),
 				wallet: this.signedControlWallet,
@@ -95,7 +97,7 @@ export default class PoolCreateClient {
 
 		try {
 			console.log(`Deploying Pool Contract Source ...`);
-			const poolSrcDeployment = await this.poolClient.warpDefault.createContract.deploy({
+			const poolSrcDeployment = await this.poolClient.arClient.warpDefault.createContract.deploy({
 				src: poolSrc,
 				initState: JSON.stringify({}),
 				wallet: this.signedControlWallet,
@@ -145,7 +147,7 @@ export default class PoolCreateClient {
 
 			console.log(`Deploying Pool from Source Tx ...`);
 			const poolInitState = JSON.stringify(poolInitJson, null, 2);
-			const poolDeployment = await this.poolClient.warpDefault.createContract.deployFromSourceTx({
+			const poolDeployment = await this.poolClient.arClient.warpDefault.createContract.deployFromSourceTx({
 				wallet: this.signedControlWallet,
 				initState: poolInitState,
 				srcTxId: poolSrcDeployment.srcTxId,

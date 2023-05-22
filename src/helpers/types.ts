@@ -1,5 +1,6 @@
-import Bundlr from '@bundlr-network/client/build/cjs/common/bundlr';
 import { Contract } from 'warp-contracts';
+
+import { ArweaveClient } from '../clients';
 
 export enum ArtifactEnum {
 	Image = 'Alex-Image',
@@ -271,10 +272,8 @@ export interface PoolType {
 }
 
 export interface IPoolClient {
-	arClient: any;
+	arClient: ArweaveClient;
 	poolConfig: PoolConfigType;
 	walletKey: string | null;
-	bundlr: Bundlr;
 	contract: Contract;
-	warpDefault: any;
 }

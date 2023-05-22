@@ -212,10 +212,10 @@ async function deployToBundlr(
 	}
 
 	try {
-		const transaction = poolClient.bundlr.createTransaction(finalContent, { tags: args.contractTags });
+		const transaction = poolClient.arClient.bundlr.createTransaction(finalContent, { tags: args.contractTags });
 		await transaction.sign();
 		try {
-			const cost = await poolClient.bundlr.getPrice(transaction.size);
+			const cost = await poolClient.arClient.bundlr.getPrice(transaction.size);
 			let balance = await poolClient.arClient.arweavePost.wallets.getBalance(poolClient.poolConfig.state.owner.pubkey);
 
 			// stop trying to fund bundlr once the wallet is empty
@@ -224,7 +224,7 @@ async function deployToBundlr(
 			// is synced up to Bundlr
 			if (balance > 0) {
 				try {
-					await poolClient.bundlr.fund(balance >= cost.integerValue() ? cost.integerValue() : balance);
+					await poolClient.arClient.bundlr.fund(balance >= cost.integerValue() ? cost.integerValue() : balance);
 				} catch (e: any) {
 					// log(`Error funding bundlr ...\n ${e}`, 1);
 				}
@@ -240,7 +240,7 @@ async function deployToBundlr(
 
 async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) {
 	try {
-		const { contractTxId } = await poolClient.warpDefault.register(args.assetId, 'node2');
+		const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
 		APS++;
 		return contractTxId;
 	} catch (e: any) {
@@ -257,7 +257,7 @@ async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) 
 				await new Promise((r) => setTimeout(r, 2000));
 				try {
 					log(`Retrying Warp ...`, null);
-					const { contractTxId } = await poolClient.warpDefault.register(args.assetId, 'node2');
+					const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
 					log(`Retry succeeded`, 0);
 					APS++;
 					return contractTxId;

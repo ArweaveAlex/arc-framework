@@ -1,9 +1,8 @@
-import Bundlr from '@bundlr-network/client';
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
 import { getArtifactsByUser, getGQLData, getPoolById, getPools } from '../../gql';
-import { BUNDLR_CURRENCY, BUNDLR_NODE, TAGS } from '../../helpers/config';
+import { TAGS } from '../../helpers/config';
 import {
 	ANSTopicEnum,
 	ContributionResultType,
@@ -93,9 +92,8 @@ export async function initPoolConfigFromContract(poolId: string) {
 }
 
 // TODO: Language to site provider
-export default class PoolClient extends ArweaveClient implements IPoolClient {
-	arClient = new ArweaveClient();
-
+export default class PoolClient implements IPoolClient {
+	arClient: ArweaveClient;
 	poolConfig: PoolConfigType;
 	walletKey: string | null;
 
@@ -104,17 +102,14 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 	signedPoolWallet: any;
 
 	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
-		super();
-
 		if (args && args.poolConfig) {
-			this.poolConfig = args.poolConfig;
+			this.arClient = new ArweaveClient(args.poolConfig.walletKey);
 
-			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, args.poolConfig.walletKey);
+			this.poolConfig = args.poolConfig;
 
 			this.contract = this.arClient.warpDefault.contract(args.poolConfig.contracts.pool.id).setEvaluationOptions({
 				allowBigInt: true,
 			});
-			this.warpDefault = this.arClient.warpDefault;
 
 			this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
 
@@ -166,10 +161,12 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 
 	async balances(): Promise<PoolBalancesType> {
 		if (this.poolConfig && this.poolConfig.contracts.pool.id) {
-			let arweaveBalance = parseInt(await this.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey));
+			let arweaveBalance = parseInt(
+				await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
+			);
 			let bundlrBalance = 0;
 			try {
-				bundlrBalance = (await this.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+				bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
 			} catch (e: any) {
 				console.log(e);
 			}
@@ -192,11 +189,10 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
-		const arClient = new ArweaveClient(this.poolConfig.walletKey);
-		let balance = await arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
+		let balance = await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
 
 		try {
-			await arClient.bundlr.fund(Math.floor(balance / 2));
+			await this.arClient.bundlr.fund(Math.floor(balance / 2));
 		} catch (e: any) {
 			throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
 		}
@@ -354,7 +350,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 	}
 
 	getARAmount(amount: string): number {
-		return Math.floor(+this.arweavePost.ar.winstonToAr(amount) * 1e6) / 1e6;
+		return Math.floor(+this.arClient.arweavePost.ar.winstonToAr(amount) * 1e6) / 1e6;
 	}
 
 	async handlePoolContribute(
@@ -383,7 +379,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 				})
 			).data[0];
 			const fetchId = arweaveContract ? arweaveContract.node.id : poolId;
-			const { data: contractData }: { data: any } = await this.arweavePost.api.get(`/${fetchId}`);
+			const { data: contractData }: { data: any } = await this.arClient.arweavePost.api.get(`/${fetchId}`);
 
 			let owner = contractData.owner;
 			if (arweaveContract) {
@@ -393,7 +389,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			const warpContract = this.warpDefault.contract(poolId).connect('use_wallet').setEvaluationOptions({
+			const warpContract = this.arClient.warpDefault.contract(poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
 				allowBigInt: true,
 			});
@@ -412,7 +408,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 							disableBundling: true,
 							transfer: {
 								target: contractState.controlPubkey,
-								winstonQty: this.arweavePost.ar.arToWinston(contribToController.toString()),
+								winstonQty: this.arClient.arweavePost.ar.arToWinston(contribToController.toString()),
 							},
 						}
 					);
@@ -425,7 +421,7 @@ export default class PoolClient extends ArweaveClient implements IPoolClient {
 					disableBundling: true,
 					transfer: {
 						target: owner,
-						winstonQty: this.arweavePost.ar.arToWinston(contribToPool.toString()),
+						winstonQty: this.arClient.arweavePost.ar.arToWinston(contribToPool.toString()),
 					},
 				}
 			);
