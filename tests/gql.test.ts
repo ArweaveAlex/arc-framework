@@ -5,8 +5,8 @@ import {
 	getArtifactsByUser,
 	getPools,
 	getProfile,
-} from '../gql';
-import { ArtifactResponseType } from '../helpers';
+} from '../src/gql';
+import { ArtifactResponseType } from '../src/helpers';
 
 async function testGetArtifactsByPoolGQL() {
 	console.log(`Testing Artifacts By Pool GQL Request ...`);

@@ -1,12 +1,11 @@
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
-import { getArtifactsByUser, getGQLData, getPoolById, getPools } from '../../gql';
+import { getGQLData, getPoolById, getPools } from '../../gql';
 import { TAGS } from '../../helpers/config';
 import {
 	ANSTopicEnum,
 	ContributionResultType,
-	ContributionType,
 	GQLResponseType,
 	IPoolClient,
 	PoolBalancesType,
@@ -234,121 +233,6 @@ export default class PoolClient implements IPoolClient {
 		});
 
 		this.poolConfig.topics = topicValues;
-	}
-
-	async getUserContributions(userWallet: string) {
-		let pools: PoolType[] = await getPools();
-
-		if (pools.length > 0) {
-			const lastContributions: any = await this.calcLastContributions(userWallet, pools);
-			return pools
-				.filter((pool: any) => {
-					if (pool.state.contributors.hasOwnProperty(userWallet)) {
-						return true;
-					}
-					return false;
-				})
-				.map((pool: any) => {
-					let poolElement = pool;
-					poolElement.totalContributed = this.calcARDonated(userWallet, pool);
-					poolElement.lastContribution = lastContributions[pool.id];
-					poolElement.receivingPercent = this.calcReceivingPercent(userWallet, pool);
-					return poolElement;
-				});
-		} else {
-			return pools;
-		}
-	}
-
-	calcARDonated(userWallet: string, pool: PoolType) {
-		let calc = parseFloat(this.calcContributions(pool.state.contributors[userWallet])) / 1000000000000;
-		let tokens = calc.toFixed(calc.toString().length);
-		return tokens;
-	}
-
-	calcReceivingPercent(userWallet: string, pool: PoolType) {
-		if (pool) {
-			let calc =
-				(parseFloat(this.calcContributions(pool.state.contributors[userWallet])) /
-					parseFloat(pool.state.totalContributions)) *
-				100;
-			let tokens = calc.toFixed(4);
-			return tokens;
-		} else {
-			return 0;
-		}
-	}
-
-	async calcLastContributions(userWallet: string, pools: PoolType[]) {
-		const artifacts = await getArtifactsByUser({
-			ids: null,
-			owner: userWallet,
-			uploader: null,
-			cursor: null,
-			reduxCursor: null,
-		});
-		let contributionMap: any = {};
-
-		for (let i = 0; i < pools.length; i++) {
-			let lastDate: number = 0;
-			for (let j = 0; j < artifacts.contracts.length; j++) {
-				const date = parseInt(getTagValue(artifacts.contracts[j].node.tags, TAGS.keys.dateCreated));
-				if (date > lastDate) {
-					lastDate = date;
-					contributionMap[pools[i].id] = date;
-				}
-			}
-		}
-
-		return contributionMap;
-	}
-
-	getReceivingPercent(userWallet: string, contributors: any, totalContributions: string, activeAmount: number): string {
-		if (userWallet && contributors && totalContributions) {
-			if (isNaN(activeAmount)) {
-				return '0';
-			}
-			let amount: number = 0;
-			amount = activeAmount * 1e12;
-
-			let origAmount: number = amount;
-
-			if (contributors[userWallet]) {
-				if (isNaN(contributors[userWallet])) {
-					let contribs = contributors[userWallet];
-					let total = 0;
-					for (let i = 0; i < contribs.length; i++) {
-						let c = contribs[i];
-						total = total + parseInt(c.qty);
-					}
-					amount = total + amount;
-				} else {
-					amount = parseFloat(contributors[userWallet]) + amount;
-				}
-			}
-
-			let calc: number = amount;
-			if (parseFloat(totalContributions) > 0) {
-				calc = (amount / (parseFloat(totalContributions) + origAmount)) * 100;
-			}
-			let tokens = calc.toFixed(4);
-			if (isNaN(calc)) return '0';
-			return calc >= 100 ? '100' : tokens;
-		} else {
-			return '0';
-		}
-	}
-
-	calcContributions(contributions: string | ContributionType[]): string {
-		let amount: number = 0;
-		if (typeof contributions === 'object') {
-			for (let i = 0; i < contributions.length; i++) {
-				amount += Number(contributions[i].qty);
-			}
-		} else {
-			amount = Number(contributions);
-		}
-		return amount.toString();
 	}
 
 	getARAmount(amount: string): number {
