@@ -1,25 +1,9 @@
-import {
-	ANSTopicEnum,
-	DEFAULT_POOLS_JSON,
-	FALLBACK_IMAGE,
-	logJsonUpdate,
-	PoolConfigType,
-	PoolStateType,
-	TAGS,
-	TESTING_APP_TYPE,
-} from '../../helpers';
+import { ANSTopicEnum, FALLBACK_IMAGE, logJsonUpdate, PoolConfigType, PoolStateType, TAGS } from '../../helpers';
+import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from '../../helpers/contracts';
 
-import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from './contracts';
 import PoolClient from './PoolClient';
 
-export function initNewPoolConfig(args?: { testMode?: boolean }) {
-	let r = DEFAULT_POOLS_JSON;
-	if (args && args.testMode) {
-		r.appType = TESTING_APP_TYPE;
-	}
-	return r;
-}
-
+// Class for creating new pools
 export default class PoolCreateClient {
 	poolClient: PoolClient;
 	poolConfig: PoolConfigType;
@@ -42,7 +26,7 @@ export default class PoolCreateClient {
 		this.poolClient = new PoolClient({
 			poolConfig: args.poolConfig,
 		});
-		this.poolConfig = args.poolConfig;
+		this.poolConfig = { ...args.poolConfig };
 		this.controlWalletJwk = args.controlWalletJwk;
 		this.poolWalletPath = args.poolWalletPath;
 		this.img = args.img;
@@ -210,5 +194,7 @@ export default class PoolCreateClient {
 		logJsonUpdate(this.poolConfig.state.title, `state.owner.pubkey`, this.poolConfig.state.owner.pubkey);
 		logJsonUpdate(this.poolConfig.state.title, `walletPath`, this.poolWalletPath);
 		logJsonUpdate(this.poolConfig.state.title, `contracts.pool.id`, poolDeployment.contractTxId);
+
+		return this.poolConfig;
 	}
 }

@@ -1,8 +1,9 @@
 import { Buffer } from 'buffer';
 import { Contract } from 'warp-contracts';
 
-import { getGQLData, getPoolById, getPools } from '../../gql';
+import { getGQLData } from '../../gql';
 import { TAGS } from '../../helpers/config';
+import { POOL_CONTRACT_SRC } from '../../helpers/contracts';
 import {
 	ANSTopicEnum,
 	ContributionResultType,
@@ -10,88 +11,12 @@ import {
 	IPoolClient,
 	PoolBalancesType,
 	PoolConfigType,
-	PoolType,
 } from '../../helpers/types';
-import { getTagValue } from '../../helpers/utils';
 import { ArweaveClient } from '../arweave';
 
-import { POOL_CONTRACT_SRC } from './contracts';
-import { initNewPoolConfig } from './PoolCreateClient';
-
-// initialize a PoolConfigType from an existing pool contract
-export async function initPoolConfigFromContract(poolId: string) {
-	let poolConfig: PoolConfigType = initNewPoolConfig();
-
-	let pool = await getPoolById(poolId);
-	let poolData = await getGQLData({
-		ids: null,
-		tagFilters: [{ name: TAGS.keys.poolName, values: [pool.state.title] }],
-		uploader: null,
-		cursor: null,
-		reduxCursor: null,
-		cursorObject: null,
-	});
-
-	if (poolData.data.length < 1) return null;
-
-	let artifactContractSrc: string;
-	let keywords: string[];
-
-	let artifactData = await getGQLData({
-		ids: null,
-		tagFilters: [{ name: TAGS.keys.poolId, values: [pool.id] }],
-		uploader: null,
-		cursor: null,
-		reduxCursor: null,
-		cursorObject: null,
-	});
-
-	if (pool.state.artifactContractSrc) {
-		artifactContractSrc = pool.state.artifactContractSrc;
-	} else {
-		if (artifactData.data.length > 0) {
-			artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
-		}
-	}
-
-	if (pool.state.keywords) {
-		keywords = pool.state.keywords;
-	} else {
-		if (artifactData.data.length > 0) {
-			keywords = JSON.parse(getTagValue(artifactData.data[0].node.tags, TAGS.keys.keywords)) as string[];
-		}
-	}
-
-	if (!artifactContractSrc) {
-		throw new Error(`Could not locate artifact contract src id`);
-	}
-
-	if (!keywords) {
-		throw new Error(`Could not locate keywords`);
-	}
-
-	poolConfig.appType = getTagValue(poolData.data[0].node.tags, TAGS.keys.appType);
-	poolConfig.contracts.pool.id = pool.id;
-	poolConfig.contracts.pool.src = getTagValue(poolData.data[0].node.tags, TAGS.keys.contractSrc);
-	poolConfig.contracts.nft.src = artifactContractSrc;
-	poolConfig.state.owner.pubkey = pool.state.owner;
-	poolConfig.state.owner.info = pool.state.ownerInfo;
-	poolConfig.state.controller.pubkey = pool.state.controlPubkey;
-	poolConfig.state.controller.contribPercent = parseFloat(pool.state.contribPercent);
-	poolConfig.state.title = pool.state.title;
-	poolConfig.state.description = pool.state.description;
-	poolConfig.state.briefDescription = pool.state.briefDescription;
-	poolConfig.state.image = pool.state.image;
-	poolConfig.state.timestamp = pool.state.timestamp;
-	poolConfig.state.ownerMaintained = pool.state.ownerMaintained;
-	poolConfig.keywords = keywords;
-	poolConfig.topics = pool.state.topics;
-
-	return poolConfig;
-}
-
-// TODO: Language to site provider
+// Class for working with existing pools
 export default class PoolClient implements IPoolClient {
+	poolId: string;
 	arClient: ArweaveClient;
 	poolConfig: PoolConfigType;
 	walletKey: string | null;
@@ -100,7 +25,11 @@ export default class PoolClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
+	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any; poolId?: string }) {
+		if (args && args.poolId) {
+			this.poolId = args.poolId;
+		}
+
 		if (args && args.poolConfig) {
 			this.arClient = new ArweaveClient(args.poolConfig.walletKey);
 
@@ -110,34 +39,9 @@ export default class PoolClient implements IPoolClient {
 				allowBigInt: true,
 			});
 
-			this.validatePoolConfigs = this.validatePoolConfigs.bind(this);
-
 			this.signedPoolWallet = args.signedPoolWallet;
 		} else {
 			this.arClient = new ArweaveClient();
-		}
-	}
-
-	async validatePoolConfigs() {
-		console.log(`Checking Exisiting Pools ...`);
-		const exisitingPools = await getPools();
-		let poolConfig = this.poolConfig;
-		exisitingPools.forEach(function (pool: PoolType) {
-			if (poolConfig.state.title === pool.state.title) {
-				throw new Error(`Pool Already Exists`);
-			}
-		});
-
-		let validTopic = false;
-		poolConfig.topics.map((topic: string) => {
-			if (topic in ANSTopicEnum) {
-				validTopic = true;
-			}
-		});
-
-		let topics = Object.values(ANSTopicEnum).join(', ');
-		if (!validTopic) {
-			throw new Error(`Must configure at least 1 topic with one of the following values ${topics}`);
 		}
 	}
 
@@ -161,32 +65,31 @@ export default class PoolClient implements IPoolClient {
 	}
 
 	async balances(): Promise<PoolBalancesType> {
-		if (this.poolConfig && this.poolConfig.contracts.pool.id) {
-			let arweaveBalance = parseInt(
-				await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
-			);
-			let bundlrBalance = 0;
-			try {
-				bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
-			} catch (e: any) {
-				console.log(e);
-			}
-			let contractState: any = (await this.contract.readState()).cachedValue.state;
-			let fundsUsed = contractState.fundsUsed ? contractState.fundsUsed : 0;
-
-			return {
-				totalBalance: arweaveBalance + bundlrBalance,
-				arweaveBalance: arweaveBalance,
-				bundlrBalance: bundlrBalance,
-				fundsUsed: fundsUsed,
-			};
-		} else {
+		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			throw new Error(`Please provide a pool config with a pool id in it`);
 		}
+		let arweaveBalance = parseInt(
+			await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
+		);
+		let bundlrBalance = 0;
+		try {
+			bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+		} catch (e: any) {
+			console.log(e);
+		}
+		let contractState: any = (await this.contract.readState()).cachedValue.state;
+		let fundsUsed = contractState.fundsUsed ? contractState.fundsUsed : 0;
+
+		return {
+			totalBalance: arweaveBalance + bundlrBalance,
+			arweaveBalance: arweaveBalance,
+			bundlrBalance: bundlrBalance,
+			fundsUsed: fundsUsed,
+		};
 	}
 
 	async fundBundlr() {
-		if (!this.poolConfig.walletKey) {
+		if (!this.poolConfig || !this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
@@ -199,13 +102,13 @@ export default class PoolClient implements IPoolClient {
 		}
 	}
 
-	async setTopics(topicValues: string[]) {
-		if (!this.poolConfig.walletKey) {
+	async setTopics(args: { topicValues: string[] }) {
+		if (!this.poolConfig || !this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
-		for (let i = 0; i < topicValues.length; i++) {
-			let topicValue = topicValues[i].trim().toLowerCase();
+		for (let i = 0; i < args.topicValues.length; i++) {
+			let topicValue = args.topicValues[i].trim().toLowerCase();
 			if (!Object.keys(ANSTopicEnum).some((key) => ANSTopicEnum[key].toLowerCase() === topicValue)) {
 				throw new Error(
 					`Invalid topic value: ${topicValue}, please only use values from this list - ${Object.values(
@@ -215,7 +118,7 @@ export default class PoolClient implements IPoolClient {
 			}
 		}
 
-		topicValues = topicValues.map((val: string) => {
+		args.topicValues = args.topicValues.map((val: string) => {
 			let l = val.toLowerCase();
 			return l.charAt(0).toUpperCase() + l.slice(1);
 		});
@@ -229,25 +132,26 @@ export default class PoolClient implements IPoolClient {
 
 		await contract.writeInteraction({
 			function: 'setTopics',
-			data: topicValues,
+			data: args.topicValues,
 		});
 
-		this.poolConfig.topics = topicValues;
+		this.poolConfig.topics = args.topicValues;
 	}
 
 	getARAmount(amount: string): number {
 		return Math.floor(+this.arClient.arweavePost.ar.winstonToAr(amount) * 1e6) / 1e6;
 	}
 
-	async handlePoolContribute(
-		poolId: string,
-		amount: number,
-		availableBalance: number
-	): Promise<ContributionResultType> {
-		if (!availableBalance) {
+	async handlePoolContribute(args: { amount: number; availableBalance: number }): Promise<ContributionResultType> {
+		if (!this.poolId) {
+			return { status: false, message: `please initialize PoolClient with poolId param to use this method` };
+		}
+
+		if (!args.availableBalance) {
 			return { status: false, message: `Wallet Not Connected` };
 		}
-		if (amount > availableBalance) {
+
+		if (args.amount > args.availableBalance) {
 			return {
 				status: false,
 				message: `Not Enough Funds`,
@@ -257,14 +161,14 @@ export default class PoolClient implements IPoolClient {
 			const arweaveContract: GQLResponseType = (
 				await getGQLData({
 					ids: null,
-					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [poolId] }],
+					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [this.poolId] }],
 					uploader: null,
 					cursor: null,
 					reduxCursor: null,
 					cursorObject: null,
 				})
 			).data[0];
-			const fetchId = arweaveContract ? arweaveContract.node.id : poolId;
+			const fetchId = arweaveContract ? arweaveContract.node.id : this.poolId;
 			const { data: contractData }: { data: any } = await this.arClient.arweavePost.api.get(`/${fetchId}`);
 
 			let owner = contractData.owner;
@@ -275,19 +179,19 @@ export default class PoolClient implements IPoolClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			const warpContract = this.arClient.warpDefault.contract(poolId).connect('use_wallet').setEvaluationOptions({
+			const warpContract = this.arClient.warpDefault.contract(this.poolId).connect('use_wallet').setEvaluationOptions({
 				waitForConfirmation: false,
 				allowBigInt: true,
 			});
 
 			let contractState: any = (await warpContract.readState()).cachedValue.state;
-			let contribToPool = amount;
+			let contribToPool = args.amount;
 			let contribToController = 0;
 			if (contractState.controlPubkey && !(contractState.controlPubkey.length === 0)) {
 				if (contractState.contribPercent && contractState.contribPercent > 0) {
 					const percentDecimal = contractState.contribPercent / 100;
-					contribToController = amount * percentDecimal;
-					contribToPool = amount - contribToController;
+					contribToController = args.amount * percentDecimal;
+					contribToPool = args.amount - contribToController;
 					await warpContract.writeInteraction(
 						{ function: 'contribute' },
 						{
