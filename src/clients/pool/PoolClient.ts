@@ -16,7 +16,6 @@ import { ArweaveClient } from '../arweave';
 
 // Class for working with existing pools
 export default class PoolClient implements IPoolClient {
-	poolId: string;
 	arClient: ArweaveClient;
 	poolConfig: PoolConfigType;
 	walletKey: string | null;
@@ -25,11 +24,7 @@ export default class PoolClient implements IPoolClient {
 
 	signedPoolWallet: any;
 
-	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any; poolId?: string }) {
-		if (args && args.poolId) {
-			this.poolId = args.poolId;
-		}
-
+	constructor(args?: { poolConfig?: PoolConfigType; signedPoolWallet?: any }) {
 		if (args && args.poolConfig) {
 			this.arClient = new ArweaveClient(args.poolConfig.walletKey);
 
@@ -143,8 +138,15 @@ export default class PoolClient implements IPoolClient {
 	}
 
 	async handlePoolContribute(args: { amount: number; availableBalance: number }): Promise<ContributionResultType> {
-		if (!this.poolId) {
-			return { status: false, message: `please initialize PoolClient with poolId param to use this method` };
+		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
+			return { status: false, message: `Please initialize your poolConfig to an existing pool` };
+		}
+
+		if (!this.poolConfig || !this.poolConfig.walletKey) {
+			return {
+				status: false,
+				message: `No wallet configured please set poolConfig and poolConfig.walletKey to the pools private key`,
+			};
 		}
 
 		if (!args.availableBalance) {
@@ -161,14 +163,14 @@ export default class PoolClient implements IPoolClient {
 			const arweaveContract: GQLResponseType = (
 				await getGQLData({
 					ids: null,
-					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [this.poolId] }],
+					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [this.poolConfig.contracts.pool.id] }],
 					uploader: null,
 					cursor: null,
 					reduxCursor: null,
 					cursorObject: null,
 				})
 			).data[0];
-			const fetchId = arweaveContract ? arweaveContract.node.id : this.poolId;
+			const fetchId = arweaveContract ? arweaveContract.node.id : this.poolConfig.contracts.pool.id;
 			const { data: contractData }: { data: any } = await this.arClient.arweavePost.api.get(`/${fetchId}`);
 
 			let owner = contractData.owner;
@@ -179,10 +181,13 @@ export default class PoolClient implements IPoolClient {
 				return { status: false, message: `Pool Contribution Failed` };
 			}
 
-			const warpContract = this.arClient.warpDefault.contract(this.poolId).connect('use_wallet').setEvaluationOptions({
-				waitForConfirmation: false,
-				allowBigInt: true,
-			});
+			const warpContract = this.arClient.warpDefault
+				.contract(this.poolConfig.contracts.pool.id)
+				.connect(this.poolConfig.walletKey)
+				.setEvaluationOptions({
+					waitForConfirmation: false,
+					allowBigInt: true,
+				});
 
 			let contractState: any = (await warpContract.readState()).cachedValue.state;
 			let contribToPool = args.amount;
