@@ -64,28 +64,42 @@ export default class PoolClient implements IPoolClient {
 		await contract.evolve(newSrcId);
 	}
 
-	async balances(): Promise<PoolBalancesType> {
+	async balances(): Promise<PoolBalancesType | null> {
 		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			throw new Error(`Please provide a pool config with a pool id in it`);
 		}
-		let arweaveBalance = parseInt(
-			await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
-		);
-		let bundlrBalance = 0;
 		try {
-			bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
-		} catch (e: any) {
-			console.log(e);
-		}
-		let contractState: any = (await this.contract.readState()).cachedValue.state;
-		let fundsUsed = contractState.fundsUsed ? contractState.fundsUsed : 0;
+			const contractState: any = (await this.contract.readState()).cachedValue.state;
 
-		return {
-			totalBalance: arweaveBalance + bundlrBalance,
-			arweaveBalance: arweaveBalance,
-			bundlrBalance: bundlrBalance,
-			fundsUsed: fundsUsed,
-		};
+			const arweaveBalance = parseInt(
+				await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
+			);
+			const bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+
+			const totalBalance = arweaveBalance + bundlrBalance;
+			const contribPercent = contractState.contribPercent ? parseInt(contractState.contribPercent) : 0;
+			const totalContributions = contractState.totalContributions ? parseInt(contractState.totalContributions) : 0;
+			const fundsUsed = contractState.fundsUsed ? parseInt(contractState.fundsUsed) : 0;
+
+			const userBalance =
+				totalBalance -
+				(totalContributions - totalContributions * (contribPercent / 100) - bundlrBalance - fundsUsed) -
+				fundsUsed -
+				bundlrBalance;
+			const poolBalance = arweaveBalance - userBalance + bundlrBalance;
+
+			return {
+				totalBalance: totalBalance,
+				arweaveBalance: arweaveBalance,
+				bundlrBalance: bundlrBalance,
+				fundsUsed: fundsUsed,
+				userBalance: userBalance,
+				poolBalance: poolBalance,
+			};
+		} catch (e: any) {
+			console.error(e);
+			return null;
+		}
 	}
 
 	async fundBundlr() {

@@ -126,6 +126,8 @@ export type PoolBalancesType = {
 	arweaveBalance: number;
 	bundlrBalance: number;
 	fundsUsed: number;
+	userBalance: number;
+	poolBalance: number;
 };
 
 export type PoolAdditionalPropsType = PoolType & {
