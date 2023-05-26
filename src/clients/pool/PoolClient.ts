@@ -97,7 +97,7 @@ export default class PoolClient implements IPoolClient {
 		}
 	}
 
-	async fundBundlr() {
+	async fundBundlr(amount?: string) {
 		if (!this.poolConfig || !this.poolConfig.walletKey) {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
@@ -105,7 +105,8 @@ export default class PoolClient implements IPoolClient {
 		let balance = await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
 
 		try {
-			await this.arClient.bundlr.fund(Math.floor(balance / 2));
+			const tx = await this.arClient.bundlr.fund(Math.floor(amount ? parseInt(amount) : balance / 2));
+			console.log(tx);
 		} catch (e: any) {
 			throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
 		}
