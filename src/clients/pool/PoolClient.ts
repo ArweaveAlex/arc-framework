@@ -74,22 +74,24 @@ export default class PoolClient implements IPoolClient {
 			const totalBalance = arweaveBalance + bundlrBalance;
 			const contribPercent = contractState.contribPercent ? parseInt(contractState.contribPercent) : 0;
 			const totalContributions = contractState.totalContributions ? parseInt(contractState.totalContributions) : 0;
-			const fundsUsed = contractState.fundsUsed ? parseInt(contractState.fundsUsed) : 0;
+			const usedFunds = contractState.usedFunds ? parseInt(contractState.usedFunds) : 0;
 
 			const userBalance =
 				totalBalance -
-				(totalContributions - totalContributions * (contribPercent / 100) - bundlrBalance - fundsUsed) -
-				fundsUsed -
+				(totalContributions - totalContributions * (contribPercent / 100) - bundlrBalance - usedFunds) -
+				usedFunds -
 				bundlrBalance;
-			const poolBalance = arweaveBalance - userBalance + bundlrBalance;
+			const poolBalance = Math.abs(arweaveBalance - userBalance - (usedFunds + bundlrBalance) + bundlrBalance);
+			const transferBalance = poolBalance - usedFunds + bundlrBalance;
 
 			return {
 				totalBalance: totalBalance,
 				arweaveBalance: arweaveBalance,
-				bundlrBalance: bundlrBalance,
-				fundsUsed: fundsUsed,
+				bundlrBalance: totalContributions > 0 ? bundlrBalance : 0,
+				usedFunds: usedFunds,
 				userBalance: userBalance,
-				poolBalance: poolBalance,
+				poolBalance: totalContributions > 0 ? poolBalance : 0,
+				transferBalance: transferBalance,
 			};
 		} catch (e: any) {
 			console.error(e);
@@ -102,11 +104,26 @@ export default class PoolClient implements IPoolClient {
 			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
 		}
 
-		let balance = await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey);
+		let sendAmount: number;
+		if (amount) {
+			sendAmount = parseInt(amount);
+		} else {
+			sendAmount = (await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)) / 2;
+		}
 
 		try {
-			const tx = await this.arClient.bundlr.fund(Math.floor(amount ? parseInt(amount) : balance / 2));
-			console.log(tx);
+			await this.arClient.bundlr.fund(Math.floor(sendAmount));
+			let contract = this.arClient.warpDefault
+				.contract(this.poolConfig.contracts.pool.id)
+				.connect(this.poolConfig.walletKey)
+				.setEvaluationOptions({
+					allowBigInt: true,
+				});
+
+			await contract.writeInteraction({
+				function: 'updateUsedFunds',
+				data: sendAmount.toString(),
+			});
 		} catch (e: any) {
 			throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
 		}

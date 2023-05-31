@@ -118,16 +118,17 @@ export interface PoolStateType {
 	canEvolve?: boolean;
 	topics?: string[];
 	keywords?: string[];
-	usedFunds?: number;
+	usedFunds?: string;
 }
 
 export type PoolBalancesType = {
 	totalBalance: number;
 	arweaveBalance: number;
 	bundlrBalance: number;
-	fundsUsed: number;
+	usedFunds: number;
 	userBalance: number;
 	poolBalance: number;
+	transferBalance: number;
 };
 
 export type PoolAdditionalPropsType = PoolType & {

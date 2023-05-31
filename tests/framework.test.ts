@@ -3,6 +3,7 @@ import {
 	getArtifactsByIds,
 	getArtifactsByPool,
 	getArtifactsByUser,
+	getIndexPools,
 	getPools,
 	getProfile,
 } from '../src/gql';
@@ -89,6 +90,12 @@ async function testGetPoolsGQL() {
 	console.log(`Pool Count: ${pools.length}`);
 }
 
+async function testGetIndexPoolsGQL() {
+	console.log(`Testing Pools by index GQL Request ...`);
+	const pools = await getIndexPools();
+	console.log(`Indexed Pool Count: ${pools.length}`);
+}
+
 async function testGetProfileGQL() {
 	console.log(`Testing Profile GQL Request ...`);
 	const profile = await getProfile('uf_FqRvLqjnFMc8ZzGkF4qWKuNmUIQcYP0tPlCGORQk');
@@ -111,6 +118,9 @@ async function testGetProfileGQL() {
 			return;
 		case 'get-pools':
 			await testGetPoolsGQL();
+			return;
+		case 'get-index-pools':
+			await testGetIndexPoolsGQL();
 			return;
 		case 'get-profile':
 			await testGetProfileGQL();

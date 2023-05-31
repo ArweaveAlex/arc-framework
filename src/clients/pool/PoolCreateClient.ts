@@ -125,6 +125,7 @@ export default class PoolCreateClient {
 			topics: [],
 			artifactContractSrc: nftDeployment.srcTxId,
 			keywords: this.poolConfig.keywords,
+			usedFunds: '0',
 		};
 
 		return poolInitJson;
@@ -170,7 +171,7 @@ export default class PoolCreateClient {
 	}
 
 	async createPool() {
-		await this.checkControlWalletBalance();
+		// await this.checkControlWalletBalance();
 		let img = await this.uploadBackgroundImage();
 		let nftDeployment = await this.deploytNftSrc();
 		const poolSrcDeployment = await this.deployPoolSrc();

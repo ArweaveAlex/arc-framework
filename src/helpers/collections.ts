@@ -9,7 +9,6 @@ import { CollectionStateType, CollectionType } from './types';
 
 // const arClient = new ArweaveClient('arweave.net');
 
-// TODO: move to client
 export function initCollection(): CollectionStateType {
 	return {
 		title: '',
@@ -50,7 +49,6 @@ export async function createCollection(collectionState: CollectionStateType) {
 	// 	{ name: TAGS.keys.initialOwner, value: collectionState.owner },
 	// ];
 
-	// TODO: integrate with arcframework
 	// const collectionContract = await arClient.warpDefault.createContract.deploy({
 	// 	src: COLLECTION_CONTRACT,
 	// 	initState: JSON.stringify(collectionState),
@@ -99,7 +97,6 @@ export async function saveCollection(collection: CollectionType) {
 		topic: collection.state.topic,
 	});
 
-	// TODO: language to site provider
 	if (result) {
 		return { status: true, message: `Collection saved!` };
 	}

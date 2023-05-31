@@ -61,6 +61,7 @@ export default class PoolConfigClient {
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
+			useArweavePost: true,
 		});
 
 		if (poolData.data.length < 1) return null;

@@ -10,6 +10,7 @@ export async function getGQLData(args: {
 	cursor: string | null;
 	reduxCursor: string | null;
 	cursorObject: CursorObjectKeyType;
+	useArweavePost?: boolean;
 }): Promise<{ data: GQLResponseType[]; nextCursor: string | null }> {
 	const arClient = new ArweaveClient();
 	let nextCursor: string | null = null;
@@ -65,7 +66,9 @@ export async function getGQLData(args: {
         `,
 	};
 
-	const response = await arClient.arweaveGet.api.post('/graphql', query);
+	const response = args.useArweavePost
+		? await arClient.arweavePost.api.post('/graphql', query)
+		: await arClient.arweaveGet.api.post('/graphql', query);
 	if (response.data.data) {
 		const responseData = response.data.data.transactions.edges;
 		if (responseData.length > 0) {

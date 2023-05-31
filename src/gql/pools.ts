@@ -1,5 +1,5 @@
 import { ArweaveClient } from '../clients';
-import { getTagValue } from '../helpers';
+import { getTagValue, STORAGE } from '../helpers';
 import { POOL_INDEX_CONTRACT_ID, TAGS } from '../helpers/config';
 import { ArcGQLResponseType, GQLResponseType, PoolIndexType, PoolType } from '../helpers/types';
 
@@ -18,6 +18,7 @@ export async function getPoolIds(owner?: string) {
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
+		useArweavePost: true,
 	});
 
 	return pools.data.map((pool: GQLResponseType) => {
@@ -29,7 +30,8 @@ export async function getPoolIds(owner?: string) {
 			case TAGS.values.poolVersions['1.4']:
 				return getTagValue(pool.node.tags, TAGS.keys.uploaderTxId);
 			default:
-				return getTagValue(pool.node.tags, TAGS.keys.uploaderTxId);
+				const uploaderTxId = getTagValue(pool.node.tags, TAGS.keys.uploaderTxId);
+				return uploaderTxId === STORAGE.none ? pool.node.id : uploaderTxId;
 		}
 	});
 }
@@ -94,6 +96,7 @@ export async function checkExistingPool(poolName: string): Promise<boolean> {
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
+		useArweavePost: true,
 	});
 
 	return existingPool.data.length > 0;

@@ -4,16 +4,6 @@ import { ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
 import { ArtifactEnum, IPoolClient } from '../helpers/types';
 import { log, logValue } from '../helpers/utils';
 
-// Artifacts per second
-let APS = 0;
-
-export function initCounter() {
-	setInterval(() => {
-		log(`Artifacts per second - ${APS}`, 0);
-		APS = 0;
-	}, 1000);
-}
-
 export function getMimeType(fileName: string) {
 	return mime.contentType(mime.lookup(fileName) || CONTENT_TYPES.octetStream) as string;
 }
@@ -214,24 +204,23 @@ async function deployToBundlr(
 	try {
 		const transaction = poolClient.arClient.bundlr.createTransaction(finalContent, { tags: args.contractTags });
 		await transaction.sign();
-		try {
-			const cost = await poolClient.arClient.bundlr.getPrice(transaction.size);
-			let balance = await poolClient.arClient.arweavePost.wallets.getBalance(poolClient.poolConfig.state.owner.pubkey);
+		// try {
+		// 	const cost = await poolClient.arClient.bundlr.getPrice(transaction.size);
+		// 	let balance = await poolClient.arClient.arweavePost.wallets.getBalance(poolClient.poolConfig.state.owner.pubkey);
 
-			// stop trying to fund bundlr once the wallet is empty
-			// otherwise fund either the cost or the rest of the balance
-			// TODO: this will intermittenly throw the error until arweave.net
-			// is synced up to Bundlr
-			if (balance > 0) {
-				try {
-					await poolClient.arClient.bundlr.fund(balance >= cost.integerValue() ? cost.integerValue() : balance);
-				} catch (e: any) {
-					// log(`Error funding bundlr ...\n ${e}`, 1);
-				}
-			}
-		} catch (e: any) {
-			log(`Error getting bundlr cost ...\n ${e}`, 1);
-		}
+		// 	// stop trying to fund bundlr once the wallet is empty
+		// 	// otherwise fund either the cost or the rest of the balance
+		// 	// is synced up to Bundlr
+		// 	if (balance > 0) {
+		// 		try {
+		// 			await poolClient.arClient.bundlr.fund(balance >= cost.integerValue() ? cost.integerValue() : balance);
+		// 		} catch (e: any) {
+		// 			// log(`Error funding bundlr ...\n ${e}`, 1);
+		// 		}
+		// 	}
+		// } catch (e: any) {
+		// 	log(`Error getting bundlr cost ...\n ${e}`, 1);
+		// }
 		return (await transaction.upload()).id;
 	} catch (e: any) {
 		throw new Error(`Error uploading to bundlr ...\n ${e}`);
@@ -241,7 +230,6 @@ async function deployToBundlr(
 async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) {
 	try {
 		const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
-		APS++;
 		return contractTxId;
 	} catch (e: any) {
 		logValue(`Error deploying to Warp - Asset ID`, args.assetId, 1);
@@ -259,7 +247,6 @@ async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) 
 					log(`Retrying Warp ...`, null);
 					const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
 					log(`Retry succeeded`, 0);
-					APS++;
 					return contractTxId;
 				} catch (e2: any) {
 					logValue(`Error deploying to Warp - Asset ID`, args.assetId, 1);

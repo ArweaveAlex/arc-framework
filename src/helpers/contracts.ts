@@ -102,7 +102,6 @@ async function handle(state, action) {
             const target = SmartWeave.transaction.target;
             const totalSupply = parseInt(state.totalSupply);
             const totalContributions = BigInt(state.totalContributions);
-            // check inputs
             if ((target !== state.owner) && (target !== state.controlPubkey)) {
                 throw new ContractError("Please fund the correct owner or controller.");
             }
@@ -110,14 +109,12 @@ async function handle(state, action) {
                 throw new ContractError("Please fund a non-zero amount");
             }
             if (totalContributions == BigInt(0)) {
-                // mint 100% of supply
                 state.tokens = {};
                 state.tokens[caller] = state.totalSupply.toString();
                 updateContributions(state.contributors, action.caller, contribution);
                 state.totalContributions = (totalContributions + contribution).toString();
             }
             else {
-                // calculate new mints
                 const mintedTokens = (Number(BigInt(1000000000000) * contribution / totalContributions) / 1000000000000) * Number(totalSupply);
                 const adjustmentFactor = Number(totalSupply) / Number(totalSupply + mintedTokens);
                 let sum = 0;
@@ -137,8 +134,7 @@ async function handle(state, action) {
             if (state.owner !== caller) {
                 throw new ContractError('Only the owner can add topics.');
             }
-        
-            // set topic values to input list
+            
             state.topics = action.input.data;
         
             return { state };
@@ -153,6 +149,15 @@ async function handle(state, action) {
             
                 return { state };
             }
+        }
+        case "updateUsedFunds": {
+            if (state.owner !== caller) {
+                throw new ContractError('Only the owner can update used funds state.');
+            }
+        
+            state.usedFunds = action.input.data;
+        
+            return { state };
         }
         default: {
             throw new ContractError("No action " + action.input.function + " exists. Please send a valid action.");
