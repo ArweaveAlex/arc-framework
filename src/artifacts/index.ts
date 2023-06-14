@@ -134,6 +134,8 @@ async function createContractTags(
 		name: TAGS.values.initState.name(args.name),
 		dateCreated: dateTime,
 		owner: tokenHolder,
+		claimable: [],
+		claims: [],
 	});
 
 	const tagList: any[] = [

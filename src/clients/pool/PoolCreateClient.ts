@@ -1,5 +1,5 @@
 import { ANSTopicEnum, FALLBACK_IMAGE, logJsonUpdate, PoolConfigType, PoolStateType, TAGS } from '../../helpers';
-import { NFT_CONTRACT_SRC, NFT_INIT_STATE, POOL_CONTRACT_SRC } from '../../helpers/contracts';
+import { POOL_CONTRACT_SRC } from '../../helpers/contracts';
 
 import PoolClient from './PoolClient';
 
@@ -72,16 +72,21 @@ export default class PoolCreateClient {
 	}
 
 	async deploytNftSrc() {
-		let nftSrc: string = NFT_CONTRACT_SRC;
-		let nftInitState: any = NFT_INIT_STATE;
-		let nftDeployment: any;
+		// let nftSrc: string = NFT_CONTRACT_SRC;
+		// let nftInitState: any = NFT_INIT_STATE;
+		// let nftDeployment: any;
 		try {
-			nftDeployment = await this.poolClient.arClient.warpDefault.createContract.deploy({
-				src: nftSrc,
-				initState: JSON.stringify(nftInitState),
-				wallet: this.signedControlWallet,
-			});
-			return nftDeployment;
+			// nftDeployment = await this.poolClient.arClient.warpDefault.createContract.deploy({
+			// 	src: nftSrc,
+			// 	initState: JSON.stringify(nftInitState),
+			// 	wallet: this.signedControlWallet,
+			// });
+			// return nftDeployment;
+			return {
+				srcTxId: 'EczcXiS-2pi6HQ5I4o83nJnpbT5CIjPr-wn-65wYqRw',
+				contractTxId: 'GfVfRpgHSzPC-xgwuknz-bUEmJR77UXWGErKRMNz7hY',
+			};
+			// EczcXiS-2pi6HQ5I4o83nJnpbT5CIjPr-wn-65wYqRw
 		} catch (e: any) {
 			console.error(e);
 			throw new Error(`Failed deploying nftContractSrc to warp`);
@@ -173,7 +178,11 @@ export default class PoolCreateClient {
 	async createPool() {
 		// await this.checkControlWalletBalance();
 		let img = await this.uploadBackgroundImage();
-		let nftDeployment = await this.deploytNftSrc();
+		// let nftDeployment = await this.deploytNftSrc();
+		let nftDeployment = {
+			contractTxId: 'R3KyOHfI5SE-5KDKUtoHs2T-dbUbYE6a1UV4eAV_Yl8',
+			srcTxId: 'DAzJJphpcjv6im1hUgFNGVP91eG9tayhX6NgMsoOHBQ',
+		};
 		const poolSrcDeployment = await this.deployPoolSrc();
 		let poolInitObj = await this.initializeState(img, nftDeployment);
 		let tags = this.createTags(poolInitObj);

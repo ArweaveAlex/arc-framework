@@ -61,7 +61,83 @@ function handle(state, action) {
             }
         };
     }
-    throw new ContractError("No function supplied or function not recognised.");
+    if (input.function === "allow") {
+        const target = input.target;
+        const quantity = input.qty;
+        const balances = state.balances;
+
+        if (!Number.isInteger(quantity) || quantity === undefined) {
+            throw new ContractError("Invalid value for quantity. Must be an integer.");
+        }
+        if (!target) {
+            throw new ContractError("No target specified.");
+        }
+        if (target === SmartWeave.contract.id) {
+            throw new ContractError("Can't setup claim to transfer a balance to itself.");
+        }
+        if (quantity <= 0 || caller === target) {
+            throw new ContractError("Invalid balance transfer.");
+        }
+        if (balances[caller] < quantity || !balances[caller] || balances[caller] == undefined || balances[caller] == null || isNaN(balances[caller])) {
+            throw new ContractError("Caller balance not high enough to make a balance of " + quantity + "claimable.");
+        }
+    
+        balances[caller] -= quantity;
+    
+        state.claimable.push({
+            from: caller,
+            to: target,
+            qty: quantity,
+            txID: SmartWeave.transaction.id,
+        });
+    }
+    if (input.function === "claim") {
+        // Claim input: txID
+        const txID = input.txID;
+        // Claim qty
+        const qty = input.qty;
+        const balances = state.balances;
+
+        if (!state.claimable.length) {
+            throw new ContractError("Contract has no claims available.");
+        }
+        // Search for txID inside of 'claimable'
+        let obj;
+        let index = -1;
+        for (let i = 0; i < state.claimable.length; i++) {
+            if (state.claimable[i].txID === txID) {
+                index = i;
+                obj = state.claimable[i];
+            }
+        }
+        if (obj === undefined) {
+            throw new ContractError("Unable to find claim.");
+        }
+        if (obj.to !== caller) {
+            throw new ContractError("Claim not addressed to caller.");
+        }
+        if (obj.qty !== qty) {
+            throw new ContractError("Claiming incorrect quantity of tokens.");
+        }
+        // Check to make sure it hasn't been claimed already
+        for (let i = 0; i < state.claims.length; i++) {
+            if (state.claims[i] === txID) {
+                throw new ContractError("This claim has already been made.");
+            }
+        }
+        // Not already claimed --> can claim
+        if (!balances[caller]) {
+            balances[caller] = 0;
+        }
+        balances[caller] += obj.qty;
+    
+        // remove from claimable
+        state.claimable.splice(index, 1);
+    
+        // add txID to 'claims'
+        state.claims.push(txID);
+    }
+    throw new ContractError("No function supplied or function not recognized.");
 }
 `;
 

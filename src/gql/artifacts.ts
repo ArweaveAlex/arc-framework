@@ -42,6 +42,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		cursor: args.cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.GQL,
+		useArweavePost: false,
 	});
 
 	return getArtifactsResponseObject(gqlResponse);
@@ -166,6 +167,7 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
+		useArweavePost: false,
 	});
 
 	if (artifact && artifact.data) {
