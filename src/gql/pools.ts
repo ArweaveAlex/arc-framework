@@ -18,7 +18,7 @@ export async function getPoolIds(owner?: string) {
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
-		useArweavePost: true,
+		useArweavePost: false,
 	});
 
 	return pools.data.map((pool: GQLResponseType) => {
