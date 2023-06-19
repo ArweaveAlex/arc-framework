@@ -180,8 +180,8 @@ export default class PoolCreateClient {
 		let img = await this.uploadBackgroundImage();
 		// let nftDeployment = await this.deploytNftSrc();
 		let nftDeployment = {
-			contractTxId: 'R3KyOHfI5SE-5KDKUtoHs2T-dbUbYE6a1UV4eAV_Yl8',
-			srcTxId: 'DAzJJphpcjv6im1hUgFNGVP91eG9tayhX6NgMsoOHBQ',
+			contractTxId: 'R-ZIJmCmDEQGe2FF2jRXNEZiM9kgL914KG0WhQdznSE',
+			srcTxId: '-SqpGS8hWHeAzYyudZR6Zm2_shhTzP-WjUr10pKumoE',
 		};
 		const poolSrcDeployment = await this.deployPoolSrc();
 		let poolInitObj = await this.initializeState(img, nftDeployment);
