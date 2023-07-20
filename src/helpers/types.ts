@@ -72,6 +72,7 @@ export interface ArtifactDetailType {
 	dataUrl: string | null;
 	dataSize: string | null;
 	rawData: string | null;
+	claimable?: any[];
 }
 
 export interface AssociationDetailType {
@@ -182,7 +183,7 @@ export interface PoolSearchIndexStateType {
 	searchIndeces: string[];
 }
 
-export type ContributionResultType = {
+export type NotificationResponseType = {
 	status: boolean;
 	message: string | null;
 };
@@ -196,11 +197,6 @@ export type CursorType = {
 
 export type ValidationType = {
 	status: boolean;
-	message: string | null;
-};
-
-export type NotificationResponseType = {
-	status: number | null;
 	message: string | null;
 };
 

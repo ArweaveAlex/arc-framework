@@ -28,6 +28,7 @@ export const TAGS = {
 		fileType: `File-Type`,
 		keywords: 'Keywords',
 		implements: 'Implements',
+		indexedBy: 'Indexed-By',
 		initialOwner: 'Initial-Owner',
 		initState: 'Init-State',
 		license: 'License',
@@ -69,6 +70,7 @@ export const TAGS = {
 		documentArtifactType: 'Alex-Document',
 		ebookArtifactType: 'Alex-Ebook',
 		imageArtifactType: 'Alex-Image',
+		indexer: 'ucm',
 		initState: {
 			name: (name: string) => `Artifact - ${name}`,
 			ticker: (assetId: string) => `ATOMIC-ASSET-${assetId}`,

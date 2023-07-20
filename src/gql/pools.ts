@@ -14,7 +14,7 @@ export async function getPoolIds(owner?: string) {
 				values: [TAGS.values.poolVersions['1.2'], TAGS.values.poolVersions['1.4'], TAGS.values.poolVersions['1.5']],
 			},
 		],
-		uploader: owner ? owner : null,
+		uploader: owner ? [owner] : null,
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,

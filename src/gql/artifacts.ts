@@ -1,5 +1,5 @@
 import { ArweaveClient } from '../clients/arweave';
-import { CURSORS, STORAGE, TAGS } from '../helpers/config';
+import { CURSORS, STORAGE, TAGS, UPLOADER } from '../helpers/config';
 import { getTxEndpoint } from '../helpers/endpoints';
 import {
 	ArcGQLResponseType,
@@ -20,7 +20,7 @@ import { getPoolById } from './pool';
 import { getPoolIds } from './pools';
 import { getGQLData } from '.';
 
-export async function getArtifactsByPool(args: ArtifactArgsType): Promise<ArtifactResponseType> {
+export async function getArtifactsByPool(args: ArtifactArgsType, useUploader: boolean): Promise<ArtifactResponseType> {
 	let tagFilters: TagFilterType[] = [
 		{
 			name: TAGS.keys.poolId,
@@ -35,10 +35,15 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		});
 	}
 
+	let uploader = args.uploader ? [args.uploader] : null;
+	if (uploader) {
+		if (useUploader) uploader.push(UPLOADER);
+	}
+
 	const gqlResponse: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: tagFilters,
-		uploader: args.uploader,
+		uploader: uploader,
 		cursor: args.cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.GQL,
@@ -51,13 +56,16 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 export async function getArtifactsByUser(args: ArtifactArgsType): Promise<ArtifactResponseType> {
 	const poolIds = await getPoolIds();
 
-	const artifacts = await getArtifactsByPool({
-		ids: poolIds,
-		owner: args.owner,
-		uploader: null,
-		cursor: args.cursor,
-		reduxCursor: args.reduxCursor,
-	});
+	const artifacts = await getArtifactsByPool(
+		{
+			ids: poolIds,
+			owner: args.owner,
+			uploader: null,
+			cursor: args.cursor,
+			reduxCursor: args.reduxCursor,
+		},
+		false
+	);
 	return artifacts;
 }
 
@@ -70,7 +78,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 	const artifacts: ArcGQLResponseType = await getGQLData({
 		ids: args.ids,
 		tagFilters: null,
-		uploader: args.uploader,
+		uploader: args.uploader ? [args.uploader] : null,
 		cursor: cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.Search,
@@ -178,42 +186,56 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 }
 
 export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDetailType | null> {
-	const pool: PoolType | null = await getPoolById(getTagValue(artifact.node.tags, TAGS.keys.poolId));
+	if (artifact) {
+		const arClient = new ArweaveClient();
 
-	try {
-		const response = await fetch(getTxEndpoint(artifact.node.id));
-		if (response.status === 200 && artifact) {
-			try {
-				return {
-					artifactId: artifact.node.id,
-					artifactName: getTagValue(artifact.node.tags, TAGS.keys.artifactName),
-					artifactType: getTagValue(artifact.node.tags, TAGS.keys.artifactType) as any,
-					associationId: getTagValue(artifact.node.tags, TAGS.keys.associationId),
-					associationSequence: getTagValue(artifact.node.tags, TAGS.keys.associationSequence),
-					profileImagePath: getTagValue(artifact.node.tags, TAGS.keys.profileImage),
-					owner: getTagValue(artifact.node.tags, TAGS.keys.initialOwner),
-					ansTitle: getTagValue(artifact.node.tags, TAGS.keys.ansTitle),
-					minted: getTagValue(artifact.node.tags, TAGS.keys.dateCreated),
-					keywords: getTagValue(artifact.node.tags, TAGS.keys.keywords),
-					mediaIds: getTagValue(artifact.node.tags, TAGS.keys.mediaIds),
-					childAssets: getTagValue(artifact.node.tags, TAGS.keys.childAssets),
-					fileType: getTagValue(artifact.node.tags, TAGS.keys.fileType),
-					renderWith: getTagValue(artifact.node.tags, TAGS.keys.renderWith),
-					poolName: pool ? pool.state.title : null,
-					poolId: pool ? pool.id : null,
-					dataUrl: response.url,
-					dataSize: artifact ? artifact.node.data.size : null,
-					rawData: await response.text(),
-				};
-			} catch (error: any) {
-				console.error(error);
+		const pool: PoolType | null = await getPoolById(getTagValue(artifact.node.tags, TAGS.keys.poolId));
+
+		try {
+			const response = await fetch(getTxEndpoint(artifact.node.id));
+			const contract = arClient.warpDefault.contract(artifact.node.id);
+			const contractState = (await contract.readState()).cachedValue.state;
+			if (response.status === 200 && artifact) {
+				try {
+					let artifactDetail: ArtifactDetailType = {
+						artifactId: artifact.node.id,
+						artifactName: getTagValue(artifact.node.tags, TAGS.keys.artifactName),
+						artifactType: getTagValue(artifact.node.tags, TAGS.keys.artifactType) as any,
+						associationId: getTagValue(artifact.node.tags, TAGS.keys.associationId),
+						associationSequence: getTagValue(artifact.node.tags, TAGS.keys.associationSequence),
+						profileImagePath: getTagValue(artifact.node.tags, TAGS.keys.profileImage),
+						owner: getTagValue(artifact.node.tags, TAGS.keys.initialOwner),
+						ansTitle: getTagValue(artifact.node.tags, TAGS.keys.ansTitle),
+						minted: getTagValue(artifact.node.tags, TAGS.keys.dateCreated),
+						keywords: getTagValue(artifact.node.tags, TAGS.keys.keywords),
+						mediaIds: getTagValue(artifact.node.tags, TAGS.keys.mediaIds),
+						childAssets: getTagValue(artifact.node.tags, TAGS.keys.childAssets),
+						fileType: getTagValue(artifact.node.tags, TAGS.keys.fileType),
+						renderWith: getTagValue(artifact.node.tags, TAGS.keys.renderWith),
+						poolName: pool ? pool.state.title : null,
+						poolId: pool ? pool.id : null,
+						dataUrl: response.url,
+						dataSize: artifact ? artifact.node.data.size : null,
+						rawData: await response.text(),
+					};
+
+					if (contractState && contractState.claimable) {
+						artifactDetail.claimable = contractState.claimable;
+					}
+
+					return artifactDetail;
+				} catch (error: any) {
+					console.error(error);
+					return null;
+				}
+			} else {
 				return null;
 			}
-		} else {
+		} catch (error: any) {
+			console.error(error);
 			return null;
 		}
-	} catch (error: any) {
-		console.error(error);
+	} else {
 		return null;
 	}
 }
@@ -260,7 +282,7 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 	const response = await global.window.arweaveWallet.dispatch(txRes);
 
 	return {
-		status: response.id ? 200 : 500,
+		status: response.id ? true : false,
 		message: response.id ? `Bookmarks Updated` : `Error Occurred`,
 	};
 }

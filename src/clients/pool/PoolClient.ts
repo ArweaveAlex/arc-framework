@@ -6,9 +6,9 @@ import { TAGS } from '../../helpers/config';
 import { POOL_CONTRACT_SRC } from '../../helpers/contracts';
 import {
 	ANSTopicEnum,
-	ContributionResultType,
 	GQLResponseType,
 	IPoolClient,
+	NotificationResponseType,
 	PoolBalancesType,
 	PoolConfigType,
 } from '../../helpers/types';
@@ -169,7 +169,7 @@ export default class PoolClient implements IPoolClient {
 		return Math.floor(+this.arClient.arweavePost.ar.winstonToAr(amount) * 1e6) / 1e6;
 	}
 
-	async handlePoolContribute(args: { amount: number; availableBalance: number }): Promise<ContributionResultType> {
+	async handlePoolContribute(args: { amount: number; availableBalance: number }): Promise<NotificationResponseType> {
 		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			return { status: false, message: `Please initialize your poolConfig to an existing pool` };
 		}

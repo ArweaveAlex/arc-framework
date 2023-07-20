@@ -1,12 +1,12 @@
 import { ArweaveClient } from '../clients/arweave';
-import { CURSORS, PAGINATOR, SEARCH, UPLOADER } from '../helpers/config';
+import { CURSORS, PAGINATOR, SEARCH } from '../helpers/config';
 import { CursorEnum, CursorObjectKeyType, GQLResponseType, TagFilterType } from '../helpers/types';
 import { checkGqlCursor, unquoteJsonKeys } from '../helpers/utils';
 
 export async function getGQLData(args: {
 	ids: string[] | null;
 	tagFilters: TagFilterType[] | null;
-	uploader: string | null;
+	uploader: string[] | null;
 	cursor: string | null;
 	reduxCursor: string | null;
 	cursorObject: CursorObjectKeyType;
@@ -22,7 +22,7 @@ export async function getGQLData(args: {
 
 	let ids = args.ids ? JSON.stringify(args.ids) : null;
 	let tags = args.tagFilters ? unquoteJsonKeys(args.tagFilters) : null;
-	let owners = args.uploader ? JSON.stringify([args.uploader, UPLOADER]) : null;
+	let owners = args.uploader ? JSON.stringify(args.uploader) : null;
 
 	let cursor = args.cursor ? `"${args.cursor}"` : null;
 

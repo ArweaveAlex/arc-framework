@@ -116,6 +116,7 @@ async function createContractTags(
 	}
 ) {
 	const dateTime = new Date().getTime().toString();
+
 	const tokenHolder = await getRandomContributor(poolClient);
 
 	const initStateJson = JSON.stringify({
@@ -161,6 +162,7 @@ async function createContractTags(
 		{ name: TAGS.keys.implements, value: TAGS.values.ansVersion },
 		{ name: TAGS.keys.initState, value: initStateJson },
 		{ name: TAGS.keys.license, value: TAGS.values.license },
+		{ name: TAGS.keys.indexedBy, value: TAGS.values.indexer },
 	];
 
 	if (args.renderWith) {
