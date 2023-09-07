@@ -56,6 +56,7 @@ export interface ArtifactDetailType {
 	artifactId: string | null;
 	artifactName: string | null;
 	artifactType: ArtifactEnum;
+	artifactContractSrc: string | null;
 	associationId: string | null;
 	associationSequence: string | null;
 	profileImagePath: string | null;

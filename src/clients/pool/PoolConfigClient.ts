@@ -61,7 +61,7 @@ export default class PoolConfigClient {
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
-			useArweavePost: false,
+			useArweavePost: true,
 		});
 
 		if (poolData.data.length < 1) return null;
@@ -69,27 +69,25 @@ export default class PoolConfigClient {
 		let artifactContractSrc: string;
 		let keywords: string[];
 
-		let artifactData = await getGQLData({
-			ids: null,
-			tagFilters: [{ name: TAGS.keys.poolId, values: [pool.id] }],
-			uploader: null,
-			cursor: null,
-			reduxCursor: null,
-			cursorObject: null,
-		});
-
 		if (pool.state.artifactContractSrc) {
 			artifactContractSrc = pool.state.artifactContractSrc;
-		} else {
-			if (artifactData.data.length > 0) {
-				artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
-			}
 		}
 
 		if (pool.state.keywords) {
 			keywords = pool.state.keywords;
-		} else {
+		}
+
+		if (!pool.state.artifactContractSrc && !pool.state.keywords) {
+			let artifactData = await getGQLData({
+				ids: null,
+				tagFilters: [{ name: TAGS.keys.poolId, values: [pool.id] }],
+				uploader: null,
+				cursor: null,
+				reduxCursor: null,
+				cursorObject: null,
+			});
 			if (artifactData.data.length > 0) {
+				artifactContractSrc = getTagValue(artifactData.data[0].node.tags, TAGS.keys.contractSrc);
 				keywords = JSON.parse(getTagValue(artifactData.data[0].node.tags, TAGS.keys.keywords)) as string[];
 			}
 		}

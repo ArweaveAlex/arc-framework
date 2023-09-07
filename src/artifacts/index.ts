@@ -30,7 +30,6 @@ export function getAnsType(alexType: string) {
 		case ArtifactEnum.Ebook:
 			ansType = TAGS.values.ansTypes.document;
 			break;
-		// file is a default
 		case ArtifactEnum.File:
 			ansType = TAGS.values.ansTypes.file;
 			break;
@@ -162,7 +161,7 @@ async function createContractTags(
 		{ name: TAGS.keys.implements, value: TAGS.values.ansVersion },
 		{ name: TAGS.keys.initState, value: initStateJson },
 		{ name: TAGS.keys.license, value: TAGS.values.license },
-		{ name: TAGS.keys.indexedBy, value: TAGS.values.indexer },
+		{ name: TAGS.keys.holderTitle, value: TAGS.values.holderTitle },
 	];
 
 	if (args.renderWith) {

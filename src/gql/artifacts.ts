@@ -175,7 +175,7 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
-		useArweavePost: false,
+		useArweavePost: true,
 	});
 
 	if (artifact && artifact.data) {
@@ -202,6 +202,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 						artifactName: getTagValue(artifact.node.tags, TAGS.keys.artifactName),
 						artifactType: getTagValue(artifact.node.tags, TAGS.keys.artifactType) as any,
 						associationId: getTagValue(artifact.node.tags, TAGS.keys.associationId),
+						artifactContractSrc: getTagValue(artifact.node.tags, TAGS.keys.contractSrc),
 						associationSequence: getTagValue(artifact.node.tags, TAGS.keys.associationSequence),
 						profileImagePath: getTagValue(artifact.node.tags, TAGS.keys.profileImage),
 						owner: getTagValue(artifact.node.tags, TAGS.keys.initialOwner),

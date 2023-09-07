@@ -1,9 +1,16 @@
-import { ANSTopicEnum, FALLBACK_IMAGE, logJsonUpdate, PoolConfigType, PoolStateType, TAGS } from '../../helpers';
+import {
+	ANSTopicEnum,
+	ARTIFACT_CONTRACT,
+	FALLBACK_IMAGE,
+	logJsonUpdate,
+	PoolConfigType,
+	PoolStateType,
+	TAGS,
+} from '../../helpers';
 import { POOL_CONTRACT_SRC } from '../../helpers/contracts';
 
 import PoolClient from './PoolClient';
 
-// Class for creating new pools
 export default class PoolCreateClient {
 	poolClient: PoolClient;
 	poolConfig: PoolConfigType;
@@ -37,7 +44,6 @@ export default class PoolCreateClient {
 		this.createPool = this.createPool.bind(this);
 		this.checkControlWalletBalance = this.checkControlWalletBalance.bind(this);
 		this.uploadBackgroundImage = this.uploadBackgroundImage.bind(this);
-		this.deploytNftSrc = this.deploytNftSrc.bind(this);
 		this.deployPoolSrc = this.deployPoolSrc.bind(this);
 		this.initializeState = this.initializeState.bind(this);
 		this.createTags = this.createTags.bind(this);
@@ -68,28 +74,6 @@ export default class PoolCreateClient {
 			return img;
 		} catch (e: any) {
 			throw new Error(`Failed to upload background image`);
-		}
-	}
-
-	async deploytNftSrc() {
-		// let nftSrc: string = NFT_CONTRACT_SRC;
-		// let nftInitState: any = NFT_INIT_STATE;
-		// let nftDeployment: any;
-		try {
-			// nftDeployment = await this.poolClient.arClient.warpDefault.createContract.deploy({
-			// 	src: nftSrc,
-			// 	initState: JSON.stringify(nftInitState),
-			// 	wallet: this.signedControlWallet,
-			// });
-			// return nftDeployment;
-			return {
-				srcTxId: 'EczcXiS-2pi6HQ5I4o83nJnpbT5CIjPr-wn-65wYqRw',
-				contractTxId: 'GfVfRpgHSzPC-xgwuknz-bUEmJR77UXWGErKRMNz7hY',
-			};
-			// EczcXiS-2pi6HQ5I4o83nJnpbT5CIjPr-wn-65wYqRw
-		} catch (e: any) {
-			console.error(e);
-			throw new Error(`Failed deploying nftContractSrc to warp`);
 		}
 	}
 
@@ -140,7 +124,6 @@ export default class PoolCreateClient {
 		const tags = [
 			{ name: TAGS.keys.appType, value: this.poolConfig.appType },
 			{ name: TAGS.keys.poolName, value: this.poolConfig.state.title },
-			// ANS 110 tags
 			{ name: TAGS.keys.title, value: this.poolConfig.state.title },
 			{ name: TAGS.keys.type, value: TAGS.values.ansTypes.collection },
 			{ name: TAGS.keys.description, value: this.poolConfig.state.briefDescription },
@@ -176,16 +159,14 @@ export default class PoolCreateClient {
 	}
 
 	async createPool() {
-		// await this.checkControlWalletBalance();
-		let img = await this.uploadBackgroundImage();
-		// let nftDeployment = await this.deploytNftSrc();
-		let nftDeployment = {
-			contractTxId: 'R-ZIJmCmDEQGe2FF2jRXNEZiM9kgL914KG0WhQdznSE',
-			srcTxId: '-SqpGS8hWHeAzYyudZR6Zm2_shhTzP-WjUr10pKumoE',
+		const img = await this.uploadBackgroundImage();
+		const nftDeployment = {
+			contractTxId: ARTIFACT_CONTRACT.tx,
+			srcTxId: ARTIFACT_CONTRACT.src,
 		};
 		const poolSrcDeployment = await this.deployPoolSrc();
-		let poolInitObj = await this.initializeState(img, nftDeployment);
-		let tags = this.createTags(poolInitObj);
+		const poolInitObj = await this.initializeState(img, nftDeployment);
+		const tags = this.createTags(poolInitObj);
 		const poolDeployment = await this.deployPoolContract(poolInitObj, poolSrcDeployment, tags);
 
 		this.poolConfig.walletPath = this.poolWalletPath;

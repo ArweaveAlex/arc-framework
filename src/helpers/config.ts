@@ -26,6 +26,7 @@ export const TAGS = {
 		dateCreated: 'Date-Created',
 		description: 'Description',
 		fileType: `File-Type`,
+		holderTitle: `Holder-Title`,
 		keywords: 'Keywords',
 		implements: 'Implements',
 		indexedBy: 'Indexed-By',
@@ -69,6 +70,7 @@ export const TAGS = {
 		defaultArtifactType: 'Alex-Default',
 		documentArtifactType: 'Alex-Document',
 		ebookArtifactType: 'Alex-Ebook',
+		holderTitle: 'sponsor',
 		imageArtifactType: 'Alex-Image',
 		indexer: 'ucm',
 		initState: {
@@ -97,6 +99,11 @@ export const TAGS = {
 		ansVersion: 'ANS-110',
 		ansType: 'token',
 	},
+};
+
+export const ARTIFACT_CONTRACT = {
+	tx: '',
+	src: 'Of9pi--Gj7hCTawhgxOwbuWnFI1h24TTgO5pw8ENJNQ',
 };
 
 export const PAGINATOR = 100;
