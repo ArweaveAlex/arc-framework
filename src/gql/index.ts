@@ -11,13 +11,16 @@ export async function getGQLData(args: {
 	reduxCursor: string | null;
 	cursorObject: CursorObjectKeyType;
 	useArweavePost?: boolean;
-}): Promise<{ data: GQLResponseType[]; nextCursor: string | null }> {
+}): Promise<{ data: GQLResponseType[]; count: number; nextCursor: string | null }> {
+	const startTime = new Date();
+
 	const arClient = new ArweaveClient();
 	let nextCursor: string | null = null;
+	let count: number = 0;
 	const data: GQLResponseType[] = [];
 
 	if (args.ids && args.ids.length <= 0) {
-		return { data: data, nextCursor: nextCursor };
+		return { data: data, count: count, nextCursor: nextCursor };
 	}
 
 	let ids = args.ids ? JSON.stringify(args.ids) : null;
@@ -47,18 +50,19 @@ export async function getGQLData(args: {
                         first: ${PAGINATOR}, 
                         after: ${cursor}
                     ){
-                    edges {
-                        cursor
-                        node {
-                            id
-                            tags {
-                                name 
-                                value 
-                            }
-                            data {
-                                size
-                                type
-                            }
+						count
+						edges {
+							cursor
+							node {
+								id
+								tags {
+									name 
+									value 
+								}
+								data {
+									size
+									type
+								}
                         }
                     }
                 }
@@ -71,6 +75,7 @@ export async function getGQLData(args: {
 		: await arClient.arweaveGet.api.post('/graphql', query);
 	if (response.data.data) {
 		const responseData = response.data.data.transactions.edges;
+		count = response.data.data.transactions.count;
 		if (responseData.length > 0) {
 			data.push(...responseData);
 			if (args.cursorObject && args.cursorObject === CursorEnum.GQL) {
@@ -83,7 +88,11 @@ export async function getGQLData(args: {
 		}
 	}
 
-	return { data: data, nextCursor: nextCursor };
+	const endTime = new Date();
+	const responseTime = (endTime.getTime() - startTime.getTime()) / 1000;
+	console.log(`Response Time: ${responseTime}s`);
+
+	return { data: data, count: count, nextCursor: nextCursor };
 }
 
 export * from './artifacts';

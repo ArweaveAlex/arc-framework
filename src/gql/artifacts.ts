@@ -1,5 +1,5 @@
 import { ArweaveClient } from '../clients/arweave';
-import { CURSORS, STORAGE, TAGS, UPLOADER } from '../helpers/config';
+import { CURSORS, STORAGE, TAGS } from '../helpers/config';
 import { getTxEndpoint } from '../helpers/endpoints';
 import {
 	ArcGQLResponseType,
@@ -20,7 +20,7 @@ import { getPoolById } from './pool';
 import { getPoolIds } from './pools';
 import { getGQLData } from '.';
 
-export async function getArtifactsByPool(args: ArtifactArgsType, useUploader: boolean): Promise<ArtifactResponseType> {
+export async function getArtifactsByPool(args: ArtifactArgsType, _useUploader: boolean): Promise<ArtifactResponseType> {
 	let tagFilters: TagFilterType[] = [
 		{
 			name: TAGS.keys.poolId,
@@ -36,9 +36,6 @@ export async function getArtifactsByPool(args: ArtifactArgsType, useUploader: bo
 	}
 
 	let uploader = args.uploader ? [args.uploader] : null;
-	if (uploader) {
-		if (useUploader) uploader.push(UPLOADER);
-	}
 
 	const gqlResponse: ArcGQLResponseType = await getGQLData({
 		ids: null,
@@ -296,6 +293,7 @@ function getArtifactsResponseObject(gqlResponse: ArcGQLResponseType): ArtifactRe
 	return {
 		nextCursor: gqlResponse.nextCursor,
 		previousCursor: null,
+		count: gqlResponse.count,
 		contracts: contracts,
 	};
 }

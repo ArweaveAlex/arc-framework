@@ -50,7 +50,7 @@ export type GQLResponseType = {
 	};
 };
 
-export type ArcGQLResponseType = { data: GQLResponseType[]; nextCursor: string | null };
+export type ArcGQLResponseType = { data: GQLResponseType[]; count: number; nextCursor: string | null };
 
 export interface ArtifactDetailType {
 	artifactId: string | null;
@@ -92,6 +92,7 @@ export type ArtifactArgsType = {
 export type ArtifactResponseType = {
 	nextCursor: string | null;
 	previousCursor: string | null;
+	count: number;
 	contracts: GQLResponseType[];
 };
 
