@@ -50,7 +50,7 @@ export async function getGQLData(args: {
                         first: ${PAGINATOR}, 
                         after: ${cursor}
                     ){
-						count
+						${args.useArweavePost ? '' : 'count'}
 						edges {
 							cursor
 							node {
@@ -75,7 +75,11 @@ export async function getGQLData(args: {
 		: await arClient.arweaveGet.api.post('/graphql', query);
 	if (response.data.data) {
 		const responseData = response.data.data.transactions.edges;
-		count = response.data.data.transactions.count;
+
+		if (response.data.data.transactions.count) {
+			count = response.data.data.transactions.count;
+		}
+
 		if (responseData.length > 0) {
 			data.push(...responseData);
 			if (args.cursorObject && args.cursorObject === CursorEnum.GQL) {
