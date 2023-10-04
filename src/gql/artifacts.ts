@@ -22,7 +22,7 @@ import { checkGqlCursor, getTagValue } from '../helpers/utils';
 import { getPoolById } from './pool';
 import { getGQLData } from '.';
 
-export async function getArtifactsByPool(args: ArtifactArgsType, _useUploader: boolean): Promise<ArtifactResponseType> {
+export async function getArtifactsByPool(args: ArtifactArgsType): Promise<ArtifactResponseType> {
 	let tagFilters: TagFilterType[] = [
 		{
 			name: TAGS.keys.poolId,
