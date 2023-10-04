@@ -12,10 +12,14 @@ export async function getPoolById(poolId: string): Promise<PoolType | null> {
 	try {
 		const contract = arClient.warpDefault.contract(poolId).setEvaluationOptions({
 			allowBigInt: true,
+			remoteStateSyncEnabled: true,
 		});
+
+		const state = ((await contract.readState()) as any).cachedValue.state;
+
 		return {
 			id: poolId,
-			state: ((await contract.readState()) as any).cachedValue.state,
+			state: state,
 		};
 	} catch (error: any) {
 		console.error(error);

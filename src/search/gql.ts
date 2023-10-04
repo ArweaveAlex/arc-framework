@@ -40,7 +40,7 @@
 
 // 	let cursor = args.cursor ? `"${args.cursor}"` : null;
 
-// 	if (args.reduxCursor && args.cursorObject && args.cursorObject === CursorEnum.Search) {
+// 	if (args.reduxCursor && args.cursorObject && args.cursorObject === CursorEnum.IdGQL) {
 // 		let i: number;
 // 		if (args.cursor && args.cursor !== CURSORS.p1 && args.cursor !== CURSORS.end && !checkGqlCursor(args.cursor)) {
 // 			i = Number(args.cursor.slice(-1));

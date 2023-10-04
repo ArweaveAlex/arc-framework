@@ -17,7 +17,7 @@ export enum ArtifactEnum {
 
 export enum CursorEnum {
 	GQL = 'gql',
-	Search = 'search',
+	IdGQL = 'idGql',
 }
 
 export enum ANSTopicEnum {
@@ -210,7 +210,7 @@ export type TableIdType = {
 export type TagFilterType = { name: string; values: string[] };
 export type ContributionType = { timestamp: string; qty: string };
 export type PoolFilterType = { title: string; fn: (data: any) => any };
-export type CursorObjectKeyType = CursorEnum.GQL | CursorEnum.Search | null;
+export type CursorObjectKeyType = CursorEnum.GQL | CursorEnum.IdGQL | null;
 export type CursorObjectType = { key: CursorObjectKeyType; value: string };
 export type SequenceType = { start: number; end: number };
 
@@ -278,3 +278,27 @@ export interface IPoolClient {
 	walletKey: string | null;
 	contract: Contract;
 }
+
+export type PagingType = {
+	limit: number;
+	items: number;
+	page: number;
+};
+
+export type BalanceType = {
+	contract_tx_id: string;
+	token_ticker: string;
+	token_name: string;
+	balance: string;
+	sort_key: string;
+};
+
+export type UserBalancesType = {
+	paging: PagingType;
+	balances: BalanceType[];
+};
+
+export type UserArtifactsArgsType = {
+	walletAddress: string;
+	fetchType: 'all' | 'bookmarks';
+};

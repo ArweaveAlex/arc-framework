@@ -1,23 +1,25 @@
 import { ArweaveClient } from '../clients/arweave';
 import { CURSORS, STORAGE, TAGS } from '../helpers/config';
-import { getTxEndpoint } from '../helpers/endpoints';
+import { getBalancesEndpoint, getTxEndpoint } from '../helpers/endpoints';
 import {
 	ArcGQLResponseType,
 	ArtifactArgsType,
 	ArtifactDetailType,
 	ArtifactResponseType,
 	AssociationDetailType,
+	BalanceType,
 	CursorEnum,
 	GQLResponseType,
 	NotificationResponseType,
 	PoolType,
 	SequenceType,
 	TagFilterType,
+	UserArtifactsArgsType,
+	UserBalancesType,
 } from '../helpers/types';
 import { checkGqlCursor, getTagValue } from '../helpers/utils';
 
 import { getPoolById } from './pool';
-import { getPoolIds } from './pools';
 import { getGQLData } from '.';
 
 export async function getArtifactsByPool(args: ArtifactArgsType, _useUploader: boolean): Promise<ArtifactResponseType> {
@@ -50,20 +52,56 @@ export async function getArtifactsByPool(args: ArtifactArgsType, _useUploader: b
 	return getArtifactsResponseObject(gqlResponse);
 }
 
-export async function getArtifactsByUser(args: ArtifactArgsType): Promise<ArtifactResponseType> {
-	const poolIds = await getPoolIds();
+export async function getArtifactIdsByUser(args: UserArtifactsArgsType): Promise<string[]> {
+	try {
+		const result: any = await fetch(getBalancesEndpoint(args.walletAddress));
+		if (result.status === 200) {
+			const balances = ((await result.json()) as UserBalancesType).balances;
 
-	const artifacts = await getArtifactsByPool(
-		{
-			ids: poolIds,
-			owner: args.owner,
-			uploader: null,
-			cursor: args.cursor,
-			reduxCursor: args.reduxCursor,
-		},
-		false
-	);
-	return artifacts;
+			const assetIds = balances
+				.filter((balance: BalanceType) => {
+					return balance.balance && parseInt(balance.balance) > 0;
+				})
+				.filter((balance: BalanceType) => {
+					return balance.token_name && balance.token_name.includes('Artifact -');
+				})
+				.map((balance: BalanceType) => {
+					return balance.contract_tx_id;
+				});
+
+			return assetIds;
+		}
+	} catch (e: any) {
+		console.error(e);
+	}
+	return [];
+}
+
+export async function getArtifactsByUser(args: ArtifactArgsType): Promise<ArtifactResponseType> {
+	const result: any = await fetch(getBalancesEndpoint(args.owner));
+	if (result.status === 200) {
+		const balances = ((await result.json()) as UserBalancesType).balances;
+
+		const assetIds = balances
+			.filter((balance: BalanceType) => {
+				return balance.balance && parseInt(balance.balance) > 0;
+			})
+			.filter((balance: BalanceType) => {
+				return balance.token_name && balance.token_name.includes('Artifact -');
+			})
+			.map((balance: BalanceType) => {
+				return balance.contract_tx_id;
+			});
+
+		console.log(assetIds.length);
+	}
+
+	return {
+		nextCursor: null,
+		previousCursor: null,
+		count: 0,
+		contracts: [],
+	};
 }
 
 export async function getArtifactsByIds(args: ArtifactArgsType): Promise<ArtifactResponseType> {
@@ -78,7 +116,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 		uploader: args.uploader ? [args.uploader] : null,
 		cursor: cursor,
 		reduxCursor: args.reduxCursor,
-		cursorObject: CursorEnum.Search,
+		cursorObject: CursorEnum.IdGQL,
 	});
 
 	return getArtifactsResponseObject(artifacts);

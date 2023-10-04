@@ -20,7 +20,6 @@ export default class UserClient {
 		let pools: PoolType[] = await getPools();
 
 		if (pools.length > 0) {
-			const lastContributions: any = await this.calcLastContributions(pools);
 			return pools
 				.filter((pool: any) => {
 					if (pool.state.contributors.hasOwnProperty(this.userWalletAddress)) {
@@ -31,7 +30,6 @@ export default class UserClient {
 				.map((pool: any) => {
 					let poolElement = pool;
 					poolElement.totalContributed = this.calcARDonated(pool);
-					poolElement.lastContribution = lastContributions[pool.id];
 					poolElement.receivingPercent = this.calcReceivingPercent(pool);
 					return poolElement;
 				});

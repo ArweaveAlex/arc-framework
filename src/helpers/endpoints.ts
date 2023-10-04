@@ -2,6 +2,10 @@ export function getBalanceEndpoint(wallet: string) {
 	return `https://arweave.net/wallet/${wallet}/balance`;
 }
 
+export function getBalancesEndpoint(walletAddress: string) {
+	return `https://contracts.warp.cc/balances?walletAddress=${walletAddress}&indexes=ucm&limit=1000`;
+}
+
 export function getViewblockEndpoint(txId: string) {
 	return `https://v2.viewblock.io/arweave/tx/${txId}`;
 }

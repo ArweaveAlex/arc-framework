@@ -113,19 +113,20 @@ export default class PoolClient implements IPoolClient {
 
 		try {
 			await this.arClient.bundlr.fund(Math.floor(sendAmount));
-			let contract = this.arClient.warpDefault
-				.contract(this.poolConfig.contracts.pool.id)
-				.connect(this.poolConfig.walletKey)
-				.setEvaluationOptions({
-					allowBigInt: true,
-				});
+			// let contract = this.arClient.warpDefault
+			// 	.contract(this.poolConfig.contracts.pool.id)
+			// 	.connect(this.poolConfig.walletKey)
+			// 	.setEvaluationOptions({
+			// 		allowBigInt: true,
+			// 	});
 
-			await contract.writeInteraction({
-				function: 'updateUsedFunds',
-				data: sendAmount.toString(),
-			});
+			// await contract.writeInteraction({
+			// 	function: 'updateUsedFunds',
+			// 	data: sendAmount,
+			// });
 		} catch (e: any) {
-			throw new Error(`Error funding bundlr, check funds in arweave wallet ...\n ${e}`);
+			console.error(e);
+			throw new Error(`Error funding bundlr...\n ${e}`);
 		}
 	}
 

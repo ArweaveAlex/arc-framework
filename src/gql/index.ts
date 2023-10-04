@@ -29,7 +29,7 @@ export async function getGQLData(args: {
 
 	let cursor = args.cursor ? `"${args.cursor}"` : null;
 
-	if (args.reduxCursor && args.cursorObject && args.cursorObject === CursorEnum.Search) {
+	if (args.reduxCursor && args.cursorObject && args.cursorObject === CursorEnum.IdGQL) {
 		let i: number;
 		if (args.cursor && args.cursor !== CURSORS.p1 && args.cursor !== CURSORS.end && !checkGqlCursor(args.cursor)) {
 			i = Number(args.cursor.slice(-1));
@@ -39,6 +39,9 @@ export async function getGQLData(args: {
 			cursor = `${SEARCH.cursorPrefix}-${i}`;
 		}
 	}
+
+	let countQuery: string = '';
+	if (!args.useArweavePost && !args.cursor) countQuery = 'count';
 
 	const query = {
 		query: `
@@ -50,7 +53,7 @@ export async function getGQLData(args: {
                         first: ${PAGINATOR}, 
                         after: ${cursor}
                     ){
-						${args.useArweavePost ? '' : 'count'}
+						${countQuery}
 						edges {
 							cursor
 							node {
@@ -67,7 +70,9 @@ export async function getGQLData(args: {
                     }
                 }
             }
-        `,
+        `
+			.replace(/\s+/g, ' ')
+			.trim(),
 	};
 
 	const response = args.useArweavePost

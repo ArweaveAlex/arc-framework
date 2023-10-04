@@ -1,6 +1,6 @@
 import mime, { contentType } from 'mime-types';
 
-import { ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
+import { ARTIFACT_CONTRACT, ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
 import { ArtifactEnum, IPoolClient } from '../helpers/types';
 import { log, logValue } from '../helpers/utils';
 
@@ -142,7 +142,7 @@ async function createContractTags(
 		{ name: TAGS.keys.appName, value: TAGS.values.appName },
 		{ name: TAGS.keys.appVersion, value: TAGS.values.appVersion },
 		{ name: TAGS.keys.contentType, value: args.contentType },
-		{ name: TAGS.keys.contractSrc, value: poolClient.poolConfig.contracts.nft.src },
+		{ name: TAGS.keys.contractSrc, value: ARTIFACT_CONTRACT.src },
 		{ name: TAGS.keys.poolId, value: poolClient.poolConfig.contracts.pool.id },
 		{ name: TAGS.keys.title, value: args.name },
 		{ name: TAGS.keys.description, value: args.description },
