@@ -17,7 +17,7 @@
 // export async function getGQLData(args: {
 // 	ids: string[] | null;
 // 	tagFilters: TagFilterType[] | null;
-// 	uploader: string | null;
+// 	uploaders: string | null;
 // 	cursor: string | null;
 // 	reduxCursor: string | null;
 // 	cursorObject: CursorObjectKeyType;
@@ -36,7 +36,7 @@
 
 // 	console.log(unquoteJsonKeys(addMatchProperty(args.tagFilters)));
 
-// 	let owners = args.uploader ? JSON.stringify([args.uploader]) : null;
+// 	let owners = args.uploaders ? JSON.stringify([args.uploaders]) : null;
 
 // 	let cursor = args.cursor ? `"${args.cursor}"` : null;
 

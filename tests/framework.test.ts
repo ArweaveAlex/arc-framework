@@ -14,7 +14,7 @@ async function testGetArtifactsByPoolGQL() {
 	const gqlData: ArtifactResponseType = await getArtifactsByPool({
 		ids: ['zoljIRyzG5hp-R4EZV2q8kFI49OAoy23_B9YJ_yEEws'],
 		owner: null,
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: 'poolAll',
 	});
@@ -31,7 +31,7 @@ async function testGetArtifactsByUserGQL() {
 	const gqlData: ArtifactResponseType = await getArtifactsByUser({
 		ids: null,
 		owner: 'uf_FqRvLqjnFMc8ZzGkF4qWKuNmUIQcYP0tPlCGORQk',
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: 'accountAll',
 	});
@@ -55,7 +55,7 @@ async function testGetArtifactsByIdsGQL() {
 			'qERJuxaUy2Vs9VwjCZSu5Lt0Tk1ssox2o0hRlHb7WkY',
 		],
 		owner: null,
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: null,
 	});
@@ -72,7 +72,7 @@ async function testGetArtifactsByBookmarksGQL() {
 	const gqlData: ArtifactResponseType = await getArtifactsByBookmarks({
 		ids: ['8VUccSZEcXxnHh5o6L7VkzY__hNDyRM0Er8c3RmCMJc'],
 		owner: null,
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: null,
 	});

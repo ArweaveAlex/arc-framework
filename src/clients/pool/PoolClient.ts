@@ -197,7 +197,7 @@ export default class PoolClient implements IPoolClient {
 				await getGQLData({
 					ids: null,
 					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [this.poolConfig.contracts.pool.id] }],
-					uploader: null,
+					uploaders: null,
 					cursor: null,
 					reduxCursor: null,
 					cursorObject: null,

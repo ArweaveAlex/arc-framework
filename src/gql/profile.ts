@@ -18,7 +18,7 @@ export async function getProfile(walletAddress: string | null): Promise<ProfileT
 					values: [TAGS.values.profileVersions['0.2'], TAGS.values.profileVersions['0.3']],
 				},
 			],
-			uploader: [walletAddress],
+			uploaders: [walletAddress],
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: CursorEnum.GQL,

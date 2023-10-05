@@ -6,13 +6,13 @@ import { checkGqlCursor, unquoteJsonKeys } from '../helpers/utils';
 export async function getGQLData(args: {
 	ids: string[] | null;
 	tagFilters: TagFilterType[] | null;
-	uploader: string[] | null;
+	uploaders: string[] | null;
 	cursor: string | null;
 	reduxCursor: string | null;
 	cursorObject: CursorObjectKeyType;
 	useArweavePost?: boolean;
 }): Promise<{ data: GQLResponseType[]; count: number; nextCursor: string | null }> {
-	const startTime = new Date();
+	// const startTime = new Date();
 
 	const arClient = new ArweaveClient();
 	let nextCursor: string | null = null;
@@ -25,7 +25,7 @@ export async function getGQLData(args: {
 
 	let ids = args.ids ? JSON.stringify(args.ids) : null;
 	let tags = args.tagFilters ? unquoteJsonKeys(args.tagFilters) : null;
-	let owners = args.uploader ? JSON.stringify(args.uploader) : null;
+	let owners = args.uploaders ? JSON.stringify(args.uploaders) : null;
 
 	let cursor = args.cursor ? `"${args.cursor}"` : null;
 
@@ -97,9 +97,9 @@ export async function getGQLData(args: {
 		}
 	}
 
-	const endTime = new Date();
-	const responseTime = (endTime.getTime() - startTime.getTime()) / 1000;
-	console.log(`Response Time: ${responseTime}s`);
+	// const endTime = new Date();
+	// const responseTime = (endTime.getTime() - startTime.getTime()) / 1000;
+	// console.log(`Response Time: ${responseTime}s`);
 
 	return { data: data, count: count, nextCursor: nextCursor };
 }

@@ -79,7 +79,7 @@ export default class ArweaveClient {
 					values: [args.poolId],
 				},
 			],
-			uploader: null,
+			uploaders: null,
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,

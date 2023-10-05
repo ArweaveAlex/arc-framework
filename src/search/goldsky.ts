@@ -44,7 +44,7 @@
 //             let result = await getGQLData({
 //                 ids: null,
 //                 tagFilters: sendTags,
-//                 uploader: null,
+//                 uploaders: null,
 //                 cursor: null,
 //                 reduxCursor: null,
 //                 cursorObject: null,

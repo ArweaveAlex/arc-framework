@@ -1,5 +1,5 @@
 import { ArweaveClient } from '../clients/arweave';
-import { CURSORS, STORAGE, TAGS } from '../helpers/config';
+import { ARTIFACT_CONTRACT, CURSORS, DRE_NODE, STORAGE, TAGS } from '../helpers/config';
 import { getBalancesEndpoint, getTxEndpoint } from '../helpers/endpoints';
 import {
 	ArcGQLResponseType,
@@ -37,12 +37,10 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		});
 	}
 
-	let uploader = args.uploader ? [args.uploader] : null;
-
 	const gqlResponse: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: tagFilters,
-		uploader: uploader,
+		uploaders: args.uploaders,
 		cursor: args.cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.GQL,
@@ -113,7 +111,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 	const artifacts: ArcGQLResponseType = await getGQLData({
 		ids: args.ids,
 		tagFilters: null,
-		uploader: args.uploader ? [args.uploader] : null,
+		uploaders: args.uploaders,
 		cursor: cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.IdGQL,
@@ -126,7 +124,7 @@ export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<A
 	const artifacts: ArcGQLResponseType = await getGQLData({
 		ids: args.ids,
 		tagFilters: null,
-		uploader: null,
+		uploaders: null,
 		cursor: args.cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.GQL,
@@ -151,7 +149,7 @@ export async function getArtifactsByAssociation(
 					values: [associationId],
 				},
 			],
-			uploader: null,
+			uploaders: null,
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
@@ -169,7 +167,7 @@ export async function getArtifactsByAssociation(
 					values: range,
 				},
 			],
-			uploader: null,
+			uploaders: null,
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
@@ -206,7 +204,7 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 	const artifact: ArcGQLResponseType = await getGQLData({
 		ids: [artifactId],
 		tagFilters: null,
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
@@ -223,13 +221,29 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDetailType | null> {
 	if (artifact) {
 		const arClient = new ArweaveClient();
-
 		const pool: PoolType | null = await getPoolById(getTagValue(artifact.node.tags, TAGS.keys.poolId));
+		const artifactContractSrc = getTagValue(artifact.node.tags, TAGS.keys.contractSrc);
 
 		try {
 			const response = await fetch(getTxEndpoint(artifact.node.id));
 			const contract = arClient.warpDefault.contract(artifact.node.id);
-			const contractState = (await contract.readState()).cachedValue.state;
+
+			let contractOptions: any = {
+				allowBigInt: true,
+				internalWrites: true,
+				unsafeClient: 'skip',
+			};
+			if (artifactContractSrc === ARTIFACT_CONTRACT.src) {
+				contractOptions.remoteStateSyncEnabled = true;
+				contractOptions.remoteStateSyncSource = DRE_NODE;
+			}
+			const contractState = (await contract.setEvaluationOptions(contractOptions).readState()).cachedValue.state;
+			let artifactOwner: string = getTagValue(artifact.node.tags, TAGS.keys.initialOwner);
+			if (contractState && contractState.balances) {
+				const balanceOwner = Object.keys(contractState.balances).filter((key) => contractState.balances[key] !== 0)[0];
+				if (balanceOwner) artifactOwner = balanceOwner;
+			}
+
 			if (response.status === 200 && artifact) {
 				try {
 					let artifactDetail: ArtifactDetailType = {
@@ -237,10 +251,10 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 						artifactName: getTagValue(artifact.node.tags, TAGS.keys.artifactName),
 						artifactType: getTagValue(artifact.node.tags, TAGS.keys.artifactType) as any,
 						associationId: getTagValue(artifact.node.tags, TAGS.keys.associationId),
-						artifactContractSrc: getTagValue(artifact.node.tags, TAGS.keys.contractSrc),
+						artifactContractSrc: artifactContractSrc,
 						associationSequence: getTagValue(artifact.node.tags, TAGS.keys.associationSequence),
 						profileImagePath: getTagValue(artifact.node.tags, TAGS.keys.profileImage),
-						owner: getTagValue(artifact.node.tags, TAGS.keys.initialOwner),
+						owner: artifactOwner,
 						ansTitle: getTagValue(artifact.node.tags, TAGS.keys.ansTitle),
 						minted: getTagValue(artifact.node.tags, TAGS.keys.dateCreated),
 						keywords: getTagValue(artifact.node.tags, TAGS.keys.keywords),
@@ -280,7 +294,7 @@ export async function getBookmarkIds(owner: string): Promise<string[]> {
 	const gqlData: ArcGQLResponseType = await getGQLData({
 		ids: null,
 		tagFilters: [{ name: TAGS.keys.bookmarkSearch, values: [owner] }],
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,

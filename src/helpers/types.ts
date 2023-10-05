@@ -84,7 +84,7 @@ export interface AssociationDetailType {
 export type ArtifactArgsType = {
 	ids: string[] | null;
 	owner: string | null;
-	uploader: string | null;
+	uploaders: string[] | null;
 	cursor: string | null;
 	reduxCursor: string | null;
 };

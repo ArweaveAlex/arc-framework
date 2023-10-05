@@ -138,7 +138,7 @@ export async function getCollectionsByOwner(walletAddress: string) {
 	// 			values: [walletAddress],
 	// 		},
 	// 	],
-	// 	uploader: null,
+	// 	uploaders: null,
 	// 	cursor: null,
 	// 	reduxCursor: null,
 	// 	cursorObject: null,

@@ -57,7 +57,7 @@ export default class PoolConfigClient {
 		let poolData = await getGQLData({
 			ids: null,
 			tagFilters: [{ name: TAGS.keys.poolName, values: [pool.state.title] }],
-			uploader: null,
+			uploaders: null,
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
@@ -81,7 +81,7 @@ export default class PoolConfigClient {
 			let artifactData = await getGQLData({
 				ids: null,
 				tagFilters: [{ name: TAGS.keys.poolId, values: [pool.id] }],
-				uploader: null,
+				uploaders: null,
 				cursor: null,
 				reduxCursor: null,
 				cursorObject: null,

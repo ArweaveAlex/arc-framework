@@ -255,3 +255,4 @@ export const ARTIFACT_TYPES_BY_FILE: { [ext: string]: ArtifactEnum } = {
 
 export const BUNDLR_NODE = 'https://node2.bundlr.network';
 export const BUNDLR_CURRENCY = 'arweave';
+export const DRE_NODE = 'https://dre-u.warp.cc/contract';

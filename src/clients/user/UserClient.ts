@@ -61,7 +61,7 @@ export default class UserClient {
 		const artifacts = await getArtifactsByUser({
 			ids: null,
 			owner: this.userWalletAddress,
-			uploader: null,
+			uploaders: null,
 			cursor: null,
 			reduxCursor: null,
 		});

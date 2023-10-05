@@ -40,7 +40,7 @@ export async function getLatestPoolSearchIndexTxId(poolId: string) {
 				values: [poolId],
 			},
 		],
-		uploader: null,
+		uploaders: null,
 		cursor: null,
 		reduxCursor: null,
 		cursorObject: null,
