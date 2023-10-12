@@ -13,6 +13,7 @@ export enum ArtifactEnum {
 	Video = 'Alex-Video',
 	Ebook = 'Alex-Ebook',
 	File = 'Alex-File',
+	NewsArticle = 'Alex-News-Article',
 }
 
 export enum CursorEnum {
@@ -122,6 +123,7 @@ export interface PoolStateType {
 	topics?: string[];
 	keywords?: string[];
 	usedFunds?: string;
+	tradeable?: boolean;
 }
 
 export type PoolBalancesType = {
@@ -223,11 +225,8 @@ export type ProfileType = {
 
 export type PoolConfigType = {
 	appType: string;
+	tradeable: boolean;
 	contracts: {
-		nft: {
-			id: NStringType;
-			src: NStringType;
-		};
 		pool: {
 			id: NStringType;
 			src: NStringType;

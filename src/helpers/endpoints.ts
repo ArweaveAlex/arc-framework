@@ -3,7 +3,7 @@ export function getBalanceEndpoint(wallet: string) {
 }
 
 export function getBalancesEndpoint(walletAddress: string) {
-	return `https://contracts.warp.cc/balances?walletAddress=${walletAddress}&indexes=ucm&limit=1000`;
+	return `https://dre-u.warp.cc/balances?walletAddress=${walletAddress}&indexes=ucm&limit=1000`;
 }
 
 export function getViewblockEndpoint(txId: string) {

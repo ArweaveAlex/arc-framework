@@ -115,10 +115,10 @@ async function createContractTags(
 	}
 ) {
 	const dateTime = new Date().getTime().toString();
+	const tokenHolder = await getContributor(poolClient);
 
-	const tokenHolder = await getRandomContributor(poolClient);
-
-	const initStateJson = JSON.stringify({
+	let contractSrc = ARTIFACT_CONTRACT.srcNonTradeable;
+	let initStateJson: any = {
 		ticker: TAGS.values.initState.ticker(args.assetId),
 		balances: {
 			[tokenHolder]: 1,
@@ -134,15 +134,22 @@ async function createContractTags(
 		name: TAGS.values.initState.name(args.name),
 		dateCreated: dateTime,
 		owner: tokenHolder,
-		claimable: [],
-		claims: [],
-	});
+	};
+
+	if (poolClient.poolConfig.tradeable) {
+		contractSrc = ARTIFACT_CONTRACT.srcTradeable;
+		initStateJson.claimable = [];
+		initStateJson.claims = [];
+		initStateJson.transferable = true;
+	}
+
+	const initState = JSON.stringify(initStateJson);
 
 	const tagList: any[] = [
 		{ name: TAGS.keys.appName, value: TAGS.values.appName },
 		{ name: TAGS.keys.appVersion, value: TAGS.values.appVersion },
 		{ name: TAGS.keys.contentType, value: args.contentType },
-		{ name: TAGS.keys.contractSrc, value: ARTIFACT_CONTRACT.src },
+		{ name: TAGS.keys.contractSrc, value: contractSrc },
 		{ name: TAGS.keys.poolId, value: poolClient.poolConfig.contracts.pool.id },
 		{ name: TAGS.keys.title, value: args.name },
 		{ name: TAGS.keys.description, value: args.description },
@@ -159,7 +166,7 @@ async function createContractTags(
 		{ name: TAGS.keys.associationSequence, value: args.associationSequence ? args.associationSequence : '' },
 		{ name: TAGS.keys.childAssets, value: args.childAssets ? JSON.stringify(args.childAssets) : '' },
 		{ name: TAGS.keys.implements, value: TAGS.values.ansVersion },
-		{ name: TAGS.keys.initState, value: initStateJson },
+		{ name: TAGS.keys.initState, value: initState },
 		{ name: TAGS.keys.license, value: TAGS.values.license },
 		{ name: TAGS.keys.holderTitle, value: TAGS.values.holderTitle },
 	];
@@ -262,7 +269,7 @@ async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) 
 	throw new Error(`Warp retries failed ...`);
 }
 
-async function getRandomContributor(poolClient: IPoolClient) {
+async function getContributor(poolClient: IPoolClient) {
 	try {
 		const evaluationResults: any = await poolClient.contract.readState();
 		const state = evaluationResults.cachedValue.state;

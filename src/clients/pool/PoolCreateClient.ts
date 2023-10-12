@@ -87,11 +87,11 @@ export default class PoolCreateClient {
 			});
 		} catch (e: any) {
 			console.error(e);
-			throw new Error(`Failed deploying nftContractSrc to warp`);
+			throw new Error(`Failed deploying poolContractSrc`);
 		}
 	}
 
-	async initializeState(img: string, nftDeployment: any) {
+	async initializeState(img: string, artifactContractSrc: string) {
 		const timestamp = Date.now().toString();
 
 		const poolInitJson: PoolStateType = {
@@ -106,15 +106,16 @@ export default class PoolCreateClient {
 			contributors: {},
 			tokens: {},
 			totalContributions: '0',
-			totalSupply: '10000000',
+			totalSupply: '1',
 			balance: '0',
 			canEvolve: true,
 			controlPubkey: this.controlWalletAddress,
 			contribPercent: this.poolConfig.state.controller.contribPercent.toString(),
 			topics: [],
-			artifactContractSrc: nftDeployment.srcTxId,
+			artifactContractSrc: artifactContractSrc,
 			keywords: this.poolConfig.keywords,
 			usedFunds: '0',
+			tradeable: this.poolConfig.tradeable,
 		};
 
 		return poolInitJson;
@@ -160,12 +161,12 @@ export default class PoolCreateClient {
 
 	async createPool() {
 		const img = await this.uploadBackgroundImage();
-		const nftDeployment = {
-			contractTxId: ARTIFACT_CONTRACT.tx,
-			srcTxId: ARTIFACT_CONTRACT.src,
-		};
+		const artifactContractSrc = this.poolConfig.tradeable
+			? ARTIFACT_CONTRACT.srcTradeable
+			: ARTIFACT_CONTRACT.srcNonTradeable;
+
 		const poolSrcDeployment = await this.deployPoolSrc();
-		const poolInitObj = await this.initializeState(img, nftDeployment);
+		const poolInitObj = await this.initializeState(img, artifactContractSrc);
 		const tags = this.createTags(poolInitObj);
 		const poolDeployment = await this.deployPoolContract(poolInitObj, poolSrcDeployment, tags);
 
@@ -174,12 +175,8 @@ export default class PoolCreateClient {
 		this.poolConfig.state.image = img;
 		this.poolConfig.contracts.pool.src = poolSrcDeployment.srcTxId;
 		this.poolConfig.state.timestamp = poolInitObj.timestamp;
-		this.poolConfig.contracts.nft.id = nftDeployment.contractTxId;
-		this.poolConfig.contracts.nft.src = nftDeployment.srcTxId;
 		this.poolConfig.contracts.pool.id = poolDeployment.contractTxId;
 
-		logJsonUpdate(this.poolConfig.state.title, `contracts.nft.id`, nftDeployment.contractTxId);
-		logJsonUpdate(this.poolConfig.state.title, `contracts.nft.src`, nftDeployment.srcTxId);
 		logJsonUpdate(this.poolConfig.state.title, `state.timestamp`, poolInitObj.timestamp);
 		logJsonUpdate(this.poolConfig.state.title, `contracts.pool.src`, poolSrcDeployment.contractTxId);
 		logJsonUpdate(this.poolConfig.state.title, `state.owner.pubkey`, this.poolConfig.state.owner.pubkey);

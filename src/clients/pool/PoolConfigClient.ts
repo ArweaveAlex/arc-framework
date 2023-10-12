@@ -101,9 +101,9 @@ export default class PoolConfigClient {
 		}
 
 		poolConfig.appType = getTagValue(poolData.data[0].node.tags, TAGS.keys.appType);
+		poolConfig.tradeable = pool.state.tradeable ? pool.state.tradeable : false;
 		poolConfig.contracts.pool.id = pool.id;
 		poolConfig.contracts.pool.src = getTagValue(poolData.data[0].node.tags, TAGS.keys.contractSrc);
-		poolConfig.contracts.nft.src = artifactContractSrc;
 		poolConfig.state.owner.pubkey = pool.state.owner;
 		poolConfig.state.owner.info = pool.state.ownerInfo;
 		poolConfig.state.controller.pubkey = pool.state.controlPubkey;

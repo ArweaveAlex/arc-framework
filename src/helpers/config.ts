@@ -113,8 +113,8 @@ export const TAGS = {
 };
 
 export const ARTIFACT_CONTRACT = {
-	tx: '',
-	src: 'Of9pi--Gj7hCTawhgxOwbuWnFI1h24TTgO5pw8ENJNQ',
+	srcTradeable: 'Of9pi--Gj7hCTawhgxOwbuWnFI1h24TTgO5pw8ENJNQ',
+	srcNonTradeable: 'rYthvz_kv-tWOCBIOWDbaV7XMedv8UgDpir2QBJKVnc',
 };
 
 export const PAGINATOR = 100;
@@ -157,11 +157,8 @@ export const DEFAULT_NOSTR_RELAYS = [
 
 export const DEFAULT_POOLS_JSON = {
 	appType: TAGS.values.poolVersions['1.5'],
+	tradeable: true,
 	contracts: {
-		nft: {
-			id: '',
-			src: '',
-		},
 		pool: {
 			id: '',
 			src: '',
@@ -206,7 +203,7 @@ export const DEFAULT_POOLS_JSON = {
 	},
 };
 
-export const TESTING_APP_TYPE = 'Alex-Archiving-Pool-Thread-Testing-v1.0';
+export const TESTING_APP_TYPE = 'Alex-Archiving-Pool-Testing-v1.1';
 
 export const CONTENT_TYPES = {
 	arweaveManifest: 'application/x.arweave-manifest+json',

@@ -233,7 +233,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 				internalWrites: true,
 				unsafeClient: 'skip',
 			};
-			if (artifactContractSrc === ARTIFACT_CONTRACT.src) {
+			if (artifactContractSrc === ARTIFACT_CONTRACT.srcTradeable) {
 				contractOptions.remoteStateSyncEnabled = true;
 				contractOptions.remoteStateSyncSource = DRE_NODE;
 			}
