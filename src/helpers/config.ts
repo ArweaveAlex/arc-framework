@@ -68,6 +68,7 @@ export const TAGS = {
 			document: 'document',
 			file: 'file',
 			collection: 'collection',
+			article: 'article',
 		},
 		audioArtifactType: 'Alex-Audio',
 		application: 'Alex.',
@@ -183,6 +184,7 @@ export const DEFAULT_POOLS_JSON = {
 	walletPath: '',
 	walletKey: null,
 	keywords: ['keyword'],
+	topics: ['History'],
 	twitterApiKeys: {
 		consumer_key: '',
 		consumer_secret: '',
@@ -191,13 +193,13 @@ export const DEFAULT_POOLS_JSON = {
 		bearer_token: '',
 	},
 	clarifaiApiKey: '',
-	topics: ['History'],
 	redditApiKeys: {
 		username: '',
 		password: '',
 		appId: '',
 		appSecret: '',
 	},
+	newsApiKey: '',
 	nostr: {
 		relays: DEFAULT_NOSTR_RELAYS,
 	},

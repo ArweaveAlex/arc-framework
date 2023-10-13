@@ -155,7 +155,7 @@ export default class PoolCreateClient {
 			return poolDeployment;
 		} catch (e: any) {
 			console.error(e);
-			throw new Error(`Failed deploying nftContractSrc to warp`);
+			throw new Error(`Failed deploying poolContract`);
 		}
 	}
 
@@ -180,7 +180,7 @@ export default class PoolCreateClient {
 		logJsonUpdate(this.poolConfig.state.title, `state.timestamp`, poolInitObj.timestamp);
 		logJsonUpdate(this.poolConfig.state.title, `contracts.pool.src`, poolSrcDeployment.contractTxId);
 		logJsonUpdate(this.poolConfig.state.title, `state.owner.pubkey`, this.poolConfig.state.owner.pubkey);
-		logJsonUpdate(this.poolConfig.state.title, `walletPath`, this.poolWalletPath);
+		if (this.poolWalletPath) logJsonUpdate(this.poolConfig.state.title, `walletPath`, this.poolWalletPath);
 		logJsonUpdate(this.poolConfig.state.title, `contracts.pool.id`, poolDeployment.contractTxId);
 
 		return this.poolConfig;

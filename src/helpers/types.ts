@@ -252,9 +252,10 @@ export type PoolConfigType = {
 	walletPath?: string;
 	walletKey: any;
 	keywords: string[];
+	topics: string[];
 	twitterApiKeys: any;
 	clarifaiApiKey: string;
-	topics: string[];
+	newsApiKey: string;
 	redditApiKeys: any;
 	nostr: {
 		relays: NostrRelayType[];

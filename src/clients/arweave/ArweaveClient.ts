@@ -83,6 +83,7 @@ export default class ArweaveClient {
 			cursor: null,
 			reduxCursor: null,
 			cursorObject: null,
+			useArweavePost: true,
 		});
 		return artifacts.data.length > 0;
 	}
