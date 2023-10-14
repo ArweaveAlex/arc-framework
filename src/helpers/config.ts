@@ -92,6 +92,7 @@ export const TAGS = {
 		},
 		license: 'x5UYiin_eRB0XCpZAkpduL0JIaXAUe9Bi2-RXGloBQI',
 		messagingArtifactType: 'Alex-Messaging',
+		newsArtifactType: 'Alex-News-Article',
 		nostrEventArtifactType: 'Alex-Nostr-Event',
 		redditThreadArtifactType: 'Alex-Reddit-Thread',
 		webpageArtifactType: 'Alex-Webpage',
