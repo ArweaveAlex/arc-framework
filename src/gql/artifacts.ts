@@ -115,6 +115,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 		cursor: cursor,
 		reduxCursor: args.reduxCursor,
 		cursorObject: CursorEnum.IdGQL,
+		useArweavePost: true,
 	});
 
 	return getArtifactsResponseObject(artifacts);
