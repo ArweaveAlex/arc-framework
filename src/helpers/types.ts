@@ -48,6 +48,9 @@ export type GQLResponseType = {
 			size: string;
 			type: string;
 		};
+		owner?: {
+			address: string;
+		};
 	};
 };
 
@@ -221,6 +224,7 @@ export type ProfileType = {
 	avatar: string | null;
 	twitter: string | null;
 	discord: string | null;
+	walletAddress?: string;
 };
 
 export type PoolConfigType = {

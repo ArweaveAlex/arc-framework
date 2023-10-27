@@ -1,7 +1,6 @@
 import { getArtifactsByUser, getPools } from '../../gql';
 import { ContributionType, getTagValue, PoolType, TAGS } from '../../helpers';
 
-// data/functions pertaining to individual users
 export default class UserClient {
 	userWalletAddress: string;
 

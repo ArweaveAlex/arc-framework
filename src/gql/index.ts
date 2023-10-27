@@ -45,31 +45,31 @@ export async function getGQLData(args: {
 
 	const query = {
 		query: `
-                query {
-                    transactions(
-                        ids: ${ids},
-                        tags: ${tags},
-                        owners: ${owners},
-                        first: ${PAGINATOR}, 
-                        after: ${cursor}
-                    ){
-						${countQuery}
-						edges {
-							cursor
-							node {
-								id
-								tags {
-									name 
-									value 
-								}
-								data {
-									size
-									type
-								}
-                        }
-                    }
-                }
-            }
+			query {
+				transactions(
+					ids: ${ids},
+					tags: ${tags},
+					owners: ${owners},
+					first: ${PAGINATOR}, 
+					after: ${cursor}
+				){
+					${countQuery}
+					edges {
+						cursor
+						node {
+							id
+							tags {
+								name 
+								value 
+							}
+							data {
+								size
+								type
+							}
+					}
+				}
+			}
+		}
         `
 			.replace(/\s+/g, ' ')
 			.trim(),

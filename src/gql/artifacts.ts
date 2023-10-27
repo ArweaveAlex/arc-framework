@@ -47,7 +47,7 @@ export async function getArtifactsByPool(args: ArtifactArgsType): Promise<Artifa
 		useArweavePost: false,
 	});
 
-	return getArtifactsResponseObject(gqlResponse);
+	return getGQLResponseObject(gqlResponse);
 }
 
 export async function getArtifactIdsByUser(args: UserArtifactsArgsType): Promise<string[]> {
@@ -118,7 +118,7 @@ export async function getArtifactsByIds(args: ArtifactArgsType): Promise<Artifac
 		useArweavePost: true,
 	});
 
-	return getArtifactsResponseObject(artifacts);
+	return getGQLResponseObject(artifacts);
 }
 
 export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<ArtifactResponseType> {
@@ -131,7 +131,7 @@ export async function getArtifactsByBookmarks(args: ArtifactArgsType): Promise<A
 		cursorObject: CursorEnum.GQL,
 	});
 
-	return getArtifactsResponseObject(artifacts);
+	return getGQLResponseObject(artifacts);
 }
 
 export async function getArtifactsByAssociation(
@@ -338,7 +338,7 @@ export async function setBookmarkIds(owner: string, ids: string[]): Promise<Noti
 	};
 }
 
-function getArtifactsResponseObject(gqlResponse: ArcGQLResponseType): ArtifactResponseType {
+function getGQLResponseObject(gqlResponse: ArcGQLResponseType): ArtifactResponseType {
 	const contracts = gqlResponse.data.filter((element: GQLResponseType) => {
 		return getTagValue(element.node.tags, TAGS.keys.uploaderTxId) === STORAGE.none;
 	});
