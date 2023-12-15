@@ -154,11 +154,11 @@ function addOrUpdateBigStrings(object, key, qty) {
 function updateContributions(object, key, qty) {
     if (object[key]) {
         object[key].push({
-            timestamp: Date.now().toString(), qty: BigInt(qty).toString()
+            timestamp: SmartWeave.block.timestamp.toString(), qty: BigInt(qty).toString()
         });
     }
     else {
-        object[key] = [{ timestamp: Date.now().toString(), qty: qty.toString() }];
+        object[key] = [{ timestamp: SmartWeave.block.timestamp.toString(), qty: qty.toString() }];
     }
 }
 function addOrUpdateIntStrings(object, key, qty) {

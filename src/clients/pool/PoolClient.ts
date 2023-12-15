@@ -49,7 +49,7 @@ export default class PoolClient implements IPoolClient {
 
 		let contract = this.arClient.warpDefault
 			.contract(this.poolConfig.contracts.pool.id)
-			.connect(this.poolConfig.walletKey)
+			.connect(poolWallet)
 			.setEvaluationOptions({
 				allowBigInt: true,
 			});
