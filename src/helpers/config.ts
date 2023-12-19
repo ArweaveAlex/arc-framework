@@ -258,6 +258,7 @@ export const DRE_NODE = 'https://dre-u.warp.cc/contract';
 export const BUNDLR_CONFIG = {
 	currency: 'arweave',
 	node: 'https://up.arweave.net',
+	node2: 'https://node2.bundlr.network',
 };
 
 export const GOLDSKY_CONFIG = {
