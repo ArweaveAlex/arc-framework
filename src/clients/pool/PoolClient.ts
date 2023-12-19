@@ -59,6 +59,7 @@ export default class PoolClient implements IPoolClient {
 		await contract.evolve(newSrcId);
 	}
 
+	// TODO: bundler balances
 	async balances(): Promise<PoolBalancesType | null> {
 		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			throw new Error(`Please provide a pool config with a pool id in it`);
@@ -69,7 +70,8 @@ export default class PoolClient implements IPoolClient {
 			const arweaveBalance = parseInt(
 				await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
 			);
-			const bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+			// const bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+			const bundlrBalance = 0;
 
 			const totalBalance = arweaveBalance + bundlrBalance;
 			const contribPercent = contractState.contribPercent ? parseInt(contractState.contribPercent) : 0;

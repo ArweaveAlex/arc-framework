@@ -1,5 +1,6 @@
 import mime, { contentType } from 'mime-types';
 
+import { getGQLData } from '../gql';
 import { ARTIFACT_CONTRACT, ARTIFACT_TYPES_BY_FILE, CONTENT_TYPES, TAGS } from '../helpers/config';
 import { ArtifactEnum, IPoolClient } from '../helpers/types';
 import { log, logValue } from '../helpers/utils';
@@ -8,7 +9,7 @@ export function getMimeType(fileName: string) {
 	return mime.contentType(mime.lookup(fileName) || CONTENT_TYPES.octetStream) as string;
 }
 
-export function getAlexType(fileType: string) {
+export function getArtifactType(fileType: string) {
 	return ARTIFACT_TYPES_BY_FILE[fileType] ? ARTIFACT_TYPES_BY_FILE[fileType] : ArtifactEnum.File;
 }
 
@@ -83,6 +84,29 @@ export async function createAsset(
 		contentType: args.contentType,
 		contractTags: contractTags,
 	});
+
+	await new Promise((r) => setTimeout(r, 2000));
+
+	let fetchedAssetId: string;
+	while (!fetchedAssetId) {
+		await new Promise((r) => setTimeout(r, 2000));
+		const gqlResponse = await getGQLData({
+			ids: [assetId],
+			tagFilters: null,
+			uploaders: null,
+			cursor: null,
+			reduxCursor: null,
+			cursorObject: null,
+			useArweavePost: true,
+		});
+
+		if (gqlResponse && gqlResponse.data.length) {
+			logValue(`Fetched Transaction`, gqlResponse.data[0].node.id, 0);
+			fetchedAssetId = gqlResponse.data[0].node.id;
+		} else {
+			logValue(`Transaction Not Found`, assetId, 0);
+		}
+	}
 
 	const contractId = await deployToWarp(poolClient, { assetId: assetId });
 	if (contractId) {
@@ -214,23 +238,6 @@ async function deployToBundlr(
 	try {
 		const transaction = poolClient.arClient.bundlr.createTransaction(finalContent, { tags: args.contractTags });
 		await transaction.sign();
-		// try {
-		// 	const cost = await poolClient.arClient.bundlr.getPrice(transaction.size);
-		// 	let balance = await poolClient.arClient.arweavePost.wallets.getBalance(poolClient.poolConfig.state.owner.pubkey);
-
-		// 	// stop trying to fund bundlr once the wallet is empty
-		// 	// otherwise fund either the cost or the rest of the balance
-		// 	// is synced up to Bundlr
-		// 	if (balance > 0) {
-		// 		try {
-		// 			await poolClient.arClient.bundlr.fund(balance >= cost.integerValue() ? cost.integerValue() : balance);
-		// 		} catch (e: any) {
-		// 			// log(`Error funding bundlr ...\n ${e}`, 1);
-		// 		}
-		// 	}
-		// } catch (e: any) {
-		// 	log(`Error getting bundlr cost ...\n ${e}`, 1);
-		// }
 		return (await transaction.upload()).id;
 	} catch (e: any) {
 		throw new Error(`Error uploading to bundlr ...\n ${e}`);
@@ -239,9 +246,10 @@ async function deployToBundlr(
 
 async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) {
 	try {
-		const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
+		const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'arweave');
 		return contractTxId;
 	} catch (e: any) {
+		console.error(e);
 		logValue(`Error deploying to Warp - Asset ID`, args.assetId, 1);
 
 		const errorString = e.toString();
@@ -255,7 +263,7 @@ async function deployToWarp(poolClient: IPoolClient, args: { assetId: string }) 
 				await new Promise((r) => setTimeout(r, 2000));
 				try {
 					log(`Retrying Warp ...`, null);
-					const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'node2');
+					const { contractTxId } = await poolClient.arClient.warpDefault.register(args.assetId, 'arweave');
 					log(`Retry succeeded`, 0);
 					return contractTxId;
 				} catch (e2: any) {

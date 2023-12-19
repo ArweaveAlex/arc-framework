@@ -4,7 +4,7 @@ import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts'
 import { ArweaveSigner, DeployPlugin, InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 import { getGQLData } from '../../gql';
-import { BUNDLR_CURRENCY, BUNDLR_NODE, GQLResponseType, TAGS } from '../../helpers';
+import { BUNDLR_CONFIG, GQLResponseType, TAGS } from '../../helpers';
 
 LoggerFactory.INST.logLevel('fatal');
 
@@ -26,7 +26,7 @@ export default class ArweaveClient {
 
 	constructor(bundlrJwk?: any) {
 		if (bundlrJwk) {
-			this.bundlr = new Bundlr(BUNDLR_NODE, BUNDLR_CURRENCY, bundlrJwk);
+			this.bundlr = new Bundlr(BUNDLR_CONFIG.node, BUNDLR_CONFIG.currency, bundlrJwk);
 		}
 
 		this.arweaveGet = Arweave.init({
