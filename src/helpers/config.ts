@@ -255,12 +255,19 @@ export const ARTIFACT_TYPES_BY_FILE: { [ext: string]: ArtifactEnum } = {
 
 export const DRE_NODE = 'https://dre-u.warp.cc/contract';
 
-export const BUNDLR_CONFIG = {
-	currency: 'arweave',
-	node: 'https://up.arweave.net',
-	node2: 'https://node2.bundlr.network',
+export const API_CONFIG = {
+	protocol: 'https',
+	port: 443,
+	timeout: 40000,
+	logging: false,
 };
 
-export const GOLDSKY_CONFIG = {
-	node: 'https://arweave-search.goldsky.com',
+export const GATEWAYS = {
+	arweave: 'arweave.net',
+	goldsky: 'arweave-search.goldsky.com',
+};
+
+export const UPLOAD_CONFIG = {
+	node1: 'https://up.arweave.network',
+	node2: 'https://turbo.ardrive.io',
 };

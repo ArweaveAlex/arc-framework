@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+
 import { Contract } from 'warp-contracts';
 
 import { getGQLData } from '../../gql';
@@ -14,7 +15,6 @@ import {
 } from '../../helpers/types';
 import { ArweaveClient } from '../arweave';
 
-// Class for working with existing pools
 export default class PoolClient implements IPoolClient {
 	arClient: ArweaveClient;
 	poolConfig: PoolConfigType;
@@ -59,7 +59,6 @@ export default class PoolClient implements IPoolClient {
 		await contract.evolve(newSrcId);
 	}
 
-	// TODO: bundler balances
 	async balances(): Promise<PoolBalancesType | null> {
 		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			throw new Error(`Please provide a pool config with a pool id in it`);
@@ -70,7 +69,7 @@ export default class PoolClient implements IPoolClient {
 			const arweaveBalance = parseInt(
 				await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)
 			);
-			// const bundlrBalance = (await this.arClient.bundlr.getBalance(this.poolConfig.state.owner.pubkey)).toNumber();
+
 			const bundlrBalance = 0;
 
 			const totalBalance = arweaveBalance + bundlrBalance;
@@ -98,37 +97,6 @@ export default class PoolClient implements IPoolClient {
 		} catch (e: any) {
 			console.error(e);
 			return null;
-		}
-	}
-
-	async fundBundlr(amount?: string) {
-		if (!this.poolConfig || !this.poolConfig.walletKey) {
-			throw new Error(`No wallet configured please set poolConfig.walletKey to the pools private key`);
-		}
-
-		let sendAmount: number;
-		if (amount) {
-			sendAmount = parseInt(amount);
-		} else {
-			sendAmount = (await this.arClient.arweavePost.wallets.getBalance(this.poolConfig.state.owner.pubkey)) / 2;
-		}
-
-		try {
-			await this.arClient.bundlr.fund(Math.floor(sendAmount));
-			// let contract = this.arClient.warpDefault
-			// 	.contract(this.poolConfig.contracts.pool.id)
-			// 	.connect(this.poolConfig.walletKey)
-			// 	.setEvaluationOptions({
-			// 		allowBigInt: true,
-			// 	});
-
-			// await contract.writeInteraction({
-			// 	function: 'updateUsedFunds',
-			// 	data: sendAmount,
-			// });
-		} catch (e: any) {
-			console.error(e);
-			throw new Error(`Error funding bundlr...\n ${e}`);
 		}
 	}
 
@@ -172,7 +140,7 @@ export default class PoolClient implements IPoolClient {
 		return Math.floor(+this.arClient.arweavePost.ar.winstonToAr(amount) * 1e6) / 1e6;
 	}
 
-	async handlePoolContribute(args: { amount: number; availableBalance: number }): Promise<NotificationResponseType> {
+	async handlePoolContribute(args: { wincAmount: number }): Promise<NotificationResponseType> {
 		if (!this.poolConfig || !this.poolConfig.contracts.pool.id) {
 			return { status: false, message: `Please initialize your poolConfig to an existing pool` };
 		}
@@ -180,22 +148,12 @@ export default class PoolClient implements IPoolClient {
 		if (!this.poolConfig || !this.poolConfig.walletKey) {
 			return {
 				status: false,
-				message: `No wallet configured please set poolConfig and poolConfig.walletKey to the pools private key`,
+				message: `No wallet configured set poolConfig and poolConfig.walletKey to the pools key`,
 			};
 		}
 
-		if (!args.availableBalance) {
-			return { status: false, message: `Wallet Not Connected` };
-		}
-
-		if (args.amount > args.availableBalance) {
-			return {
-				status: false,
-				message: `Not Enough Funds`,
-			};
-		}
 		try {
-			const arweaveContract: GQLResponseType = (
+			const transaction: GQLResponseType = (
 				await getGQLData({
 					ids: null,
 					tagFilters: [{ name: TAGS.keys.uploaderTxId, values: [this.poolConfig.contracts.pool.id] }],
@@ -205,15 +163,15 @@ export default class PoolClient implements IPoolClient {
 					cursorObject: null,
 				})
 			).data[0];
-			const fetchId = arweaveContract ? arweaveContract.node.id : this.poolConfig.contracts.pool.id;
+			const fetchId = transaction ? transaction.node.id : this.poolConfig.contracts.pool.id;
 			const { data: contractData }: { data: any } = await this.arClient.arweavePost.api.get(`/${fetchId}`);
 
 			let owner = contractData.owner;
-			if (arweaveContract) {
+			if (transaction) {
 				owner = JSON.parse(Buffer.from(contractData.data, 'base64').toString('utf-8')).owner;
 			}
 			if (!owner) {
-				return { status: false, message: `Pool Contribution Failed` };
+				return { status: false, message: `Owner not found, contribution failed` };
 			}
 
 			const warpContract = this.arClient.warpDefault
@@ -224,46 +182,21 @@ export default class PoolClient implements IPoolClient {
 					allowBigInt: true,
 				});
 
-			let contractState: any = (await warpContract.readState()).cachedValue.state;
-			let contribToPool = args.amount;
-			let contribToController = 0;
-			if (contractState.controlPubkey && !(contractState.controlPubkey.length === 0)) {
-				if (contractState.contribPercent && contractState.contribPercent > 0) {
-					const percentDecimal = contractState.contribPercent / 100;
-					contribToController = args.amount * percentDecimal;
-					contribToPool = args.amount - contribToController;
-					await warpContract.writeInteraction(
-						{ function: 'contribute' },
-						{
-							disableBundling: true,
-							transfer: {
-								target: contractState.controlPubkey,
-								winstonQty: this.arClient.arweavePost.ar.arToWinston(contribToController.toString()),
-							},
-						}
-					);
-				}
-			}
-
-			const result = await warpContract.writeInteraction(
+			await warpContract.writeInteraction(
 				{ function: 'contribute' },
 				{
 					disableBundling: true,
 					transfer: {
 						target: owner,
-						winstonQty: this.arClient.arweavePost.ar.arToWinston(contribToPool.toString()),
+						winstonQty: args.wincAmount.toString(),
 					},
 				}
 			);
 
-			if (!result) {
-				return { status: false, message: `Pool Contribution Failed` };
-			}
-
 			return { status: true, message: `Thank you for your contribution.` };
-		} catch (error: any) {
-			console.error(error);
-			return { status: false, message: `Pool Contribution Failed` };
+		} catch (e: any) {
+			console.error(e);
+			return { status: false, message: e.message };
 		}
 	}
 }

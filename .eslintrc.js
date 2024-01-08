@@ -9,21 +9,20 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: ['*.js', '*.ts'],
+			files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
 			rules: {
 				'simple-import-sort/imports': [
 					'error',
 					{
 						groups: [
-							['^((?!\\.).)*$'],
+							['^react', '^@?\\w'],
+							['^arweave', 'arbundles', '@irys/sdk', '^warp', '^@permaweb/stampjs', '^@?\\w'],
 							[
+								'^(@|artifacts)(/.*|$)',
 								'^(@|clients)(/.*|$)',
-								'^(@|collections)(/.*|$)',
-								'^(@|filters)(/.*|$)',
 								'^(@|gql)(/.*|$)',
 								'^(@|helpers)(/.*|$)',
 								'^(@|search)(/.*|$)',
-								'^(@|tests)(/.*|$)',
 								'^(@|workers)(/.*|$)',
 							],
 							['^\\u0000'],

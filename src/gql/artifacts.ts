@@ -202,7 +202,7 @@ export async function getArtifactsByAssociation(
 }
 
 export async function getArtifactById(artifactId: string): Promise<ArtifactDetailType | null> {
-	const artifact: ArcGQLResponseType = await getGQLData({
+	const gqlResponse: ArcGQLResponseType = await getGQLData({
 		ids: [artifactId],
 		tagFilters: null,
 		uploaders: null,
@@ -211,9 +211,8 @@ export async function getArtifactById(artifactId: string): Promise<ArtifactDetai
 		cursorObject: null,
 		useArweavePost: true,
 	});
-
-	if (artifact && artifact.data) {
-		return await getArtifact(artifact.data[0]);
+	if (gqlResponse && gqlResponse.data) {
+		return await getArtifact(gqlResponse.data[0]);
 	} else {
 		return null;
 	}
@@ -245,7 +244,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 				if (balanceOwner) artifactOwner = balanceOwner;
 			}
 
-			if (response.status === 200 && artifact) {
+			if (response.ok && artifact) {
 				try {
 					let artifactDetail: ArtifactDetailType = {
 						artifactId: artifact.node.id,

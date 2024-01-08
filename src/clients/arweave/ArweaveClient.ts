@@ -1,20 +1,11 @@
-import Bundlr from '@bundlr-network/client';
 import Arweave from 'arweave';
 import { defaultCacheOptions, LoggerFactory, WarpFactory } from 'warp-contracts';
 import { ArweaveSigner, DeployPlugin, InjectedArweaveSigner } from 'warp-contracts-plugin-deploy';
 
 import { getGQLData } from '../../gql';
-import { BUNDLR_CONFIG, GQLResponseType, TAGS } from '../../helpers';
+import { API_CONFIG, GATEWAYS, GQLResponseType, TAGS } from '../../helpers';
 
 LoggerFactory.INST.logLevel('fatal');
-
-const GET_ENDPOINT = 'arweave-search.goldsky.com';
-const POST_ENDPOINT = 'arweave.net';
-
-const PORT = 443;
-const PROTOCOL = 'https';
-const TIMEOUT = 40000;
-const LOGGING = false;
 
 export default class ArweaveClient {
 	bundlr: any;
@@ -24,25 +15,21 @@ export default class ArweaveClient {
 	warpDefault: any;
 	arweaveUtils: any;
 
-	constructor(bundlrJwk?: any) {
-		if (bundlrJwk) {
-			this.bundlr = new Bundlr(BUNDLR_CONFIG.node, BUNDLR_CONFIG.currency, bundlrJwk);
-		}
-
+	constructor(_jwk?: any) {
 		this.arweaveGet = Arweave.init({
-			host: GET_ENDPOINT,
-			port: PORT,
-			protocol: PROTOCOL,
-			timeout: TIMEOUT,
-			logging: LOGGING,
+			host: GATEWAYS.goldsky,
+			protocol: API_CONFIG.protocol,
+			port: API_CONFIG.port,
+			timeout: API_CONFIG.timeout,
+			logging: API_CONFIG.logging,
 		});
 
 		this.arweavePost = Arweave.init({
-			host: POST_ENDPOINT,
-			port: PORT,
-			protocol: PROTOCOL,
-			timeout: TIMEOUT,
-			logging: LOGGING,
+			host: GATEWAYS.arweave,
+			protocol: API_CONFIG.protocol,
+			port: API_CONFIG.port,
+			timeout: API_CONFIG.timeout,
+			logging: API_CONFIG.logging,
 		});
 
 		this.arweaveUtils = Arweave.utils;

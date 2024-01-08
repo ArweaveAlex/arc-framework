@@ -82,13 +82,12 @@ export default class UserClient {
 
 	getReceivingPercent(userWallet: string, contributors: any, totalContributions: string, activeAmount: number): string {
 		if (userWallet && contributors && totalContributions) {
-			if (isNaN(activeAmount)) {
+			if (isNaN(activeAmount) || activeAmount <= 0) {
 				return '0';
 			}
-			let amount: number = 0;
-			amount = activeAmount * 1e12;
 
-			let origAmount: number = amount;
+			let amount: number = Number(activeAmount);
+			let origAmount: number = Number(amount);
 
 			if (contributors[userWallet]) {
 				if (isNaN(contributors[userWallet])) {
@@ -106,10 +105,12 @@ export default class UserClient {
 
 			let calc: number = amount;
 			if (parseFloat(totalContributions) > 0) {
-				calc = (amount / (parseFloat(totalContributions) + origAmount)) * 100;
+				calc = (Number(amount) / (parseFloat(totalContributions) + origAmount)) * 100;
 			}
 			let tokens = calc.toFixed(4);
-			if (isNaN(calc)) return '0';
+			if (isNaN(calc)) {
+				return '0';
+			}
 			return calc >= 100 ? '100' : tokens;
 		} else {
 			return '0';
