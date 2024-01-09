@@ -174,8 +174,8 @@ async function handle(state, action) {
     const canEvolve = state.canEvolve;
     switch (action.input.function) {
         case "contribute": {
-            const contribution = BigInt(SmartWeave.transaction.quantity);
-            const target = SmartWeave.transaction.target;
+            const contribution = Number(action.input.winstonQty);
+            const target = action.input.target;
             const totalSupply = parseInt(state.totalSupply);
             const totalContributions = BigInt(state.totalContributions);
             if ((target !== state.owner) && (target !== state.controlPubkey)) {

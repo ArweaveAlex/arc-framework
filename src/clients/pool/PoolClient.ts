@@ -183,14 +183,12 @@ export default class PoolClient implements IPoolClient {
 				});
 
 			await warpContract.writeInteraction(
-				{ function: 'contribute' },
 				{
-					disableBundling: true,
-					transfer: {
-						target: owner,
-						winstonQty: args.wincAmount.toString(),
-					},
-				}
+					function: 'contribute',
+					target: owner,
+					winstonQty: args.wincAmount.toString(),
+				},
+				{ disableBundling: true }
 			);
 
 			return { status: true, message: `Thank you for your contribution.` };
