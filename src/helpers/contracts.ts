@@ -174,7 +174,7 @@ async function handle(state, action) {
     const canEvolve = state.canEvolve;
     switch (action.input.function) {
         case "contribute": {
-            const contribution = Number(action.input.winstonQty);
+            const contribution = BigInt(action.input.winstonQty);
             const target = action.input.target;
             const totalSupply = parseInt(state.totalSupply);
             const totalContributions = BigInt(state.totalContributions);
