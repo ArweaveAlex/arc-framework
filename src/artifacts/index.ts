@@ -93,7 +93,12 @@ export async function createContractTags(
 ) {
 	const dateTime = new Date().getTime().toString();
 
-	const tokenHolder = await getContributor(poolClient);
+	let tokenHolder: string;
+	try {
+		tokenHolder = await getContributor(poolClient);
+	} catch (e: any) {
+		tokenHolder = poolClient.poolConfig.state.owner.pubkey;
+	}
 
 	let contractSrc = ARTIFACT_CONTRACT.srcNonTradeable;
 	let initStateJson: any = {
