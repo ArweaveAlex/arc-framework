@@ -260,6 +260,7 @@ export type PoolConfigType = {
 	twitterApiKeys: any;
 	clarifaiApiKey: string;
 	newsApiKey: string;
+	gNewsApiKey: string;
 	redditApiKeys: any;
 	nostr: {
 		relays: NostrRelayType[];

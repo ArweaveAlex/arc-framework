@@ -201,6 +201,7 @@ export const DEFAULT_POOLS_JSON = {
 		appSecret: '',
 	},
 	newsApiKey: '',
+	gNewsApiKey: '',
 	nostr: {
 		relays: DEFAULT_NOSTR_RELAYS,
 	},

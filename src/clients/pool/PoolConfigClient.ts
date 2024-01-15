@@ -9,7 +9,6 @@ import {
 	TESTING_APP_TYPE,
 } from '../../helpers';
 
-// Class for generating PoolConfigType instances
 export default class PoolConfigClient {
 	testMode: boolean;
 
@@ -28,12 +27,12 @@ export default class PoolConfigClient {
 	}
 
 	async validateNewPoolConfig(args: { poolConfig: PoolConfigType }) {
-		console.log(`Checking Exisiting Pools ...`);
+		console.log(`Checking existing pools ...`);
 		const exisitingPools = await getPools();
 
 		exisitingPools.forEach(function (pool: PoolType) {
 			if (args.poolConfig.state.title === pool.state.title) {
-				throw new Error(`Pool Already Exists`);
+				throw new Error(`Pool already exists`);
 			}
 		});
 
