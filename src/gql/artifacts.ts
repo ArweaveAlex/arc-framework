@@ -322,14 +322,14 @@ export async function getBookmarkIds(owner: string): Promise<string[]> {
 
 export async function setBookmarkIds(owner: string, ids: string[]): Promise<NotificationResponseType> {
 	const arClient = new ArweaveClient();
-	let txRes = await arClient.arweavePost.createTransaction({ data: JSON.stringify(ids) }, 'use_wallet');
+	const tx = await arClient.arweavePost.createTransaction({ data: JSON.stringify(ids) }, 'use_wallet');
 
-	txRes.addTag(TAGS.keys.bookmarkSearch, owner);
-	txRes.addTag(TAGS.keys.dateCreated, Date.now().toString());
-	txRes.addTag(TAGS.keys.bookmarkIds, JSON.stringify(ids));
+	tx.addTag(TAGS.keys.bookmarkSearch, owner);
+	tx.addTag(TAGS.keys.dateCreated, Date.now().toString());
+	tx.addTag(TAGS.keys.bookmarkIds, JSON.stringify(ids));
 
 	// @ts-ignore
-	const response = await global.window.arweaveWallet.dispatch(txRes);
+	const response = await global.window.arweaveWallet.dispatch(tx);
 
 	return {
 		status: response.id ? true : false,

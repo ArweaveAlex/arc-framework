@@ -65,9 +65,15 @@ export default class PoolCreateClient {
 					data: this.img,
 				});
 				tx.addTag(TAGS.keys.contentType, this.imgFileType);
-				await this.poolClient.arClient.arweavePost.transactions.sign(tx, this.controlWalletJwk);
-				await this.poolClient.arClient.arweavePost.transactions.post(tx);
-				img = tx.id;
+				let response: any;
+				if (global.window && global.window.arweaveWallet) {
+					response = await global.window.arweaveWallet.dispatch(tx);
+					img = response.id;
+				} else {
+					await this.poolClient.arClient.arweavePost.transactions.sign(tx, this.controlWalletJwk);
+					await this.poolClient.arClient.arweavePost.transactions.post(tx);
+					img = tx.id;
+				}
 			} else {
 				img = FALLBACK_IMAGE;
 			}
