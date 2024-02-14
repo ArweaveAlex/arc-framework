@@ -85,10 +85,11 @@ export async function createContractTags(
 		associationId: string | null;
 		associationSequence: string | null;
 		childAssets: string[];
-		renderWith: string[] | null;
+		renderWith: string | null;
 		assetId: string;
 		fileType?: string | null | undefined;
 		dataProtocol?: string | null | undefined;
+		originalUrl?: string | null | undefined;
 	}
 ) {
 	const dateTime = new Date().getTime().toString();
@@ -143,28 +144,24 @@ export async function createContractTags(
 		{ name: TAGS.keys.dateCreated, value: dateTime },
 		{ name: TAGS.keys.artifactType, value: args.artifactType },
 		{ name: TAGS.keys.keywords, value: JSON.stringify(poolClient.poolConfig.keywords) },
-		{ name: TAGS.keys.mediaIds, value: args.additionalMediaPaths ? JSON.stringify(args.additionalMediaPaths) : '' },
-		{ name: TAGS.keys.profileImage, value: args.profileImagePath ? JSON.stringify(args.profileImagePath) : '' },
-		{ name: TAGS.keys.associationId, value: args.associationId ? args.associationId : '' },
-		{ name: TAGS.keys.associationSequence, value: args.associationSequence ? args.associationSequence : '' },
-		{ name: TAGS.keys.childAssets, value: args.childAssets ? JSON.stringify(args.childAssets) : '' },
 		{ name: TAGS.keys.implements, value: TAGS.values.ansVersion },
 		{ name: TAGS.keys.initState, value: initState },
 		{ name: TAGS.keys.license, value: TAGS.values.license },
 		{ name: TAGS.keys.holderTitle, value: TAGS.values.holderTitle },
 	];
 
-	if (args.renderWith) {
-		tagList.push({ name: TAGS.keys.renderWith, value: JSON.stringify(args.renderWith) });
-	}
+	if (args.additionalMediaPaths)
+		tagList.push({ name: TAGS.keys.mediaIds, value: JSON.stringify(args.additionalMediaPaths) });
+	if (args.profileImagePath)
+		tagList.push({ name: TAGS.keys.profileImage, value: JSON.stringify(args.profileImagePath) });
+	if (args.associationId) tagList.push({ name: TAGS.keys.associationId, value: args.associationId });
+	if (args.associationSequence) tagList.push({ name: TAGS.keys.associationSequence, value: args.associationSequence });
+	if (args.childAssets) tagList.push({ name: TAGS.keys.childAssets, value: JSON.stringify(args.childAssets) });
 
-	if (args.dataProtocol) {
-		tagList.push({ name: TAGS.keys.dataProtocol, value: args.dataProtocol });
-	}
-
-	if (args.fileType) {
-		tagList.push({ name: TAGS.keys.fileType, value: args.fileType });
-	}
+	if (args.renderWith) tagList.push({ name: TAGS.keys.renderWith, value: args.renderWith });
+	if (args.dataProtocol) tagList.push({ name: TAGS.keys.dataProtocol, value: args.dataProtocol });
+	if (args.originalUrl) tagList.push({ name: TAGS.keys.originalUrl, value: args.originalUrl });
+	if (args.fileType) tagList.push({ name: TAGS.keys.fileType, value: args.fileType });
 
 	if (poolClient.poolConfig.topics) {
 		for (let i = 0; i < poolClient.poolConfig.topics.length; i++) {

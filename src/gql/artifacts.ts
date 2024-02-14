@@ -267,6 +267,7 @@ export async function getArtifact(artifact: GQLResponseType): Promise<ArtifactDe
 						dataUrl: response.url,
 						dataSize: artifact ? artifact.node.data.size : null,
 						rawData: await response.text(),
+						originalUrl: getTagValue(artifact.node.tags, TAGS.keys.originalUrl),
 					};
 
 					if (contractState && contractState.claimable) {

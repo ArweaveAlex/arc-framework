@@ -36,6 +36,7 @@ export const TAGS = {
 		initState: 'Init-State',
 		license: 'License',
 		name: 'Name',
+		originalUrl: 'Original-URL',
 		poolId: 'Pool-Id',
 		poolName: 'Pool-Name',
 		profileImage: 'Profile-Image',
@@ -145,7 +146,7 @@ export const STORAGE = {
 	none: 'N/A',
 };
 
-export const RENDER_WITH_VALUES = ['alex-renderers'];
+export const RENDER_WITH_VALUE = 'alex-renderers';
 
 export const DEFAULT_NOSTR_RELAYS = [
 	{ socket: 'wss://relay.damus.io' },

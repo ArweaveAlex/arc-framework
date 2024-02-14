@@ -78,6 +78,7 @@ export interface ArtifactDetailType {
 	dataSize: string | null;
 	rawData: string | null;
 	claimable?: any[];
+	originalUrl: string | null;
 }
 
 export interface AssociationDetailType {
